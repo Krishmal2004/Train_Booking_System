@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Schedule</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a3a6e;
+            --secondary: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #198754;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #0dcaf0;
+            --border-radius: 8px;
+            --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding-top: 70px;
+        }
+
+        /* Header/Navbar */
+        .navbar {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand i {
+            color: var(--secondary);
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 15px;
+            border-radius: 30px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link i {
+            margin-right: 5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        /* Main content */
+        .page-header {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+            url('https://images.pexels.com/photos/2031755/pexels-photo-2031755.jpeg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 60px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        /* Action buttons */
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #132d54;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            color: var(--dark);
+        }
+
+        .btn-warning:hover {
+            background-color: #e5ac00;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        /* Schedule Card */
+        .schedule-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .status-active {
+            background-color: rgba(25, 135, 84, 0.2);
+            color: #20c997;
+        }
+
+        .status-cancelled {
+            background-color: rgba(220, 53, 69, 0.2);
+            color: #fa5252;
+        }
+
+        .status-completed {
+            background-color: rgba(13, 202, 240, 0.2);
+            color: #4cc9f0;
+        }
+
+        .card-body {
+            padding: 0;
+        }
+
+        /* Journey visualization */
+        .journey-visual {
+            background-color: var(--light);
+            padding: 30px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .journey-track {
+            position: absolute;
+            left: 100px;
+            right: 100px;
+            top: 50%;
+            height: 4px;
+            background-color: var(--primary);
+            transform: translateY(-50%);
+        }
+
+        .journey-track::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                    90deg,
+                    var(--primary),
+                    var(--primary) 10px,
+                    #5d7cb5 10px,
+                    #5d7cb5 20px
+            );
+        }
+
+        .station {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            width: 150px;
+        }
+
+        .station-icon {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            color: var(--primary);
+            font-size: 1.25rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .station-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .station-time {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        /* Schedule details */
+        .schedule-details {
+            padding: 30px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .detail-group {
+            margin-bottom: 20px;
+        }
+
+        .detail-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #6c757d;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-label i {
+            color: var(--primary);
+        }
+
+        .detail-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .detail-remarks {
+            background-color: var(--light);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+        }
+
+        .detail-remarks-label {
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-remarks-label i {
+            color: var(--primary);
+        }
+
+        .detail-remarks-text {
+            color: #495057;
+            font-style: italic;
+        }
+
+        /* Stats section */
+        .stats-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-top: 1px solid #dee2e6;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #6c757d;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-brand i {
+            color: var(--secondary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .page-header {
+                padding: 40px 0;
+            }
+
+            .journey-visual {
+                flex-direction: column;
+                gap: 50px;
+                padding: 50px 20px;
+            }
+
+            .journey-track {
+                left: 50%;
+                right: auto;
+                top: 100px;
+                bottom: 100px;
+                width: 4px;
+                height: auto;
+                transform: translateX(-50%);
+            }
+
+            .journey-track::before {
+                background: repeating-linear-gradient(
+                        180deg,
+                        var(--primary),
+                        var(--primary) 10px,
+                        #5d7cb5 10px,
+                        #5d7cb5 20px
+                );
+            }
+
+            .station {
+                width: 100%;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-section {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .action-bar {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .card-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .stats-section {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-content">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-train"></i>
+                TrainConnect
+            </a>
+            <ul class="navbar-nav">
+                <li>
+                    <a href="/" class="nav-link">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li>
+                    <a href="/routes" class="nav-link">
+                        <i class="fas fa-route"></i> Routes
+                    </a>
+                </li>
+                <li>
+                    <a href="/schedules" class="nav-link active">
+                        <i class="fas fa-calendar-alt"></i> Schedules
+                    </a>
+                </li>
+                <li>
+                    <a href="/tickets" class="nav-link">
+                        <i class="fas fa-ticket-alt"></i> Tickets
+                    </a>
+                </li>
+            </ul>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <span>K</span>
+                </div>
+                <span class="user-name">Krishmal2004</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Header -->
+<header class="page-header">
+    <div class="container">
+        <h1 class="page-title">Schedule Details</h1>
+        <p class="page-subtitle">View complete information about this train schedule</p>
+    </div>
+</header>
+
+<div class="container">
+    <!-- Action Bar -->
+    <div class="action-bar">
+        <a href="/schedules" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Back to Schedules
+        </a>
+        <a th:href="@{/schedules/{id}/edit(id=${schedule.id})}" class="btn btn-warning">
+            <i class="fas fa-edit"></i> Edit Schedule
+        </a>
+    </div>
+
+    <!-- Schedule Card -->
+    <div class="schedule-card">
+        <div class="card-header">
+            <h2 class="card-title">
+                <i class="fas fa-calendar-day"></i>
+                <span th:text="${schedule.scheduleId}">SCH001</span>
+            </h2>
+            <div class="status-badge"
+                 th:classappend="${schedule.status == 'active' ? 'status-active' :
+                                    (schedule.status == 'cancelled' ? 'status-cancelled' : 'status-completed')}">
+                <i th:class="${schedule.status == 'active' ? 'fas fa-check-circle' :
+                                (schedule.status == 'cancelled' ? 'fas fa-times-circle' : 'fas fa-flag-checkered')}"></i>
+                <span th:text="${schedule.status}">Active</span>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- Journey Visualization -->
+            <div class="journey-visual">
+                <div class="journey-track"></div>
+                <div class="station">
+                    <div class="station-icon">
+                        <i class="fas fa-train"></i>
+                    </div>
+                    <div class="station-name" th:text="${schedule.route != null ? schedule.route.origin : 'Origin'}">New York</div>
+                    <div class="station-time" th:text="${schedule.departureTime}">08:30 AM</div>
+                </div>
+                <div class="station">
+                    <div class="station-icon">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </div>
+                    <div class="station-name" th:text="${schedule.route != null ? schedule.route.destination : 'Destination'}">Boston</div>
+                    <div class="station-time" th:text="${schedule.arrivalTime}">12:45 PM</div>
+                </div>
+            </div>
+
+            <!-- Schedule Details -->
+            <div class="schedule-details">
+                <div class="details-grid">
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-fingerprint"></i> Schedule ID
+                        </div>
+                        <div class="detail-value" th:text="${schedule.scheduleId}">SCH001</div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-calendar"></i> Date
+                        </div>
+                        <div class="detail-value" th:text="${schedule.scheduleDate}">2025-09-15</div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-route"></i> Route
+                        </div>
+                        <div class="detail-value" th:text="${schedule.route != null ? schedule.route.routeId + ' (' + schedule.route.origin + ' - ' + schedule.route.destination + ')' : 'N/A'}">RT001 (New York - Boston)</div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-hourglass-start"></i> Departure Time
+                        </div>
+                        <div class="detail-value" th:text="${schedule.departureTime}">08:30 AM</div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-hourglass-end"></i> Arrival Time
+                        </div>
+                        <div class="detail-value" th:text="${schedule.arrivalTime}">12:45 PM</div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-toggle-on"></i> Status
+                        </div>
+                        <div class="detail-value" th:text="${schedule.status}">Active</div>
+                    </div>
+                </div>
+
+                <!-- Remarks Section -->
+                <div class="detail-remarks">
+                    <div class="detail-remarks-label">
+                        <i class="fas fa-comment-alt"></i> Remarks
+                    </div>
+                    <div class="detail-remarks-text" th:text="${schedule.remarks != null && !schedule.remarks.isEmpty() ? schedule.remarks : 'No remarks'}">
+                        No remarks
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <div class="stat-item">
+                    <div class="stat-value">4h 15m</div>
+                    <div class="stat-label">Journey Duration</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">235 km</div>
+                    <div class="stat-label">Distance</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">55 km/h</div>
+                    <div class="stat-label">Avg. Speed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" th:text="${#dates.format(#dates.createNow(), 'HH:mm')}">21:14</div>
+                    <div class="stat-label">Current Time</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <i class="fas fa-train"></i>
+                TrainConnect
+            </div>
+            <div class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/routes" class="footer-link">Routes</a>
+                <a href="/schedules" class="footer-link">Schedules</a>
+                <a href="/tickets" class="footer-link">Tickets</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 TrainConnect. All rights reserved.</p>
+            <p>Current time: 2025-09-15 21:14:18 | User: Krishmal2004</p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

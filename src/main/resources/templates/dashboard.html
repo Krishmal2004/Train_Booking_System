@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Passenger Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a3a6e;
+            --primary-light: rgba(26, 58, 110, 0.1);
+            --secondary: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #198754;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #0dcaf0;
+            --border-radius: 8px;
+            --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f5f7fa; color: #333; line-height: 1.6; padding-top: 70px; }
+        .container { width: 100%; max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .navbar { background-color: var(--primary); color: white; padding: 15px 0; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .navbar-content { display: flex; justify-content: space-between; align-items: center; }
+        .navbar-brand { font-size: 1.5rem; font-weight: 700; color: white; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+        .navbar-brand i { color: var(--secondary); }
+        .navbar-nav { display: flex; list-style: none; gap: 20px; }
+        .nav-link { color: rgba(255, 255, 255, 0.8); text-decoration: none; font-weight: 500; transition: var(--transition); padding: 8px 15px; border-radius: 30px; }
+        .nav-link:hover, .nav-link.active { color: white; background-color: rgba(255, 255, 255, 0.1); }
+        .nav-link i { margin-right: 5px; }
+        .user-info { display: flex; align-items: center; gap: 15px; color: white; }
+        .user-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; font-weight: 600; color: white; }
+        .user-name { font-weight: 500; }
+        .page-header { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1554103213-79353a1a52c3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'); background-size: cover; background-position: center; color: white; padding: 60px 0; margin-bottom: 40px; }
+        .page-title { font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; text-align: center; }
+        .page-subtitle { font-size: 1.1rem; max-width: 600px; margin: 0 auto; opacity: 0.9; text-align: center; }
+        .section-heading { font-size: 1.75rem; font-weight: 600; color: var(--dark); margin-bottom: 25px; padding-bottom: 10px; border-bottom: 2px solid var(--primary-light); margin-top: 50px; }
+        .book-ticket-card { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 30px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; border-left: 5px solid var(--primary); }
+        .book-ticket-card-content h3 { font-size: 1.5rem; margin: 0 0 10px 0; color: var(--dark); }
+        .book-ticket-card-content p { margin: 0; color: #6c757d; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 12px 24px; border: none; border-radius: var(--border-radius); font-family: 'Montserrat', sans-serif; font-weight: 600; cursor: pointer; transition: var(--transition); text-decoration: none; font-size: 1rem; }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: #132d54; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .btn-warning { background-color: var(--warning); color: var(--dark); }
+        .btn-warning:hover { background-color: #e5ac00; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .btn i { margin-right: 8px; }
+        .booking-card { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); margin-bottom: 20px; display: flex; overflow: hidden; transition: var(--transition); }
+        .booking-card:hover { transform: translateY(-5px); box-shadow: 0 1rem 1.5rem rgba(0,0,0,0.1); }
+        .booking-card-status { width: 15px; flex-shrink: 0; }
+        .status-confirmed { background-color: var(--success); }
+        .status-pending { background-color: var(--warning); }
+        .status-cancelled { background-color: var(--danger); }
+        .booking-card-main { padding: 20px; display: flex; flex-grow: 1; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .booking-journey { display: flex; align-items: center; gap: 15px; }
+        .journey-icon { font-size: 1.5rem; color: var(--primary); }
+        .journey-stations h4 { font-size: 1.25rem; font-weight: 600; margin: 0 0 5px 0; color: var(--dark); }
+        .journey-stations p { font-size: 0.9rem; color: #6c757d; margin: 0; }
+        .booking-details { display: flex; gap: 30px; align-items: center; flex-wrap: wrap; }
+        .detail-item { text-align: left; }
+        .detail-item .label { font-size: 0.8rem; color: #6c757d; margin-bottom: 4px; text-transform: uppercase; }
+        .detail-item .value { font-size: 1.1rem; font-weight: 600; color: var(--dark); }
+        .booking-actions { display: flex; gap: 10px; text-align: right; }
+        .alert-info { color: #0c5460; background-color: #d1ecf1; border-color: #bee5eb; padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: var(--border-radius); }
+        .footer { background-color: var(--dark); color: white; padding: 40px 0; margin-top: 60px; }
+        .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
+        .footer-brand { font-size: 1.5rem; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+        .footer-brand i { color: var(--secondary); }
+        .footer-links { display: flex; gap: 20px; }
+        .footer-link { color: rgba(255, 255, 255, 0.7); text-decoration: none; transition: var(--transition); }
+        .footer-link:hover { color: white; }
+        .footer-bottom { text-align: center; padding-top: 20px; margin-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); color: rgba(255, 255, 255, 0.7); font-size: 0.875rem; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .route-card { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 20px; border-left: 4px solid var(--info); transition: var(--transition); }
+        .route-card:hover { transform: translateY(-5px); box-shadow: 0 1rem 1.5rem rgba(0,0,0,0.1); }
+        .route-card h4 { font-size: 1.2rem; margin: 0 0 15px 0; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .route-details { display: flex; justify-content: space-between; font-size: 0.9rem; }
+        .route-details .detail { display: flex; align-items: center; gap: 8px; color: #6c757d; }
+        .route-details .detail i { color: var(--secondary); }
+        .package-card { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 20px; border-left: 4px solid var(--success); transition: var(--transition); }
+        .package-card:hover { transform: translateY(-5px); box-shadow: 0 1rem 1.5rem rgba(0,0,0,0.1); }
+        .package-card h4 { font-size: 1.2rem; margin: 0 0 10px 0; color: var(--primary); display: flex; align-items: center; gap: 10px; }
+        .package-card .package-route { font-size: 1rem; font-weight: 600; margin-bottom: 15px; color: var(--dark); }
+        .package-card .package-dates { font-size: 0.9rem; color: #6c757d; margin-bottom: 15px; }
+        .package-card .package-remarks { font-size: 0.9rem; color: #333; background-color: var(--primary-light); padding: 10px; border-radius: 5px; }
+        .schedule-card { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); padding: 20px; border-left: 4px solid var(--warning); transition: var(--transition); display: flex; flex-direction: column; gap: 15px; }
+        .schedule-card:hover { transform: translateY(-5px); box-shadow: 0 1rem 1.5rem rgba(0,0,0,0.1); }
+        .schedule-header { display: flex; justify-content: space-between; align-items: flex-start; }
+        .schedule-route h4 { font-size: 1.2rem; margin: 0 0 5px 0; color: var(--primary); }
+        .schedule-route p { font-size: 0.9rem; color: #6c757d; margin: 0; }
+        .schedule-status { display: inline-block; padding: 6px 12px; border-radius: 50px; font-weight: 600; font-size: 0.8rem; text-transform: uppercase; }
+        .status-active { background-color: rgba(25, 135, 84, 0.15); color: var(--success); }
+        .status-cancelled { background-color: rgba(220, 53, 69, 0.15); color: var(--danger); }
+        .status-completed { background-color: rgba(13, 202, 240, 0.15); color: var(--info); }
+        .schedule-details { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #eee; padding-top: 15px; }
+        .schedule-time { text-align: center; }
+        .schedule-time .label { font-size: 0.8rem; color: #6c757d; margin-bottom: 4px; }
+        .schedule-time .value { font-size: 1.2rem; font-weight: 600; color: var(--dark); }
+        .schedule-arrow i { font-size: 1.5rem; color: #ccc; }
+        .ticket-status-badge {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+        .status-badge-confirmed {
+            background-color: rgba(25, 135, 84, 0.15);
+            color: var(--success);
+        }
+        .status-badge-pending {
+            background-color: rgba(255, 193, 7, 0.15);
+            color: #997404;
+        }
+        .status-badge-cancelled {
+            background-color: rgba(220, 53, 69, 0.15);
+            color: var(--danger);
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-content">
+            <a href="/" class="navbar-brand"><i class="fas fa-train"></i> TrainConnect</a>
+            <ul class="navbar-nav">
+                <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/routes" class="nav-link"><i class="fas fa-route"></i> Routes</a></li>
+                <li><a href="/schedules" class="nav-link"><i class="fas fa-calendar-alt"></i> Schedules</a></li>
+                <li><a href="/tickets" class="nav-link active"><i class="fas fa-ticket-alt"></i> Tickets</a></li>
+            </ul>
+            <div class="user-info">
+                <div class="user-avatar"><span th:text="${#strings.substring(currentUser, 0, 1)}">U</span></div>
+                <span class="user-name" th:text="${currentUser}">User</span>
+                <a th:href="@{/logout}" class="nav-link" title="Logout"><i class="fas fa-sign-out-alt"></i></a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<header class="page-header">
+    <div class="container">
+        <h1 class="page-title">Passenger Dashboard</h1>
+        <p class="page-subtitle">Manage your bookings and view your travel history with ease.</p>
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="book-ticket-card">
+        <div class="book-ticket-card-content">
+            <h3>Ready for a new adventure?</h3>
+            <p>Book your next train ticket in just a few clicks.</p>
+        </div>
+        <a th:href="@{/tickets/create}" class="btn btn-primary">
+            <i class="fas fa-plus-circle"></i> Book New Ticket
+        </a>
+    </div>
+
+    <div th:if="${not #lists.isEmpty(packages)}">
+        <h2 class="section-heading">Available Seasonal Packages</h2>
+        <div class="dashboard-grid">
+            <div th:each="package : ${packages}" class="package-card">
+                <h4>
+                    <i class="fas fa-box-open"></i>
+                    <span th:text="${'Package ID: ' + package.packageID}">PKG-ID</span>
+                </h4>
+                <div class="package-route" th:if="${package.route != null}">
+                    <span th:text="${package.route.origin}">Origin</span>
+                    <i class="fas fa-long-arrow-alt-right"></i>
+                    <span th:text="${package.route.destination}">Destination</span>
+                </div>
+                <div class="package-dates">
+                    <i class="fas fa-calendar-alt"></i>
+                    <strong>Available:</strong>
+                    <span th:text="${#temporals.format(package.startDate, 'MMM dd, yyyy')}">Start Date</span> -
+                    <span th:text="${#temporals.format(package.endDate, 'MMM dd, yyyy')}">End Date</span>
+                </div>
+                <div class="package-remarks" th:if="${package.remarks != null and !package.remarks.isEmpty()}">
+                    <p th:text="${package.remarks}">Remarks will be shown here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:if="${not #lists.isEmpty(schedules)}">
+        <h2 class="section-heading">Train Schedules</h2>
+        <div class="dashboard-grid">
+            <div th:each="schedule : ${schedules}" class="schedule-card">
+                <div class="schedule-header">
+                    <div class="schedule-route">
+                        <h4 th:if="${schedule.route != null}">
+                            <span th:text="${schedule.route.origin}">Origin</span> -
+                            <span th:text="${schedule.route.destination}">Destination</span>
+                        </h4>
+                        <p>
+                            <i class="fas fa-calendar-day"></i>
+                            <span th:text="${#temporals.format(schedule.scheduleDate, 'MMMM dd, yyyy')}">Date</span>
+                        </p>
+                    </div>
+                    <div class="schedule-status"
+                         th:classappend="${schedule.status == 'active' ? 'status-active' :
+                                          (schedule.status == 'cancelled' ? 'status-cancelled' : 'status-completed')}">
+                        <span th:text="${schedule.status}">Status</span>
+                    </div>
+                </div>
+                <div class="schedule-details">
+                    <div class="schedule-time">
+                        <div class="label">DEPARTS</div>
+                        <div class="value" th:text="${#temporals.format(schedule.departureTime, 'hh:mm a')}">00:00 AM</div>
+                    </div>
+                    <div class="schedule-arrow">
+                        <i class="fas fa-long-arrow-alt-right"></i>
+                    </div>
+                    <div class="schedule-time">
+                        <div class="label">ARRIVES</div>
+                        <div class="value" th:text="${#temporals.format(schedule.arrivalTime, 'hh:mm a')}">00:00 AM</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="section-heading">My Booking History</h2>
+    <div th:if="${not #lists.isEmpty(tickets)}">
+        <div th:each="ticket : ${tickets}" class="booking-card">
+            <div class="booking-card-status"
+                 th:classappend="${ticket.status == 'confirmed' ? 'status-confirmed' : (ticket.status == 'pending' ? 'status-pending' : 'status-cancelled')}"></div>
+            <div class="booking-card-main">
+                <div class="booking-journey">
+                    <div class="journey-icon"><i class="fas fa-train"></i></div>
+                    <div class="journey-stations">
+                        <h4>
+                            <span th:text="${ticket.route.origin}">Origin</span>
+                            <i class="fas fa-long-arrow-alt-right"></i>
+                            <span th:text="${ticket.route.destination}">Destination</span>
+                        </h4>
+                        <p>Ticket ID: <span th:text="${ticket.ticketId}">TKT-ID</span></p>
+                    </div>
+                </div>
+                <div class="booking-details">
+                    <div class="detail-item">
+                        <div class="label">Travel Date</div>
+                        <div class="value" th:text="${#temporals.format(ticket.travelDate, 'MMM dd, yyyy')}">Date</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">Seat</div>
+                        <div class="value" th:text="${ticket.seatNumber}">Seat</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">Price</div>
+                        <div class="value" th:text="${'$' + #numbers.formatDecimal(ticket.price, 1, 'COMMA', 2, 'POINT')}">$0.00</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="label">STATUS</div>
+                        <div class="value">
+                             <span class="ticket-status-badge"
+                                   th:classappend="${ticket.status == 'confirmed' ? 'status-badge-confirmed' :
+                                                  (ticket.status == 'pending' ? 'status-badge-pending' : 'status-badge-cancelled')}"
+                                   th:text="${ticket.status}">
+                                 Status
+                             </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="booking-actions">
+                    <a th:href="@{/tickets/{id}(id=${ticket.id})}" class="btn btn-primary">
+                        <i class="fas fa-eye"></i> View
+                    </a>
+                    <a th:href="@{/tickets/{id}/edit(id=${ticket.id})}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div th:if="${#lists.isEmpty(tickets)}" class="alert alert-info" role="alert">
+        You have no booking history yet.
+    </div>
+
+    <h2 class="section-heading">All Available Routes</h2>
+    <div th:if="${#lists.isEmpty(routes)}" class="alert alert-info" role="alert">
+        No active routes are available at the moment.
+    </div>
+    <div class="dashboard-grid" th:if="${not #lists.isEmpty(routes)}">
+        <div th:each="route : ${routes}" class="route-card">
+            <h4>
+                <i class="fas fa-route"></i>
+                <span th:text="${route.origin}">Origin</span> to <span th:text="${route.destination}">Destination</span>
+            </h4>
+            <div class="route-details">
+                <div class="detail"><i class="fas fa-road"></i> <span th:text="${route.distance + ' km'}"></span></div>
+                <div class="detail"><i class="fas fa-clock"></i> <span th:text="${route.durationMinutes + ' min'}"></span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-brand"><i class="fas fa-train"></i> TrainConnect</div>
+            <div class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/routes" class="footer-link">Routes</a>
+                <a href="/schedules" class="footer-link">Schedules</a>
+                <a href="/tickets" class="footer-link">Tickets</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 TrainConnect. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Route</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #1a3a6e;
+            --secondary-color: #e63946;
+            --light-color: #f1faee;
+            --dark-color: #1d3557;
+            --accent-color: #a8dadc;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Route Edit Banner with Train Image */
+        .edit-banner {
+            height: 180px;
+            background: linear-gradient(rgba(26, 58, 110, 0.8), rgba(26, 58, 110, 0.8)),
+            url('https://images.pexels.com/photos/726414/pexels-photo-726414.jpeg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .edit-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .edit-badge {
+            position: absolute;
+            top: 20px;
+            right: -35px;
+            background: var(--warning-color);
+            color: white;
+            padding: 5px 40px;
+            font-size: 12px;
+            font-weight: 600;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            letter-spacing: 1px;
+        }
+
+        h1 {
+            color: white;
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .edit-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            max-width: 500px;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .navigation {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: #f1f5f9;
+        }
+
+        .back-link:hover {
+            color: var(--secondary-color);
+            background-color: #e9ecef;
+            transform: translateX(-5px);
+        }
+
+        .back-link i {
+            margin-right: 8px;
+        }
+
+        form {
+            display: grid;
+            gap: 20px;
+        }
+
+        .route-visual {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .route-diagram {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .station {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .station-icon {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .station-name {
+            font-size: 12px;
+            font-weight: 500;
+            text-align: center;
+            max-width: 80px;
+        }
+
+        .route-line {
+            flex-grow: 1;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            position: relative;
+        }
+
+        .route-line::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: repeating-linear-gradient(90deg, var(--primary-color), var(--primary-color) 10px, transparent 10px, transparent 15px);
+            animation: moveLine 2s linear infinite;
+        }
+
+        @keyframes moveLine {
+            0% { background-position: 0 0; }
+            100% { background-position: 25px 0; }
+        }
+
+        .form-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        label i {
+            color: var(--primary-color);
+            font-size: 14px;
+        }
+
+        input, select, textarea {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 15px;
+            transition: var(--transition);
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(168, 218, 220, 0.3);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%231d3557' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .error-message {
+            color: var(--danger-color);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .status-active, .status-inactive {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-left: 10px;
+        }
+
+        .status-active {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: #27ae60;
+        }
+
+        .status-inactive {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: #c0392b;
+        }
+
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            gap: 15px;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary-color) 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 16px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-update {
+            background: linear-gradient(135deg, var(--success-color) 0%, #219653 100%);
+        }
+
+        .btn-reset {
+            background-color: #f1f5f9;
+            color: var(--dark-color);
+            box-shadow: none;
+        }
+
+        .btn-reset:hover {
+            background-color: #e9ecef;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-color);
+            opacity: 0.7;
+        }
+
+        .input-with-icon input,
+        .input-with-icon select {
+            padding-left: 40px;
+        }
+
+        .form-section {
+            background-color: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .stops-visualization {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stop-item {
+            background-color: white;
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .helper-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .container {
+                padding-bottom: 20px;
+            }
+
+            .edit-banner {
+                height: 150px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .main-content {
+                padding: 20px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .btn-container {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .route-diagram {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .route-line {
+                width: 4px;
+                height: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Banner with Train Image -->
+    <div class="edit-banner">
+        <div class="edit-badge">EDIT MODE</div>
+        <div class="edit-overlay">
+            <h1>Edit Train Route</h1>
+            <p class="edit-subtitle">Update the details for this route including stations, distances, and scheduling information</p>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="navigation">
+            <a href="/routes" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Routes
+            </a>
+        </div>
+
+        <!-- Dynamic Route Visualization -->
+        <div class="route-visual">
+            <div class="route-diagram">
+                <div class="station">
+                    <div class="station-icon">
+                        <i class="fas fa-train"></i>
+                    </div>
+                    <div class="station-name" id="originDisplay">Origin</div>
+                </div>
+
+                <div class="route-line"></div>
+
+                <div class="station">
+                    <div class="station-icon">
+                        <i class="fas fa-flag-checkered"></i>
+                    </div>
+                    <div class="station-name" id="destinationDisplay">Destination</div>
+                </div>
+            </div>
+
+            <div id="stopsVisualization" class="stops-visualization">
+                <!-- Stop items will be added dynamically -->
+            </div>
+        </div>
+
+        <form th:action="@{/routes/{id}/edit(id=${route.id})}" th:object="${route}" method="post">
+            <div class="form-section">
+                <h3 class="form-title">
+                    <i class="fas fa-map-marked-alt"></i> Route Information
+                </h3>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="routeId"><i class="fas fa-hashtag"></i> Route ID:</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-fingerprint"></i>
+                            <input type="text" id="routeId" th:field="*{routeId}" required>
+                        </div>
+                        <span class="error-message" th:if="${#fields.hasErrors('routeId')}" th:errors="*{routeId}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="status"><i class="fas fa-toggle-on"></i> Status:</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-check-circle"></i>
+                            <select id="status" th:field="*{status}" required>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+                        <span class="error-message" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="origin"><i class="fas fa-map-marker-alt"></i> Origin:</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-train"></i>
+                            <input type="text" id="origin" th:field="*{origin}" required>
+                        </div>
+                        <span class="error-message" th:if="${#fields.hasErrors('origin')}" th:errors="*{origin}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="destination"><i class="fas fa-map-marker"></i> Destination:</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-flag-checkered"></i>
+                            <input type="text" id="destination" th:field="*{destination}" required>
+                        </div>
+                        <span class="error-message" th:if="${#fields.hasErrors('destination')}" th:errors="*{destination}"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-section">
+                <h3 class="form-title">
+                    <i class="fas fa-map-signs"></i> Stops & Metrics
+                </h3>
+                <div class="form-group">
+                    <label for="stops"><i class="fas fa-map-signs"></i> Stops (comma-separated):</label>
+                    <textarea id="stops" th:field="*{stops}" placeholder="E.g., Central Station, North Terminal, East Junction"></textarea>
+                    <div class="helper-text">List all intermediate stations where the train stops, separated by commas</div>
+                </div>
+
+                <div class="form-row" style="margin-top: 20px;">
+                    <div class="form-group">
+                        <label for="distance"><i class="fas fa-ruler"></i> Distance (km):</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-road"></i>
+                            <input type="number" id="distance" th:field="*{distance}" step="0.1" min="0.1" required>
+                        </div>
+                        <span class="error-message" th:if="${#fields.hasErrors('distance')}" th:errors="*{distance}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="durationMinutes"><i class="fas fa-clock"></i> Duration (minutes):</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-hourglass-half"></i>
+                            <input type="number" id="durationMinutes" th:field="*{durationMinutes}" min="1" required>
+                        </div>
+                        <span class="error-message" th:if="${#fields.hasErrors('durationMinutes')}" th:errors="*{durationMinutes}"></span>
+                        <div class="helper-text" id="durationHelper"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button type="reset" class="btn btn-reset" id="resetBtn">
+                    <i class="fas fa-undo"></i> Reset Changes
+                </button>
+                <button type="submit" class="btn btn-update">
+                    <i class="fas fa-save"></i> Update Route
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const originInput = document.getElementById('origin');
+        const destinationInput = document.getElementById('destination');
+        const stopsTextarea = document.getElementById('stops');
+        const durationInput = document.getElementById('durationMinutes');
+        const resetBtn = document.getElementById('resetBtn');
+
+        const originDisplay = document.getElementById('originDisplay');
+        const destinationDisplay = document.getElementById('destinationDisplay');
+        const stopsVisualization = document.getElementById('stopsVisualization');
+        const durationHelper = document.getElementById('durationHelper');
+
+        // Initial update of visual elements
+        updateVisualElements();
+        updateDurationHelper();
+
+        // Update visual elements when inputs change
+        originInput.addEventListener('input', updateVisualElements);
+        destinationInput.addEventListener('input', updateVisualElements);
+        stopsTextarea.addEventListener('input', updateVisualElements);
+        durationInput.addEventListener('input', updateDurationHelper);
+
+        // Confirm reset
+        resetBtn.addEventListener('click', function(event) {
+            if (!confirm('Are you sure you want to reset all changes?')) {
+                event.preventDefault();
+            } else {
+                // If reset is confirmed, update the visualization after a short delay
+                setTimeout(updateVisualElements, 50);
+                setTimeout(updateDurationHelper, 50);
+            }
+        });
+
+        function updateVisualElements() {
+            // Update origin and destination displays
+            originDisplay.textContent = originInput.value || 'Origin';
+            destinationDisplay.textContent = destinationInput.value || 'Destination';
+
+            // Update stops visualization
+            stopsVisualization.innerHTML = '';
+            if (stopsTextarea.value) {
+                const stops = stopsTextarea.value.split(',').map(stop => stop.trim()).filter(stop => stop);
+                stops.forEach(stop => {
+                    const stopElement = document.createElement('div');
+                    stopElement.className = 'stop-item';
+                    stopElement.innerHTML = `<i class="fas fa-stop-circle"></i> ${stop}`;
+                    stopsVisualization.appendChild(stopElement);
+                });
+            }
+
+            // If no stops, show a placeholder
+            if (stopsVisualization.children.length === 0) {
+                const placeholderElement = document.createElement('div');
+                placeholderElement.className = 'stop-item';
+                placeholderElement.innerHTML = '<i class="fas fa-info-circle"></i> No intermediate stops';
+                placeholderElement.style.opacity = '0.6';
+                stopsVisualization.appendChild(placeholderElement);
+            }
+        }
+
+        function updateDurationHelper() {
+            const minutes = parseInt(durationInput.value) || 0;
+            if (minutes >= 60) {
+                const hours = Math.floor(minutes / 60);
+                const mins = minutes % 60;
+                durationHelper.textContent = `${hours} hour${hours !== 1 ? 's' : ''} ${mins} minute${mins !== 1 ? 's' : ''}`;
+            } else if (minutes > 0) {
+                durationHelper.textContent = `${minutes} minute${minutes !== 1 ? 's' : ''}`;
+            } else {
+                durationHelper.textContent = '';
+            }
+        }
+    });
+</script>
+</body>
+</html>

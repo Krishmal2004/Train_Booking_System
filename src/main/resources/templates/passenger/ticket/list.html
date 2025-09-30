@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Train Ticket Management</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* TrainConnect Management System CSS
+       Created for: Krishmal2004
+       Last updated: 2025-09-15 22:04:14
+    */
+
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+    /* CSS Variables for consistent theming */
+    :root {
+      --primary: #1a3a6e;
+      --primary-light: rgba(26, 58, 110, 0.1);
+      --secondary: #e63946;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --success: #198754;
+      --warning: #ffc107;
+      --danger: #dc3545;
+      --info: #0dcaf0;
+      --border-radius: 8px;
+      --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      --transition: all 0.3s ease;
+    }
+
+    /* Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+      padding-top: 70px;
+    }
+
+    /* Header/Navbar */
+    .navbar {
+      background-color: var(--primary);
+      color: white;
+      padding: 15px 0;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .navbar-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .navbar-brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar-brand i {
+      color: var(--secondary);
+    }
+
+    .navbar-nav {
+      display: flex;
+      list-style: none;
+      gap: 20px;
+    }
+
+    .nav-link {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-weight: 500;
+      transition: var(--transition);
+      padding: 8px 15px;
+      border-radius: 30px;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: white;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-link i {
+      margin-right: 5px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: rgba(255, 255, 255, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: white;
+    }
+
+    .user-name {
+      font-weight: 500;
+    }
+
+    /* Main content */
+    .page-header {
+      background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+      url('https://images.unsplash.com/photo-1474487548417-781cb71495f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80');
+      background-size: cover;
+      background-position: center;
+      color: white;
+      text-align: center;
+      padding: 60px 0;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .page-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .page-subtitle {
+      font-size: 1.1rem;
+      max-width: 600px;
+      margin: 0 auto;
+      opacity: 0.9;
+    }
+
+    /* Success message */
+    .alert {
+      padding: 15px 20px;
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .alert-success {
+      background-color: rgba(25, 135, 84, 0.1);
+      border-left: 4px solid var(--success);
+      color: var(--success);
+    }
+
+    /* Action buttons */
+    .action-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 24px;
+      border: none;
+      border-radius: var(--border-radius);
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 0.875rem;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #132d54;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-success {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #146c43;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn i {
+      margin-right: 8px;
+    }
+
+    /* Dashboard stats */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .stat-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      margin-bottom: 15px;
+    }
+
+    .stat-primary {
+      background-color: rgba(26, 58, 110, 0.1);
+      color: var(--primary);
+    }
+
+    .stat-success {
+      background-color: rgba(25, 135, 84, 0.1);
+      color: var(--success);
+    }
+
+    .stat-warning {
+      background-color: rgba(255, 193, 7, 0.1);
+      color: var(--warning);
+    }
+
+    .stat-danger {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: var(--danger);
+    }
+
+    .stat-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #6c757d;
+      font-size: 0.9rem;
+    }
+
+    /* Filter card */
+    .filter-card {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .filter-header {
+      background-color: var(--primary);
+      color: white;
+      padding: 15px 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .filter-title {
+      font-size: 1.1rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filter-body {
+      padding: 20px;
+    }
+
+    .filter-form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      align-items: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .form-group {
+      flex: 1;
+      min-width: 200px;
+    }
+
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark);
+      font-size: 0.9rem;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ced4da;
+      border-radius: var(--border-radius);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 1rem;
+      transition: var(--transition);
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem rgba(26, 58, 110, 0.25);
+    }
+
+    .divider {
+      width: 100%;
+      height: 1px;
+      background-color: #e9ecef;
+      margin: 20px 0;
+    }
+
+    /* Table styles */
+    .table-responsive {
+      overflow-x: auto;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 40px;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: white;
+    }
+
+    .table th {
+      background-color: var(--primary);
+      color: white;
+      padding: 15px;
+      text-align: left;
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    .table th:first-child {
+      border-top-left-radius: var(--border-radius);
+    }
+
+    .table th:last-child {
+      border-top-right-radius: var(--border-radius);
+    }
+
+    .table td {
+      padding: 15px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    .table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .table tr:last-child td:first-child {
+      border-bottom-left-radius: var(--border-radius);
+    }
+
+    .table tr:last-child td:last-child {
+      border-bottom-right-radius: var(--border-radius);
+    }
+
+    .table tr:hover {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .table-empty {
+      text-align: center;
+      padding: 40px;
+      color: #6c757d;
+    }
+
+    /* Status badges */
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-confirmed {
+      background-color: rgba(25, 135, 84, 0.1);
+      color: var(--success);
+    }
+
+    .badge-pending {
+      background-color: rgba(255, 193, 7, 0.1);
+      color: var(--warning);
+    }
+
+    .badge-cancelled {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: var(--danger);
+    }
+
+    /* Class badges */
+    .badge-economy {
+      background-color: rgba(13, 202, 240, 0.1);
+      color: var(--info);
+    }
+
+    .badge-business {
+      background-color: rgba(26, 58, 110, 0.1);
+      color: var(--primary);
+    }
+
+    .badge-first {
+      background-color: rgba(230, 57, 70, 0.1);
+      color: var(--secondary);
+    }
+
+    /* Action buttons */
+    .action-buttons {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--light);
+      color: var(--dark);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .action-btn-view {
+      background-color: rgba(26, 58, 110, 0.1);
+      color: var(--primary);
+    }
+
+    .action-btn-edit {
+      background-color: rgba(255, 193, 7, 0.1);
+      color: var(--warning);
+    }
+
+    .action-btn-delete {
+      background-color: rgba(220, 53, 69, 0.1);
+      color: var(--danger);
+    }
+
+    /* Footer */
+    .footer {
+      background-color: var(--dark);
+      color: white;
+      padding: 40px 0;
+      margin-top: 60px;
+    }
+
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-brand {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .footer-brand i {
+      color: var(--secondary);
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-link {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .footer-link:hover {
+      color: white;
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 20px;
+      margin-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 0.875rem;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 768px) {
+      .navbar-nav {
+        display: none;
+      }
+
+      .page-title {
+        font-size: 2rem;
+      }
+
+      .page-header {
+        padding: 40px 0;
+      }
+
+      .filter-form {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .form-group {
+        width: 100%;
+      }
+
+      .action-buttons {
+        flex-wrap: wrap;
+      }
+
+      .stats-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .action-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .table th, .table td {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar">
+  <div class="container">
+    <div class="navbar-content">
+      <a href="/" class="navbar-brand">
+        <i class="fas fa-train"></i>
+        TrainConnect
+      </a>
+      <ul class="navbar-nav">
+        <li>
+          <a href="/" class="nav-link">
+            <i class="fas fa-home"></i> Home
+          </a>
+        </li>
+        <li>
+          <a href="/routes" class="nav-link">
+            <i class="fas fa-route"></i> Routes
+          </a>
+        </li>
+        <li>
+          <a href="/schedules" class="nav-link">
+            <i class="fas fa-calendar-alt"></i> Schedules
+          </a>
+        </li>
+        <li>
+          <a href="/tickets" class="nav-link active">
+            <i class="fas fa-ticket-alt"></i> Tickets
+          </a>
+        </li>
+      </ul>
+      <div class="user-info">
+        <div class="user-avatar"><span>K</span></div>
+        <span class="user-name" th:text="${currentUser}">Krishmal2004</span>
+
+        <a th:href="@{/logout}" class="nav-link" title="Logout">
+          <i class="fas fa-sign-out-alt"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Page Header -->
+<header class="page-header">
+  <div class="container">
+    <h1 class="page-title">Train Ticket Management</h1>
+    <p class="page-subtitle">Manage all passenger tickets, bookings, and reservations</p>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Success Message -->
+  <div class="alert alert-success" th:if="${successMessage}">
+    <i class="fas fa-check-circle"></i>
+    <span th:text="${successMessage}">Operation completed successfully!</span>
+  </div>
+
+  <!-- Dashboard Stats -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <div class="stat-icon stat-primary">
+        <i class="fas fa-ticket-alt"></i>
+      </div>
+      <div class="stat-value" th:text="${tickets.size()}">0</div>
+      <div class="stat-label">Total Tickets</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-success">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="stat-value" th:text="${tickets.?[status == 'confirmed'].size()}">0</div>
+      <div class="stat-label">Confirmed</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-warning">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="stat-value" th:text="${tickets.?[status == 'pending'].size()}">0</div>
+      <div class="stat-label">Pending</div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon stat-danger">
+        <i class="fas fa-times-circle"></i>
+      </div>
+      <div class="stat-value" th:text="${tickets.?[status == 'cancelled'].size()}">0</div>
+      <div class="stat-label">Cancelled</div>
+    </div>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="action-bar">
+    <a href="/" class="btn btn-primary">
+      <i class="fas fa-home"></i> Home
+    </a>
+    <a href="/tickets/create" class="btn btn-success">
+      <i class="fas fa-plus-circle"></i> Buy New Ticket
+    </a>
+  </div>
+
+  <!-- Filter Card -->
+  <div class="filter-card">
+    <div class="filter-header">
+      <h3 class="filter-title">
+        <i class="fas fa-filter"></i> Filter & Search
+      </h3>
+    </div>
+    <div class="filter-body">
+      <form action="/tickets" method="get" class="filter-form">
+        <div class="form-group">
+          <label for="status" class="form-label">Status</label>
+          <select id="status" name="status" class="form-control">
+            <option value="">All</option>
+            <option value="confirmed">Confirmed</option>
+            <option value="pending">Pending</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="travelDate" class="form-label">Travel Date</label>
+          <input type="date" id="travelDate" name="travelDate" class="form-control">
+        </div>
+
+        <div>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-filter"></i> Filter
+          </button>
+        </div>
+      </form>
+
+      <div class="divider"></div>
+
+      <form action="/tickets" method="get" class="filter-form">
+        <div class="form-group">
+          <label for="passengerName" class="form-label">Passenger Name</label>
+          <input type="text" id="passengerName" name="passengerName" placeholder="Enter passenger name" class="form-control">
+        </div>
+
+        <div>
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-search"></i> Search
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Tickets Table -->
+  <div class="table-responsive">
+    <table class="table">
+      <thead>
+      <tr>
+        <th>Ticket ID</th>
+        <th>Passenger</th>
+        <th>Route</th>
+        <th>Travel Date</th>
+        <th>Seat</th>
+        <th>Class</th>
+        <th>Price</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:if="${tickets.empty}">
+        <td colspan="9" class="table-empty">
+          <i class="fas fa-search fa-3x mb-3" style="margin-bottom: 15px; display: block; color: #dee2e6;"></i>
+          <div>No tickets found</div>
+        </td>
+      </tr>
+      <tr th:each="ticket : ${tickets}">
+        <td th:text="${ticket.ticketId}">TKT-12345</td>
+        <td th:text="${ticket.passengerName}">John Doe</td>
+        <td th:text="${ticket.route != null ? ticket.route.origin + ' - ' + ticket.route.destination : 'N/A'}">New York - Boston</td>
+        <td th:text="${ticket.travelDate}">2025-09-15</td>
+        <td th:text="${ticket.seatNumber}">A-12</td>
+        <td th:text="${ticket.ticketClass}">Economy</td>
+        <td th:text="${ticket.price}">125.00</td>
+        <td th:text="${ticket.status}">Confirmed</td>
+        <td>
+          <a th:href="@{/tickets/{id}(id=${ticket.id})}">View</a> |
+          <a th:href="@{/tickets/{id}/edit(id=${ticket.id})}">Edit</a> |
+          <a th:href="@{/tickets/{id}/delete(id=${ticket.id})}"
+             onclick="return confirm('Are you sure you want to cancel this ticket?')">Cancel</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <i class="fas fa-train"></i>
+        TrainConnect
+      </div>
+      <div class="footer-links">
+        <a href="/" class="footer-link">Home</a>
+        <a href="/routes" class="footer-link">Routes</a>
+        <a href="/schedules" class="footer-link">Schedules</a>
+        <a href="/tickets" class="footer-link">Tickets</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2025 TrainConnect. All rights reserved.</p>
+      <p>Current time: 2025-09-15 22:04:14 | User: Krishmal2004</p>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

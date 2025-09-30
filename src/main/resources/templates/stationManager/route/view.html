@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Route</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #e74c3c;
+            --accent-color: #3498db;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --info-color: #3498db;
+            --border-radius: 10px;
+            --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .page-wrapper {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+        }
+
+        .logo i {
+            color: var(--secondary-color);
+            font-size: 28px;
+        }
+
+        /* Navigation styles */
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 50px;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-link i {
+            font-size: 16px;
+        }
+
+        /* Mobile menu toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .main-content {
+            flex: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--dark-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--secondary-color);
+            border-radius: 2px;
+        }
+
+        .action-bar {
+            display: flex;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+        }
+
+        .btn-secondary {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+        }
+
+        .btn-warning {
+            background-color: var(--warning-color);
+        }
+
+        /* Route details card */
+        .route-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .route-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 25px;
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .route-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .route-id {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        .route-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 15px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background-color: rgba(46, 204, 113, 0.2);
+            color: var(--success-color);
+        }
+
+        .status-inactive {
+            background-color: rgba(231, 76, 60, 0.2);
+            color: var(--danger-color);
+        }
+
+        /* Route visualization */
+        .route-visualization {
+            padding: 30px;
+            background-color: var(--light-color);
+            display: flex;
+            justify-content: center;
+            position: relative;
+        }
+
+        .route-path {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            max-width: 800px;
+            padding: 0 40px;
+        }
+
+        .station {
+            position: relative;
+            z-index: 2;
+        }
+
+        .station-point {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            color: var(--primary-color);
+            margin-bottom: 8px;
+        }
+
+        .station-name {
+            position: absolute;
+            width: 120px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .origin .station-name {
+            bottom: -30px;
+        }
+
+        .destination .station-name {
+            bottom: -30px;
+        }
+
+        .track-line {
+            flex-grow: 1;
+            height: 6px;
+            background-color: var(--accent-color);
+            position: relative;
+            z-index: 1;
+        }
+
+        .track-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(to right, transparent, transparent 10px, white 10px, white 20px);
+            opacity: 0.3;
+        }
+
+        /* Route details content */
+        .route-content {
+            padding: 30px;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .detail-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .detail-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-label i {
+            color: var(--accent-color);
+        }
+
+        .detail-value {
+            background-color: var(--light-color);
+            padding: 15px;
+            border-radius: var(--border-radius);
+            font-size: 16px;
+        }
+
+        .stops-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .stop-item {
+            background-color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stop-item i {
+            color: var(--accent-color);
+            font-size: 12px;
+        }
+
+        .metrics-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-top: 30px;
+        }
+
+        .metrics-header {
+            background-color: var(--accent-color);
+            color: white;
+            padding: 15px 25px;
+        }
+
+        .metrics-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .metrics-content {
+            padding: 25px;
+            display: flex;
+            gap: 25px;
+        }
+
+        .metric {
+            flex: 1;
+            text-align: center;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            background-color: var(--light-color);
+        }
+
+        .metric-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            font-size: 14px;
+            color: var(--dark-color);
+            opacity: 0.7;
+        }
+
+        .metric-icon {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--accent-color);
+        }
+
+        .footer {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px 0;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            .nav-menu {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background-color: var(--primary-color);
+                flex-direction: column;
+                padding: 20px;
+                gap: 10px;
+                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+                display: none;
+                z-index: 100;
+            }
+
+            .nav-menu.active {
+                display: flex;
+            }
+
+            .route-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .route-status {
+                align-self: flex-start;
+            }
+
+            .metrics-content {
+                flex-direction: column;
+            }
+
+            .action-bar {
+                flex-wrap: wrap;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-wrapper">
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <i class="fas fa-train"></i>
+                <span>TrainConnect</span>
+            </a>
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav>
+                <ul class="nav-menu" id="navMenu">
+                    <li class="nav-item">
+                        <a href="/" class="nav-link">
+                            <i class="fas fa-home"></i> Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/routes" class="nav-link active">
+                            <i class="fas fa-route"></i> Routes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/schedules" class="nav-link">
+                            <i class="fas fa-calendar-alt"></i> Schedules
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/tickets" class="nav-link">
+                            <i class="fas fa-ticket-alt"></i> Tickets
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <h1 class="page-title">Route Details</h1>
+
+        <div class="action-bar">
+            <a href="/routes" class="btn btn-primary">
+                <i class="fas fa-arrow-left"></i> Back to Routes
+            </a>
+            <a th:href="@{/routes/{id}/edit(id=${route.id})}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit Route
+            </a>
+        </div>
+
+        <div class="route-card">
+            <div class="route-header">
+                <div>
+                    <h2 class="route-title">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span th:text="${route.origin}"></span>
+                        <i class="fas fa-arrow-right"></i>
+                        <span th:text="${route.destination}"></span>
+                    </h2>
+                    <div class="route-id">
+                        Route ID: <span th:text="${route.routeId}"></span>
+                    </div>
+                </div>
+                <div class="route-status" th:classappend="${route.status == 'active' ? 'status-active' : 'status-inactive'}">
+                    <i th:class="${route.status == 'active' ? 'fas fa-check-circle' : 'fas fa-times-circle'}"></i>
+                    <span th:text="${route.status}"></span>
+                </div>
+            </div>
+
+            <div class="route-visualization">
+                <div class="route-path">
+                    <div class="station origin">
+                        <div class="station-point">
+                            <i class="fas fa-train"></i>
+                        </div>
+                        <div class="station-name" th:text="${route.origin}"></div>
+                    </div>
+
+                    <div class="track-line"></div>
+
+                    <div class="station destination">
+                        <div class="station-point">
+                            <i class="fas fa-flag-checkered"></i>
+                        </div>
+                        <div class="station-name" th:text="${route.destination}"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="route-content">
+                <div class="details-grid">
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-map-pin"></i> Origin Station
+                        </div>
+                        <div class="detail-value" th:text="${route.origin}"></div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-map-pin"></i> Destination Station
+                        </div>
+                        <div class="detail-value" th:text="${route.destination}"></div>
+                    </div>
+
+                    <div class="detail-group">
+                        <div class="detail-label">
+                            <i class="fas fa-map-signs"></i> Intermediate Stops
+                        </div>
+                        <div class="detail-value">
+                            <div th:if="${route.stops != null and !route.stops.isEmpty()}" class="stops-list">
+                                <div class="stop-item" th:each="stop : ${#strings.arraySplit(route.stops, ',')}">
+                                    <i class="fas fa-stop-circle"></i>
+                                    <span th:text="${#strings.trim(stop)}"></span>
+                                </div>
+                            </div>
+                            <div th:unless="${route.stops != null and !route.stops.isEmpty()}">
+                                No intermediate stops on this route
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="metrics-card">
+            <div class="metrics-header">
+                <h3 class="metrics-title">
+                    <i class="fas fa-chart-line"></i> Route Metrics
+                </h3>
+            </div>
+
+            <div class="metrics-content">
+                <div class="metric">
+                    <div class="metric-icon">
+                        <i class="fas fa-road"></i>
+                    </div>
+                    <div class="metric-value" th:text="${route.distance} + ' km'"></div>
+                    <div class="metric-label">Total Distance</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="metric-value" th:text="${route.durationMinutes} + ' min'"></div>
+                    <div class="metric-label">Journey Duration</div>
+                </div>
+
+                <div class="metric">
+                    <div class="metric-icon">
+                        <i class="fas fa-tachometer-alt"></i>
+                    </div>
+                    <div class="metric-value" th:text="${#numbers.formatDecimal(route.distance / (route.durationMinutes / 60), 1, 1)} + ' km/h'"></div>
+                    <div class="metric-label">Average Speed</div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>&copy; 2025 TrainConnect. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+
+<script>
+    // Toggle mobile menu
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.getElementById('menuToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        if (menuToggle && navMenu) {
+            menuToggle.addEventListener('click', function() {
+                navMenu.classList.toggle('active');
+            });
+        }
+    });
+</script>
+</body>
+</html>

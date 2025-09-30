@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TrainConnect - View Seasonal Package</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #1a3a6e;
+            --secondary-color: #e63946;
+            --light-color: #f1faee;
+            --dark-color: #1d3557;
+            --accent-color: #a8dadc;
+            --gradient-primary: linear-gradient(135deg, #1a3a6e 0%, #2a5298 100%);
+            --gradient-secondary: linear-gradient(135deg, #e63946 0%, #ff616f 100%);
+            --box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .content-wrapper {
+            flex: 1 0 auto;
+        }
+
+        /* NAVBAR STYLING */
+        .navbar {
+            background-color: rgba(26, 58, 110, 0.95);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            transition: var(--transition);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+        }
+
+        .navbar-brand .train-icon {
+            color: var(--secondary-color);
+        }
+
+        /* Page header */
+        .page-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            margin-bottom: 0;
+            color: white;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin: 10px 0 0;
+        }
+
+        .breadcrumb-item a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .breadcrumb-item a:hover {
+            color: white;
+        }
+
+        .breadcrumb-item.active {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Button styling */
+        .btn {
+            border-radius: 50px;
+            padding: 10px 25px;
+            font-weight: 500;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-secondary);
+            border: none;
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(230, 57, 70, 0.4);
+            background: linear-gradient(135deg, #d12836 0%, #e63946 100%);
+        }
+
+        .btn-outline-primary {
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+        }
+
+        /* Action buttons */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        /* Detail cards */
+        .detail-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .detail-card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .detail-card-header h5 {
+            margin-bottom: 0;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .detail-card-body {
+            padding: 20px;
+        }
+
+        /* Detail items */
+        .detail-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .detail-item {
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: var(--dark-color);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+        }
+
+        .detail-label i {
+            margin-right: 8px;
+            color: var(--primary-color);
+            width: 24px;
+            text-align: center;
+        }
+
+        .detail-value {
+            padding-left: 32px;
+            color: #6c757d;
+        }
+
+        /* Package ID styling */
+        .package-id {
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            padding: 8px 15px;
+            background-color: rgba(168, 218, 220, 0.15);
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        /* Status badges */
+        .status-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .status-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .status-scheduled {
+            background-color: #cce5ff;
+            color: #004085;
+        }
+
+        .status-completed {
+            background-color: #d6d8db;
+            color: #383d41;
+        }
+
+        .status-cancelled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        /* Route card styling */
+        .route-info {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .route-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            margin-right: 15px;
+        }
+
+        .route-details {
+            flex: 1;
+        }
+
+        .route-id {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .route-path {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        /* Date display */
+        .date-display {
+            display: flex;
+            align-items: center;
+            padding: 8px 15px;
+            background-color: rgba(168, 218, 220, 0.15);
+            border-radius: 5px;
+            width: fit-content;
+        }
+
+        .date-display i {
+            margin-right: 10px;
+            color: var(--primary-color);
+        }
+
+        /* Remarks section */
+        .remarks-content {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border-left: 4px solid var(--accent-color);
+            font-style: italic;
+            color: #6c757d;
+        }
+
+        .no-remarks {
+            color: #6c757d;
+            font-style: italic;
+        }
+
+        /* User info card */
+        .user-info-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .user-info-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info-header h5 {
+            margin-bottom: 0;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .user-info-body {
+            padding: 15px 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .user-details h6 {
+            margin-bottom: 0;
+            font-size: 1rem;
+        }
+
+        .user-details p {
+            margin-bottom: 0;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .datetime {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .datetime i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        /* GitHub activity */
+        .github-activity {
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .github-activity h6 {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .repo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .repo-list li {
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .repo-list a {
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .repo-list a:hover {
+            color: var(--secondary-color);
+        }
+
+        .repo-list a i {
+            margin-right: 5px;
+            color: #333;
+        }
+
+        /* Package metadata */
+        .package-metadata {
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .metadata-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .metadata-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .metadata-label {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .metadata-value {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        /* FOOTER STYLING */
+        .footer {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 60px 0 20px;
+            margin-top: 60px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .footer:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: var(--secondary-color);
+        }
+
+        .footer h5 {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            color: white;
+        }
+
+        .footer h5:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: var(--transition);
+            color: white;
+        }
+
+        .social-links a:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Date range visualization */
+        .date-range {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .date-range-bar {
+            height: 8px;
+            background: var(--gradient-secondary);
+            border-radius: 4px;
+            flex: 1;
+            position: relative;
+        }
+
+        .date-range-start, .date-range-end {
+            position: absolute;
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .date-range-start {
+            bottom: -25px;
+            left: 0;
+        }
+
+        .date-range-end {
+            bottom: -25px;
+            right: 0;
+        }
+
+        .date-range-duration {
+            position: absolute;
+            top: -25px;
+            width: 100%;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--dark-color);
+            font-weight: 500;
+        }
+
+        /* Related packages section */
+        .related-packages {
+            margin-top: 15px;
+        }
+
+        .related-package-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .related-package-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .related-package-item:last-child {
+            border-bottom: none;
+        }
+
+        .related-package-icon {
+            width: 32px;
+            height: 32px;
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+        }
+
+        .related-package-details {
+            flex: 1;
+        }
+
+        .related-package-id {
+            font-weight: 500;
+            color: var(--dark-color);
+            font-size: 0.9rem;
+        }
+
+        .related-package-dates {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .related-package-status {
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-train me-2 train-icon"></i>TrainConnect
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/routes"><i class="fas fa-route me-1"></i> Routes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/attractions"><i class="fas fa-mountain me-1"></i> Attractions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/schedules"><i class="fas fa-calendar-alt me-1"></i> Schedules</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/packages"><i class="fas fa-gift me-1"></i> Packages</a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-primary" href="/logout"><i class="fas fa-sign-out-alt me-1"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-gift me-2"></i> Seasonal Package Details</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="breadcrumb-item"><a href="/packages">Seasonal Packages</a></li>
+                    <li class="breadcrumb-item active" th:text="${package.packageID}">PKG-2025-001</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="/packages" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back to Packages
+            </a>
+            <a th:href="@{/packages/{id}/edit(id=${package.packageID})}" class="btn btn-primary">
+                <i class="fas fa-edit"></i> Edit Package
+            </a>
+            <button class="btn btn-outline-primary ms-lg-auto">
+                <i class="fas fa-print"></i> Print Details
+            </button>
+        </div>
+
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <!-- Package Overview Card -->
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <h5><i class="fas fa-info-circle me-2"></i> Package Overview</h5>
+                    </div>
+                    <div class="detail-card-body">
+                        <ul class="detail-list">
+                            <li class="detail-item">
+                                <div class="detail-label">
+                                    <i class="fas fa-fingerprint"></i> Package ID
+                                </div>
+                                <div class="detail-value">
+                                    <span class="package-id" th:text="${package.packageID}">PKG-2025-001</span>
+                                </div>
+                            </li>
+
+                            <li class="detail-item">
+                                <div class="detail-label">
+                                    <i class="fas fa-route"></i> Route
+                                </div>
+                                <div class="detail-value">
+                                    <div class="route-info" th:if="${package.route != null}">
+                                        <div class="route-icon">
+                                            <i class="fas fa-train"></i>
+                                        </div>
+                                        <div class="route-details">
+                                            <div class="route-id" th:text="${package.route.routeId}">R201</div>
+                                            <div class="route-path" th:text="${package.route.origin + ' - ' + package.route.destination}">
+                                                Central Station - Mountain View
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="no-route" th:if="${package.route == null}">
+                                        <i>No route assigned to this package</i>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="detail-item">
+                                <div class="detail-label">
+                                    <i class="fas fa-calendar-alt"></i> Date Range
+                                </div>
+                                <div class="detail-value">
+                                    <div class="d-flex gap-4 mb-2">
+                                        <div class="date-display">
+                                            <i class="fas fa-calendar-plus"></i>
+                                            <span th:text="${#temporals.format(package.startDate, 'MMMM d, yyyy')}">June 1, 2025</span>
+                                        </div>
+                                        <div class="date-display">
+                                            <i class="fas fa-calendar-minus"></i>
+                                            <span th:text="${#temporals.format(package.endDate, 'MMMM d, yyyy')}">August 31, 2025</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="date-range">
+                                        <div class="date-range-bar"></div>
+                                        <div class="date-range-start" th:text="${#temporals.format(package.startDate, 'MMM d')}">Jun 1</div>
+                                        <div class="date-range-end" th:text="${#temporals.format(package.endDate, 'MMM d')}">Aug 31</div>
+                                        <div class="date-range-duration">
+                                            <span th:text="${package.endDate.getDayOfYear() - package.startDate.getDayOfYear() + 1}">92</span> days
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>
+
+                            <li class="detail-item">
+                                <div class="detail-label">
+                                    <i class="fas fa-tag"></i> Status
+                                </div>
+                                <div class="detail-value">
+                  <span th:class="${'status-badge ' +
+                          (package.status == 'ACTIVE' ? 'status-active' :
+                          (package.status == 'SCHEDULED' ? 'status-scheduled' :
+                          (package.status == 'COMPLETED' ? 'status-completed' : 'status-cancelled')))}"
+                        th:text="${package.status}">
+                    ACTIVE
+                  </span>
+                                </div>
+                            </li>
+
+                            <li class="detail-item">
+                                <div class="detail-label">
+                                    <i class="fas fa-comment-alt"></i> Remarks
+                                </div>
+                                <div class="detail-value">
+                                    <div class="remarks-content" th:if="${package.remarks != null && !package.remarks.isEmpty()}" th:text="${package.remarks}">
+                                        This seasonal package offers special discounts for the summer season with family-friendly activities at Mountain View.
+                                    </div>
+                                    <div class="no-remarks" th:if="${package.remarks == null || package.remarks.isEmpty()}">
+                                        No remarks provided for this package.
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Package Offerings Card (This is a placeholder - actual data would depend on your model) -->
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <h5><i class="fas fa-clipboard-list me-2"></i> Package Offerings</h5>
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Package offerings and pricing details would appear here.
+                        </div>
+
+                        <!-- Sample offerings table - replace with actual data -->
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Offering</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Standard</td>
+                                <td>Basic round-trip ticket with standard amenities</td>
+                                <td>$149.99</td>
+                            </tr>
+                            <tr>
+                                <td>Premium</td>
+                                <td>Premium seating with meal service included</td>
+                                <td>$249.99</td>
+                            </tr>
+                            <tr>
+                                <td>Family</td>
+                                <td>Group discount for 4+ travelers with activity package</td>
+                                <td>$499.99</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- User Info Card -->
+                <div class="user-info-card">
+                    <div class="user-info-header">
+                        <h5><i class="fas fa-user-circle me-2"></i> User Information</h5>
+                    </div>
+                    <div class="user-info-body">
+                        <div class="user-profile">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-details">
+                                <h6>Krishmal2004</h6>
+                                <p>Operations Manager</p>
+                            </div>
+                        </div>
+                        <p class="datetime">
+                            <i class="far fa-clock"></i> 2025-09-16 12:59:16
+                        </p>
+
+                    </div>
+                </div>
+
+                <!-- Package Metadata Card -->
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <h5><i class="fas fa-cog me-2"></i> Package Metadata</h5>
+                    </div>
+                    <div class="detail-card-body">
+                        <div class="package-metadata">
+                            <ul class="metadata-list">
+                                <li class="metadata-item">
+                                    <span class="metadata-label">Created On</span>
+                                    <span class="metadata-value">August 10, 2025</span>
+                                </li>
+                                <li class="metadata-item">
+                                    <span class="metadata-label">Last Modified</span>
+                                    <span class="metadata-value">September 5, 2025</span>
+                                </li>
+                                <li class="metadata-item">
+                                    <span class="metadata-label">Created By</span>
+                                    <span class="metadata-value">Krishmal2004</span>
+                                </li>
+                                <li class="metadata-item">
+                                    <span class="metadata-label">Total Duration</span>
+                                    <span class="metadata-value">92 days</span>
+                                </li>
+                                <li class="metadata-item">
+                                    <span class="metadata-label">Current Bookings</span>
+                                    <span class="metadata-value">42</span>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <hr>
+
+                        <!-- Package Statistics (Placeholder) -->
+                        <h6 class="mt-4 mb-3">Package Statistics</h6>
+                        <div class="progress mb-3" style="height: 20px;">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 65%;" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100">65% Booked</div>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted mb-4">
+                            <span>42 bookings</span>
+                            <span>65 seats available</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Related Packages Card -->
+                <div class="detail-card">
+                    <div class="detail-card-header">
+                        <h5><i class="fas fa-link me-2"></i> Related Packages</h5>
+                    </div>
+                    <div class="detail-card-body p-0">
+                        <div class="related-packages">
+                            <a href="#" class="related-package-item">
+                                <div class="related-package-icon">
+                                    <i class="fas fa-gift"></i>
+                                </div>
+                                <div class="related-package-details">
+                                    <div class="related-package-id">PKG-2025-002</div>
+                                    <div class="related-package-dates">Sep 1 - Oct 31, 2025</div>
+                                </div>
+                                <span class="badge bg-primary">SCHEDULED</span>
+                            </a>
+                            <a href="#" class="related-package-item">
+                                <div class="related-package-icon">
+                                    <i class="fas fa-gift"></i>
+                                </div>
+                                <div class="related-package-details">
+                                    <div class="related-package-id">PKG-2024-012</div>
+                                    <div class="related-package-dates">Mar 1 - May 31, 2025</div>
+                                </div>
+                                <span class="badge bg-success">ACTIVE</span>
+                            </a>
+                            <a href="#" class="related-package-item">
+                                <div class="related-package-icon">
+                                    <i class="fas fa-gift"></i>
+                                </div>
+                                <div class="related-package-details">
+                                    <div class="related-package-id">PKG-2024-008</div>
+                                    <div class="related-package-dates">Dec 1, 2024 - Feb 28, 2025</div>
+                                </div>
+                                <span class="badge bg-secondary">COMPLETED</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5>TrainConnect</h5>
+                <p>Modern railway management and booking system for seamless passenger experience. Explore scenic routes and unforgettable journeys.</p>
+                <div class="social-links mt-4">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 mb-4 mb-md-0">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/" class="footer-link">Home</a></li>
+                    <li><a href="/routes" class="footer-link">Routes</a></li>
+                    <li><a href="/attractions" class="footer-link">Attractions</a></li>
+                    <li><a href="/schedules" class="footer-link">Schedules</a></li>
+                    <li><a href="/packages" class="footer-link">Packages</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <h5>Contact Us</h5>
+                <address class="mb-0">
+                    <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Railway Street, City</p>
+                    <p class="mb-2"><i class="fas fa-phone me-2"></i> (123) 456-7890</p>
+                    <p class="mb-2"><i class="fas fa-envelope me-2"></i> info@trainconnect.com</p>
+                    <p class="mb-2"><i class="fas fa-clock me-2"></i> Mon-Fri: 9AM - 6PM</p>
+                </address>
+            </div>
+            <div class="col-md-3">
+                <h5>Newsletter</h5>
+                <p>Subscribe for updates on new routes and special offers.</p>
+                <div class="input-group mb-3">
+                    <input type="email" class="form-control" placeholder="Your email">
+                    <button class="btn btn-secondary" type="button">Subscribe</button>
+                </div>
+                <p class="small">By subscribing, you agree to our Privacy Policy and Terms of Service.</p>
+            </div>
+        </div>
+        <hr class="my-4 bg-light opacity-25">
+        <div class="text-center">
+            <p class="mb-0">&copy; 2025 TrainConnect. All rights reserved.</p>
+            <p class="mb-0">Current time: 2025-09-16 12:59:16 | User: Krishmal2004</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TrainConnect - Premium Railway Experience</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #1a3a6e;
+            --secondary-color: #e63946;
+            --light-color: #f1faee;
+            --dark-color: #1d3557;
+            --accent-color: #a8dadc;
+            --gradient-primary: linear-gradient(135deg, #1a3a6e 0%, #2a5298 100%);
+            --gradient-secondary: linear-gradient(135deg, #e63946 0%, #ff616f 100%);
+            --box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        /* NAVBAR STYLING */
+        .navbar {
+            background-color: rgba(26, 58, 110, 0.95);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            transition: var(--transition);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+        }
+
+        .navbar-brand .train-icon {
+            color: var(--secondary-color);
+        }
+
+        .nav-link {
+            position: relative;
+            margin: 0 5px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            bottom: 0;
+            left: 0;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover:after,
+        .nav-link.active:after {
+            width: 100%;
+        }
+
+        /* HERO SECTION STYLING */
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+            url('https://images.pexels.com/photos/726414/pexels-photo-726414.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            padding: 150px 0;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-section:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to top, rgba(248, 249, 250, 1), transparent);
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* BUTTON STYLING */
+        .btn {
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 500;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .btn-lg {
+            padding: 15px 40px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-secondary);
+            border: none;
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(230, 57, 70, 0.4);
+            background: linear-gradient(135deg, #d12836 0%, #e63946 100%);
+        }
+
+        .btn-outline-light {
+            border-width: 2px;
+            font-weight: 500;
+        }
+
+        .btn-outline-light:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+        }
+
+        /* SECTION STYLING */
+        .section-title {
+            position: relative;
+            padding-bottom: 20px;
+            margin-bottom: 50px;
+            color: var(--dark-color);
+            text-align: center;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--gradient-secondary);
+        }
+
+        .section-padding {
+            padding: 80px 0;
+        }
+
+        /* FEATURE CARDS */
+        .feature-card {
+            border: none;
+            border-radius: 15px;
+            transition: var(--transition);
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .feature-card .card-header {
+            background: var(--gradient-primary);
+            color: white;
+            font-weight: 600;
+            border-radius: 15px 15px 0 0;
+            padding: 20px;
+            border: none;
+        }
+
+        .feature-icon {
+            background-color: var(--accent-color);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--primary-color);
+            font-size: 28px;
+            box-shadow: 0 10px 20px rgba(168, 218, 220, 0.3);
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: rotateY(180deg);
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            background: linear-gradient(rgba(26, 58, 110, 0.9), rgba(26, 58, 110, 0.9)),
+            url('https://images.pexels.com/photos/2790396/pexels-photo-2790396.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 80px 0;
+            border-radius: 20px;
+            margin: 60px 0;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            color: white;
+        }
+
+        .cta-section .card {
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border: none;
+        }
+
+        .form-control, .form-select {
+            height: 50px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus, .form-select:focus {
+            box-shadow: none;
+            border-color: var(--accent-color);
+        }
+
+        /* COMING SOON SECTION */
+        .coming-soon {
+            background-color: #ffe9eb;
+            border-left: 5px solid var(--secondary-color);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+
+        .coming-soon:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        /* IMAGE GALLERY */
+        .gallery-section {
+            padding: 80px 0;
+            background-color: #f8f9fa;
+        }
+
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            transition: transform 0.5s;
+            border-radius: 15px;
+        }
+
+        .gallery-item:hover .gallery-img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 20px;
+            color: white;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        /* TRAIN JOURNEY SHOWCASE */
+        .train-journey-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            box-shadow: var(--box-shadow);
+            transition: var(--transition);
+        }
+
+        .train-journey-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .journey-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .journey-content {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 25px;
+            color: white;
+        }
+
+        .journey-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: 500;
+            font-size: 0.8rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* TESTIMONIAL SECTION */
+        .testimonial-section {
+            background-color: #f1faee;
+            padding: 80px 0;
+        }
+
+        .testimonial-card {
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            transition: var(--transition);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+        }
+
+        .testimonial-img {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--accent-color);
+            margin-right: 15px;
+        }
+
+        .star-rating {
+            color: #ffc107;
+        }
+
+        /* FOOTER STYLING */
+        .footer {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 80px 0 20px;
+            margin-top: 60px;
+            position: relative;
+        }
+
+        .footer:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: var(--secondary-color);
+        }
+
+        .footer h5 {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+        }
+
+        .footer h5:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        /* RESPONSIVE ADJUSTMENTS */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .btn {
+                padding: 10px 20px;
+            }
+            .hero-section {
+                padding: 100px 0;
+            }
+            .section-padding {
+                padding: 60px 0;
+            }
+        }
+
+        /* IMAGE CAROUSEL */
+        .carousel-item {
+            height: 400px;
+        }
+
+        .carousel-item img {
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-caption {
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 30px;
+        }
+
+        .carousel-indicators {
+            margin-bottom: 0;
+        }
+
+        /* FLOATING ELEMENTS */
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-train me-2 train-icon"></i>TrainConnect
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="/"><i class="fas fa-home me-1"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login"><i class="fas fa-route me-1"></i> Routes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/attractions"><i class="fas fa-mountain me-1"></i> Attractions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login"><i class="fas fa-calendar-alt me-1"></i> Schedules</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login"><i class="fas fa-ticket-alt me-1"></i> Tickets</a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-primary" href="/login"><i class="fas fa-user me-1"></i> Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero-section text-center">
+    <div class="container hero-content">
+        <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">Welcome to TrainConnect</h1>
+        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">Experience the magic of rail travel with our modern railway management and booking system for seamless passenger journeys</p>
+        <div class="d-flex justify-content-center gap-3" data-aos="fade-up" data-aos-delay="300">
+            <a href="/tickets" class="btn btn-primary btn-lg">Book Tickets</a>
+            <a href="/schedules" class="btn btn-outline-light btn-lg">View Schedules</a>
+        </div>
+    </div>
+</section>
+
+<!-- Main Content -->
+<div class="container">
+    <!-- Featured Train Journeys -->
+    <section class="mb-5" data-aos="fade-up">
+        <h2 class="section-title">Featured Train Journeys</h2>
+        <div class="row">
+            <div class="col-md-6 col-lg-4">
+                <div class="train-journey-card">
+                    <span class="journey-badge">Most Popular</span>
+                    <img src="https://images.pexels.com/photos/2385477/pexels-photo-2385477.jpeg" class="journey-img" alt="Mountain Journey">
+                    <div class="journey-content">
+                        <h4>Mountain Express</h4>
+                        <p>Experience breathtaking views through mountain passes and valleys</p>
+                        <a href="#" class="btn btn-sm btn-outline-light">Explore Route</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="train-journey-card">
+                    <span class="journey-badge">Scenic</span>
+                    <img src="https://images.pexels.com/photos/1658967/pexels-photo-1658967.jpeg" class="journey-img" alt="Coastal Journey">
+                    <div class="journey-content">
+                        <h4>Coastal Explorer</h4>
+                        <p>Travel along stunning coastlines with panoramic ocean views</p>
+                        <a href="#" class="btn btn-sm btn-outline-light">Explore Route</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <div class="train-journey-card">
+                    <span class="journey-badge">Heritage</span>
+                    <img src="https://images.pexels.com/photos/726414/pexels-photo-726414.jpeg" class="journey-img" alt="Heritage Journey">
+                    <div class="journey-content">
+                        <h4>Heritage Steam Express</h4>
+                        <p>Step back in time aboard our restored vintage steam trains</p>
+                        <a href="#" class="btn btn-sm btn-outline-light">Explore Route</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Image Carousel -->
+    <section class="mb-5" data-aos="fade-up">
+        <div id="trainCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#trainCarousel" data-bs-slide-to="0" class="active"></button>
+                <button type="button" data-bs-target="#trainCarousel" data-bs-slide-to="1"></button>
+                <button type="button" data-bs-target="#trainCarousel" data-bs-slide-to="2"></button>
+            </div>
+            <div class="carousel-inner rounded-4 overflow-hidden shadow-lg">
+                <div class="carousel-item active">
+                    <img src="https://images.pexels.com/photos/3680316/pexels-photo-3680316.jpeg" class="d-block w-100" alt="Luxury Train Interior">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Luxury Accommodations</h5>
+                        <p>Experience first-class comfort in our premium train cabins</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.pexels.com/photos/3844304/pexels-photo-3844304.jpeg" class="d-block w-100" alt="Scenic Train Route">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Breathtaking Views</h5>
+                        <p>Journey through the most scenic landscapes in the country</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.pexels.com/photos/2788792/pexels-photo-2788792.jpeg" class="d-block w-100" alt="Dining Experience">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Gourmet Dining</h5>
+                        <p>Enjoy exceptional cuisine prepared by our talented chefs</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#trainCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#trainCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </section>
+
+    <!-- Management Section -->
+    <section class="mb-5" data-aos="fade-up">
+        <h2 class="section-title">Our Services</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="100">
+                <div class="feature-card card h-100">
+                    <div class="card-header text-center">
+                        Route Management
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <h5 class="card-title">Route Planning</h5>
+                        <p class="card-text">Manage train routes, stations, and track maintenance schedules efficiently.</p>
+                        <a href="/routes" class="btn btn-primary">Manage Routes</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="200">
+                <div class="feature-card card h-100">
+                    <div class="card-header text-center">
+                        Schedule Management
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                        <h5 class="card-title">Train Schedules</h5>
+                        <p class="card-text">Create and manage train schedules, including delays and special services.</p>
+                        <a href="/schedules" class="btn btn-primary">Manage Schedules</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="300">
+                <div class="feature-card card h-100">
+                    <div class="card-header text-center">
+                        Package Management
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-gift"></i>
+                        </div>
+                        <h5 class="card-title">Seasonal Packages</h5>
+                        <p class="card-text">Create special offers, seasonal packages, and promotional fares.</p>
+                        <a href="/packages" class="btn btn-primary">Manage Packages</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-6" data-aos="zoom-in" data-aos-delay="400">
+                <div class="feature-card card h-100">
+                    <div class="card-header text-center">
+                        Passenger Management
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h5 class="card-title">Customer Data</h5>
+                        <p class="card-text">Manage passenger information, frequent travelers, and customer support.</p>
+                        <a href="/tickets" class="btn btn-primary">Manage Passengers</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-lg-6" data-aos="zoom-in" data-aos-delay="500">
+                <div class="feature-card card h-100">
+                    <div class="card-header text-center">
+                        Ticketing System
+                    </div>
+                    <div class="card-body text-center">
+                        <div class="feature-icon">
+                            <i class="fas fa-ticket-alt"></i>
+                        </div>
+                        <h5 class="card-title">Ticket Sales</h5>
+                        <p class="card-text">Complete ticketing solution with reservations, cancellations, and refunds.</p>
+                        <a href="/" class="btn btn-primary">Manage Tickets</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery-section mb-5" data-aos="fade-up">
+        <h2 class="section-title">Train Gallery</h2>
+        <div class="row g-4">
+            <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="100">
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/1761282/pexels-photo-1761282.jpeg" class="gallery-img" alt="Train Tracks">
+                    <div class="gallery-overlay">
+                        <h5>Mountain Railways</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="200">
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/1604200/pexels-photo-1604200.jpeg" class="gallery-img" alt="Vintage Train">
+                    <div class="gallery-overlay">
+                        <h5>Heritage Collection</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="300">
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/1105766/pexels-photo-1105766.jpeg" class="gallery-img" alt="Train Station">
+                    <div class="gallery-overlay">
+                        <h5>Central Station</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="400">
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/2031756/pexels-photo-2031756.jpeg" class="gallery-img" alt="Train Interior">
+                    <div class="gallery-overlay">
+                        <h5>Premium Cabins</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="100">
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/541216/pexels-photo-541216.jpeg" class="gallery-img" alt="Train Dining">
+                    <div class="gallery-overlay">
+                        <h5>Dining Experience</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="200">
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/1658967/pexels-photo-1658967.jpeg" class="gallery-img" alt="Train Crossing Bridge">
+                    <div class="gallery-overlay">
+                        <h5>Scenic Bridges</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="300">
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/730134/pexels-photo-730134.jpeg" class="gallery-img" alt="Historic Train">
+                    <div class="gallery-overlay">
+                        <h5>Steam Locomotive</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3" data-aos="zoom-in" data-aos-delay="400">
+                <div class="gallery-item">
+                    <img src="https://images.pexels.com/photos/1619317/pexels-photo-1619317.jpeg" class="gallery-img" alt="Luxury Train">
+                    <div class="gallery-overlay">
+                        <h5>Luxury Express</h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section text-center" data-aos="fade-up">
+        <div class="container">
+            <h2 class="mb-4">Ready to Begin Your Journey?</h2>
+            <p class="lead mb-5">Find the best routes and book your tickets online with just a few clicks!</p>
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-body p-4">
+                            <form class="row g-3">
+                                <div class="col-md-5">
+                                    <label for="fromStation" class="form-label">From</label>
+                                    <select class="form-select" id="fromStation">
+                                        <option selected disabled>Select departure station</option>
+                                        <option>Central Station</option>
+                                        <option>North Terminal</option>
+                                        <option>East Junction</option>
+                                        <option>West End</option>
+                                        <option>Mountain View</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="toStation" class="form-label">To</label>
+                                    <select class="form-select" id="toStation">
+                                        <option selected disabled>Select arrival station</option>
+                                        <option>Central Station</option>
+                                        <option>North Terminal</option>
+                                        <option>East Junction</option>
+                                        <option>West End</option>
+                                        <option>Mountain View</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="passengers" class="form-label">Passengers</label>
+                                    <select class="form-select" id="passengers">
+                                        <option>1</option>
+                                        <option>2</option>
+                                        <option>3</option>
+                                        <option>4+</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="departDate" class="form-label">Departure Date</label>
+                                    <input type="date" class="form-control" id="departDate">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="returnDate" class="form-label">Return Date (Optional)</label>
+                                    <input type="date" class="form-control" id="returnDate">
+                                </div>
+                                <div class="col-12 text-center mt-4">
+                                    <button type="submit" class="btn btn-primary btn-lg px-5">Search Trains</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonial-section mb-5" data-aos="fade-up">
+        <div class="container">
+            <h2 class="section-title">What Our Passengers Say</h2>
+            <div class="row">
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="testimonial-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://i.pravatar.cc/150?img=1" alt="Passenger" class="testimonial-img">
+                            <div>
+                                <h5 class="mb-0">Emily Johnson</h5>
+                                <div class="star-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p>"The Mountain Express journey was absolutely breathtaking! The staff was incredibly helpful and the views were unforgettable."</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="testimonial-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://i.pravatar.cc/150?img=11" alt="Passenger" class="testimonial-img">
+                            <div>
+                                <h5 class="mb-0">Michael Smith</h5>
+                                <div class="star-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star-half-alt"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p>"The Heritage Steam Express was like stepping back in time. The historical details and comfort of the journey exceeded my expectations."</p>
+                    </div>
+                </div>
+                <div class="col-md-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="testimonial-card">
+                        <div class="d-flex align-items-center mb-3">
+                            <img src="https://i.pravatar.cc/150?img=5" alt="Passenger" class="testimonial-img">
+                            <div>
+                                <h5 class="mb-0">Sophia Williams</h5>
+                                <div class="star-rating">
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                    <i class="fas fa-star"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <p>"The Coastal Explorer was perfect for our anniversary. Watching the sunset over the ocean from our cabin was a magical experience!"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coming Soon Section -->
+    <section class="my-5" data-aos="fade-up">
+        <h2 class="section-title">Coming Soon</h2>
+        <div class="coming-soon mb-4" data-aos="fade-up" data-aos-delay="100">
+            <div class="row align-items-center">
+                <div class="col-md-2 text-center">
+                    <i class="fas fa-headset display-4 text-muted floating"></i>
+                </div>
+                <div class="col-md-10">
+                    <h4>IT Support System</h4>
+                    <p class="mb-0">Our new IT support system is under development. This system will help manage technical issues, track hardware/software assets, and streamline IT operations.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info" data-aos="fade-up" data-aos-delay="200">
+            <i class="fas fa-info-circle me-2"></i>
+            Stay tuned for more upcoming features and enhancements to our train management system!
+        </div>
+    </section>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5>TrainConnect</h5>
+                <p>Modern railway management and booking system for seamless passenger experience. Explore scenic routes and unforgettable journeys.</p>
+                <div class="social-links mt-4">
+                    <a href="#" class="text-white"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 mb-4 mb-md-0">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/" class="footer-link">Home</a></li>
+                    <li><a href="/routes" class="footer-link">Routes</a></li>
+                    <li><a href="/attractions" class="footer-link">Attractions</a></li>
+                    <li><a href="/schedules" class="footer-link">Schedules</a></li>
+                    <li><a href="/packages" class="footer-link">Packages</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <h5>Contact Us</h5>
+                <address class="mb-0">
+                    <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Railway Street, City</p>
+                    <p class="mb-2"><i class="fas fa-phone me-2"></i> (123) 456-7890</p>
+                    <p class="mb-2"><i class="fas fa-envelope me-2"></i> info@trainconnect.com</p>
+                    <p class="mb-2"><i class="fas fa-clock me-2"></i> Mon-Fri: 9AM - 6PM</p>
+                </address>
+            </div>
+            <div class="col-md-3">
+                <h5>Newsletter</h5>
+                <p>Subscribe for updates on new routes and special offers.</p>
+                <div class="input-group mb-3">
+                    <input type="email" class="form-control" placeholder="Your email">
+                    <button class="btn btn-secondary" type="button">Subscribe</button>
+                </div>
+                <p class="small">By subscribing, you agree to our Privacy Policy and Terms of Service.</p>
+            </div>
+        </div>
+        <hr class="my-4 bg-light opacity-25">
+        <div class="text-center">
+            <p class="mb-0">&copy; 2025 TrainConnect. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- AOS Animation Library -->
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    // Initialize AOS animations
+    AOS.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true
+    });
+</script>
+</body>
+</html>

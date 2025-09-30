@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TrainConnect - Edit Seasonal Package</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+        :root {
+            --primary-color: #1a3a6e;
+            --secondary-color: #e63946;
+            --light-color: #f1faee;
+            --dark-color: #1d3557;
+            --accent-color: #a8dadc;
+            --gradient-primary: linear-gradient(135deg, #1a3a6e 0%, #2a5298 100%);
+            --gradient-secondary: linear-gradient(135deg, #e63946 0%, #ff616f 100%);
+            --box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .content-wrapper {
+            flex: 1 0 auto;
+        }
+
+        /* NAVBAR STYLING */
+        .navbar {
+            background-color: rgba(26, 58, 110, 0.95);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            transition: var(--transition);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+        }
+
+        .navbar-brand .train-icon {
+            color: var(--secondary-color);
+        }
+
+        /* Page header */
+        .page-header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+        }
+
+        .page-header h1 {
+            margin-bottom: 0;
+            color: white;
+        }
+
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin: 10px 0 0;
+        }
+
+        .breadcrumb-item a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .breadcrumb-item a:hover {
+            color: white;
+        }
+
+        .breadcrumb-item.active {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Form styling */
+        .form-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .form-card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-card-header h5 {
+            margin-bottom: 0;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .form-card-body {
+            padding: 30px;
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+        }
+
+        .form-control, .form-select {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid #ced4da;
+            transition: var(--transition);
+            height: auto;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 0.25rem rgba(168, 218, 220, 0.25);
+        }
+
+        .form-control:read-only {
+            background-color: #f8f9fa;
+            cursor: not-allowed;
+        }
+
+        .form-text {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .invalid-feedback {
+            font-size: 0.85rem;
+            color: var(--secondary-color);
+        }
+
+        /* Button styling */
+        .btn {
+            border-radius: 50px;
+            padding: 12px 25px;
+            font-weight: 500;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-secondary);
+            border: none;
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(230, 57, 70, 0.4);
+            background: linear-gradient(135deg, #d12836 0%, #e63946 100%);
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(220, 53, 69, 0.4);
+        }
+
+        /* User info card */
+        .user-info-card {
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .user-info-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info-header h5 {
+            margin-bottom: 0;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .user-info-body {
+            padding: 15px 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--accent-color);
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+        }
+
+        .user-details h6 {
+            margin-bottom: 0;
+            font-size: 1rem;
+        }
+
+        .user-details p {
+            margin-bottom: 0;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .datetime {
+            font-size: 0.85rem;
+            color: #6c757d;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .datetime i {
+            margin-right: 5px;
+            color: var(--primary-color);
+        }
+
+        /* GitHub activity */
+        .github-activity {
+            margin-top: 15px;
+            border-top: 1px solid #eee;
+            padding-top: 15px;
+        }
+
+        .github-activity h6 {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .repo-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .repo-list li {
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .repo-list a {
+            color: var(--primary-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .repo-list a:hover {
+            color: var(--secondary-color);
+        }
+
+        .repo-list a i {
+            margin-right: 5px;
+            color: #333;
+        }
+
+        /* FOOTER STYLING */
+        .footer {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 60px 0 20px;
+            margin-top: 60px;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        .footer:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: var(--secondary-color);
+        }
+
+        .footer h5 {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+            color: white;
+        }
+
+        .footer h5:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: var(--transition);
+            color: white;
+        }
+
+        .social-links a:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        /* Tips card */
+        .tips-card {
+            background-color: rgba(168, 218, 220, 0.15);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .tips-card h5 {
+            color: var(--primary-color);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+        }
+
+        .tips-card ul {
+            padding-left: 20px;
+            margin-bottom: 0;
+        }
+
+        .tips-card li {
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Package info card */
+        .package-info-card {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .package-info-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 15px 20px;
+        }
+
+        .package-info-header h5 {
+            margin-bottom: 0;
+            color: white;
+        }
+
+        .package-info-body {
+            padding: 20px;
+        }
+
+        .package-meta {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .package-meta li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .package-meta li:last-child {
+            border-bottom: none;
+        }
+
+        .meta-label {
+            font-weight: 500;
+            color: var(--dark-color);
+        }
+
+        .meta-value {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-train me-2 train-icon"></i>TrainConnect
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/routes"><i class="fas fa-route me-1"></i> Routes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/attractions"><i class="fas fa-mountain me-1"></i> Attractions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/schedules"><i class="fas fa-calendar-alt me-1"></i> Schedules</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/packages"><i class="fas fa-gift me-1"></i> Packages</a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-primary" href="/logout"><i class="fas fa-sign-out-alt me-1"></i> Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="content-wrapper">
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1><i class="fas fa-edit me-2"></i> Edit Seasonal Package</h1>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li class="breadcrumb-item"><a href="/packages">Seasonal Packages</a></li>
+                    <li class="breadcrumb-item active">Edit Package</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <!-- Main Content -->
+            <div class="col-lg-8">
+                <div class="form-card">
+                    <div class="form-card-header">
+                        <h5><i class="fas fa-edit me-2"></i> Edit Package Details</h5>
+                    </div>
+                    <div class="form-card-body">
+                        <form th:action="@{/packages/{id}/edit(id=${package.packageID})}" th:object="${package}" method="post" class="needs-validation" novalidate>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="packageID" class="form-label">Package ID</label>
+                                    <input type="text" class="form-control" id="packageID" th:field="*{packageID}" readonly>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('packageID')}" th:errors="*{packageID}">
+                                        Please provide a valid package ID.
+                                    </div>
+                                    <small class="form-text">Package ID cannot be changed after creation.</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="startDate" class="form-label">Start Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}">
+                                        Please select a start date.
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="endDate" class="form-label">End Date <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="endDate" th:field="*{endDate}" required>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}">
+                                        Please select an end date.
+                                    </div>
+                                    <small class="form-text">End date must be after start date.</small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
+                                    <select class="form-select" id="status" th:field="*{status}" required>
+                                        <option value="">-- Select Status --</option>
+                                        <option value="ACTIVE">Active</option>
+                                        <option value="SCHEDULED">Scheduled</option>
+                                        <option value="COMPLETED">Completed</option>
+                                        <option value="CANCELLED">Cancelled</option>
+                                    </select>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('status')}" th:errors="*{status}">
+                                        Please select a status.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label for="remarks" class="form-label">Remarks</label>
+                                <textarea class="form-control" id="remarks" th:field="*{remarks}" rows="4"
+                                          placeholder="Enter any additional information about this package"></textarea>
+                            </div>
+
+                            <div class="d-flex gap-3">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="fas fa-save me-2"></i> Update Package
+                                </button>
+                                <a href="/packages" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i> Back to Packages
+                                </a>
+                                <a th:href="@{/packages/{id}/delete(id=${package.packageID})}"
+                                   onclick="return confirm('Are you sure you want to delete this package?')"
+                                   class="btn btn-danger ms-auto">
+                                    <i class="fas fa-trash-alt me-2"></i> Delete Package
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- User Info Card -->
+                <div class="user-info-card">
+                    <div class="user-info-header">
+                        <h5><i class="fas fa-user-circle me-2"></i> User Information</h5>
+                    </div>
+                    <div class="user-info-body">
+                        <div class="user-profile">
+                            <div class="user-avatar">
+                                <i class="fas fa-user"></i>
+                            </div>
+                            <div class="user-details">
+                                <h6>Krishmal2004</h6>
+                                <p>Operations Manager</p>
+                            </div>
+                        </div>
+                        <p class="datetime">
+                            <i class="far fa-clock"></i> 2025-09-16 12:45:44
+                        </p>
+
+                    </div>
+                </div>
+
+                <!-- Package Status Card -->
+                <div class="package-info-card">
+                    <div class="package-info-header">
+                        <h5><i class="fas fa-info-circle me-2"></i> Package Information</h5>
+                    </div>
+                    <div class="package-info-body">
+                        <ul class="package-meta">
+                            <li>
+                                <span class="meta-label">Created</span>
+                                <span class="meta-value">August 15, 2025</span>
+                            </li>
+                            <li>
+                                <span class="meta-label">Last Modified</span>
+                                <span class="meta-value">September 10, 2025</span>
+                            </li>
+                            <li>
+                                <span class="meta-label">Modified By</span>
+                                <span class="meta-value">Krishmal2004</span>
+                            </li>
+                            <li>
+                                <span class="meta-label">Duration</span>
+                                <span class="meta-value" th:if="${package.startDate != null && package.endDate != null}">
+                  <span th:text="${#temporals.format(package.startDate, 'MMM d')} + ' - ' + ${#temporals.format(package.endDate, 'MMM d, yyyy')}"></span>
+                  (<span th:text="${package.endDate.getDayOfYear() - package.startDate.getDayOfYear() + 1}"></span> days)
+                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Tips Card -->
+                <div class="tips-card">
+                    <h5><i class="fas fa-lightbulb me-2"></i> Package Editing Tips</h5>
+                    <ul>
+                        <li>Change the <strong>Status</strong> to "Completed" for packages that have ended their run</li>
+                        <li>Use "Cancelled" status for packages that are no longer offered</li>
+                        <li>Update the <strong>Remarks</strong> with any important changes or customer feedback</li>
+                        <li>Extending the <strong>End Date</strong> will lengthen the package's availability</li>
+                        <li>Be careful when changing dates of active packages as it may affect existing bookings</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5>TrainConnect</h5>
+                <p>Modern railway management and booking system for seamless passenger experience. Explore scenic routes and unforgettable journeys.</p>
+                <div class="social-links mt-4">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 mb-4 mb-md-0">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/" class="footer-link">Home</a></li>
+                    <li><a href="/routes" class="footer-link">Routes</a></li>
+                    <li><a href="/attractions" class="footer-link">Attractions</a></li>
+                    <li><a href="/schedules" class="footer-link">Schedules</a></li>
+                    <li><a href="/packages" class="footer-link">Packages</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <h5>Contact Us</h5>
+                <address class="mb-0">
+                    <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Railway Street, City</p>
+                    <p class="mb-2"><i class="fas fa-phone me-2"></i> (123) 456-7890</p>
+                    <p class="mb-2"><i class="fas fa-envelope me-2"></i> info@trainconnect.com</p>
+                    <p class="mb-2"><i class="fas fa-clock me-2"></i> Mon-Fri: 9AM - 6PM</p>
+                </address>
+            </div>
+            <div class="col-md-3">
+                <h5>Newsletter</h5>
+                <p>Subscribe for updates on new routes and special offers.</p>
+                <div class="input-group mb-3">
+                    <input type="email" class="form-control" placeholder="Your email">
+                    <button class="btn btn-secondary" type="button">Subscribe</button>
+                </div>
+                <p class="small">By subscribing, you agree to our Privacy Policy and Terms of Service.</p>
+            </div>
+        </div>
+        <hr class="my-4 bg-light opacity-25">
+        <div class="text-center">
+            <p class="mb-0">&copy; 2025 TrainConnect. All rights reserved.</p>
+            <p class="mb-0">Current time: 2025-09-16 12:45:44 | User: Krishmal2004</p>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Form validation script -->
+<script>
+    // Validate date inputs
+    document.getElementById('endDate').addEventListener('change', function() {
+        const startDate = new Date(document.getElementById('startDate').value);
+        const endDate = new Date(this.value);
+
+        if (endDate < startDate) {
+            alert('End date cannot be before start date');
+            this.value = '';
+        }
+    });
+
+    // Form validation
+    (function() {
+        'use strict';
+
+        // Fetch all forms we want to apply validation to
+        var forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+                form.addEventListener('submit', function(event) {
+                    if (!form.checkValidity()) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+
+                    form.classList.add('was-validated');
+                }, false);
+            });
+    })();
+</script>
+</body>
+</html>

@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Schedule | TrainConnect</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3a36e0;
+            --secondary: #ff7a50;
+            --dark: #121212;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --success: #00c853;
+            --warning: #ffc107;
+            --danger: #f44336;
+            --border-radius: 16px;
+            --box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            color: var(--dark);
+            line-height: 1.6;
+            padding-top: 70px;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: var(--primary) !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand i {
+            color: var(--secondary);
+            font-size: 1.5rem;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--dark);
+            font-weight: 500;
+            padding: 10px 15px;
+            border-radius: 50px;
+            transition: var(--transition);
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--primary);
+            background-color: rgba(58, 54, 224, 0.1);
+        }
+
+        .navbar-nav .nav-link i {
+            margin-right: 5px;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .page-header::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            margin: 25px auto 0;
+            border-radius: 2px;
+        }
+
+        /* Card Styles */
+        .custom-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            margin-bottom: 30px;
+            border: none;
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), #5652e5);
+            color: white;
+            padding: 20px;
+            border-bottom: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin: 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-header i {
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(30deg);
+            z-index: 1;
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        /* Form Styles */
+        .form-label {
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .form-control, .form-select {
+            padding: 12px 16px;
+            border: 1px solid #e1e5eb;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background-color: #f9fafc;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(58, 54, 224, 0.15);
+            background-color: white;
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .input-group-text {
+            background-color: #f1f3f9;
+            border: 1px solid #e1e5eb;
+            color: var(--primary);
+        }
+
+        /* Button Styles */
+        .btn {
+            padding: 12px 24px;
+            font-weight: 500;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #5652e5);
+            border: none;
+            box-shadow: 0 4px 15px rgba(58, 54, 224, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(58, 54, 224, 0.4);
+        }
+
+        .btn-secondary {
+            background-color: #f1f3f9;
+            color: var(--dark);
+            border: none;
+        }
+
+        .btn-secondary:hover {
+            background-color: #e1e5eb;
+            color: var(--dark);
+        }
+
+        .btn-icon {
+            margin-right: 8px;
+        }
+
+        /* Section Dividers */
+        .section-divider {
+            display: flex;
+            align-items: center;
+            margin: 30px 0 20px;
+        }
+
+        .section-divider h5 {
+            font-weight: 600;
+            color: var(--primary);
+            margin: 0;
+            padding-right: 15px;
+        }
+
+        .section-divider .line {
+            flex-grow: 1;
+            height: 1px;
+            background-color: #e1e5eb;
+        }
+
+        /* Form Helpers */
+        .form-text {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        .error-message {
+            color: var(--danger);
+            font-size: 0.85rem;
+            margin-top: 6px;
+        }
+
+        /* Train Animation */
+        .train-container {
+            position: relative;
+            height: 80px;
+            margin: 40px 0;
+            overflow: hidden;
+        }
+
+        .train-track {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background-color: #e1e5eb;
+            transform: translateY(-50%);
+        }
+
+        .train-track::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                    90deg,
+                    transparent,
+                    transparent 15px,
+                    #c5c9d1 15px,
+                    #c5c9d1 25px
+            );
+        }
+
+        .train {
+            position: absolute;
+            top: 50%;
+            left: -80px;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+            animation: trainMove 10s linear infinite;
+        }
+
+        .train-front {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-right: -5px;
+        }
+
+        .train-cart {
+            font-size: 1.8rem;
+            color: var(--secondary);
+            margin-right: -5px;
+        }
+
+        @keyframes trainMove {
+            0% { left: -80px; }
+            100% { left: calc(100% + 80px); }
+        }
+
+        /* Floating Stations */
+        .station {
+            position: absolute;
+            top: 0;
+            transform: translateX(-50%);
+            text-align: center;
+            width: 100px;
+        }
+
+        .station-icon {
+            background-color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .station-name {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .station-departure {
+            left: 20%;
+        }
+
+        .station-arrival {
+            left: 80%;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.3rem;
+        }
+
+        .footer-brand i {
+            color: var(--secondary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        .copyright {
+            opacity: 0.7;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+
+            .page-header h1 {
+                font-size: 2rem;
+            }
+
+            .card-body {
+                padding: 20px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .footer-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-train"></i> TrainConnect
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/routes">
+                        <i class="fas fa-route"></i> Routes
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/schedules">
+                        <i class="fas fa-calendar-alt"></i> Schedules
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tickets">
+                        <i class="fas fa-ticket-alt"></i> Tickets
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="main-container">
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Create New Schedule</h1>
+        <p>Plan train departures and arrivals by setting up a new schedule for your routes</p>
+    </div>
+
+    <!-- Back Button -->
+    <div class="d-flex justify-content-start mb-4">
+        <a href="/schedules" class="btn btn-secondary">
+            <i class="fas fa-arrow-left btn-icon"></i> Back to Schedules
+        </a>
+    </div>
+
+    <!-- Train Animation -->
+    <div class="train-container">
+        <div class="train-track"></div>
+        <div class="train">
+            <div class="train-front"><i class="fas fa-train"></i></div>
+            <div class="train-cart"><i class="fas fa-subway"></i></div>
+            <div class="train-cart"><i class="fas fa-subway"></i></div>
+        </div>
+        <div class="station station-departure">
+            <div class="station-icon">
+                <i class="fas fa-hourglass-start"></i>
+            </div>
+            <div class="station-name">Departure</div>
+        </div>
+        <div class="station station-arrival">
+            <div class="station-icon">
+                <i class="fas fa-hourglass-end"></i>
+            </div>
+            <div class="station-name">Arrival</div>
+        </div>
+    </div>
+
+    <!-- Schedule Form Card -->
+    <div class="card custom-card">
+        <div class="card-header">
+            <h2><i class="fas fa-calendar-plus"></i> New Schedule Details</h2>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/schedules/create}" th:object="${schedule}" method="post" class="needs-validation" novalidate>
+                <!-- Basic Information Section -->
+                <div class="section-divider">
+                    <h5><i class="fas fa-info-circle"></i> Basic Information</h5>
+                    <div class="line"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="scheduleId" class="form-label">Schedule ID</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-fingerprint"></i></span>
+                                <input type="text" class="form-control" id="scheduleId" th:field="*{scheduleId}"
+                                       placeholder="Enter unique schedule ID" required>
+                            </div>
+                            <div class="error-message" th:if="${#fields.hasErrors('scheduleId')}" th:errors="*{scheduleId}"></div>
+                            <div class="form-text">A unique identifier for this schedule (e.g., SCH-001)</div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="routeId" class="form-label">Route</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-route"></i></span>
+                                <select class="form-select" id="routeId" name="routeId" required>
+                                    <option value="">Select a route</option>
+                                    <option th:each="route : ${routes}"
+                                            th:value="${route.id}"
+                                            th:text="${route.routeId + ' (' + route.origin + ' - ' + route.destination + ')'}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-text">Select the train route for this schedule</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date and Time Section -->
+                <div class="section-divider">
+                    <h5><i class="fas fa-clock"></i> Date and Time</h5>
+                    <div class="line"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="scheduleDate" class="form-label">Schedule Date</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-calendar-day"></i></span>
+                                <input type="date" class="form-control" id="scheduleDate" th:field="*{scheduleDate}" required>
+                            </div>
+                            <div class="error-message" th:if="${#fields.hasErrors('scheduleDate')}" th:errors="*{scheduleDate}"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="departureTime" class="form-label">Departure Time</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-hourglass-start"></i></span>
+                                <input type="time" class="form-control" id="departureTime" name="departureTime" required>
+                            </div>
+                            <div class="error-message" th:if="${#fields.hasErrors('departureTime')}" th:errors="*{departureTime}"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="arrivalTime" class="form-label">Arrival Time</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-hourglass-end"></i></span>
+                                <input type="time" class="form-control" id="arrivalTime" name="arrivalTime" required>
+                            </div>
+                            <div class="error-message" th:if="${#fields.hasErrors('arrivalTime')}" th:errors="*{arrivalTime}"></div>
+                            <div class="form-text">Must be later than departure time</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Information Section -->
+                <div class="section-divider">
+                    <h5><i class="fas fa-cog"></i> Status & Additional Information</h5>
+                    <div class="line"></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="status" class="form-label">Schedule Status</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-toggle-on"></i></span>
+                                <select class="form-select" id="status" th:field="*{status}" required>
+                                    <option value="active">Active</option>
+                                    <option value="cancelled">Cancelled</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
+                            <div class="error-message" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="remarks" class="form-label">Remarks (Optional)</label>
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-comment-alt"></i></span>
+                                <textarea class="form-control" id="remarks" th:field="*{remarks}" rows="3"
+                                          placeholder="Add any additional notes or information..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Actions -->
+                <div class="d-flex justify-content-between mt-4">
+                    <button type="reset" class="btn btn-secondary">
+                        <i class="fas fa-undo btn-icon"></i> Reset Form
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save btn-icon"></i> Create Schedule
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-content">
+        <div>
+            <div class="footer-brand">
+                <i class="fas fa-train"></i> TrainConnect
+            </div>
+            <p class="copyright">&copy; 2025 TrainConnect. All rights reserved.</p>
+        </div>
+        <div class="footer-links">
+            <a href="/" class="footer-link">Home</a>
+            <a href="/routes" class="footer-link">Routes</a>
+            <a href="/schedules" class="footer-link">Schedules</a>
+            <a href="/tickets" class="footer-link">Tickets</a>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Form validation
+    (function() {
+        'use strict';
+
+        // Fetch all forms that need validation
+        var forms = document.querySelectorAll('.needs-validation');
+
+        // Loop through forms and prevent submission if not valid
+        Array.prototype.slice.call(forms).forEach(function(form) {
+            form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Time validation - ensure arrival is after departure
+        const departureTime = document.getElementById('departureTime');
+        const arrivalTime = document.getElementById('arrivalTime');
+
+        if (departureTime && arrivalTime) {
+            arrivalTime.addEventListener('change', validateTimes);
+            departureTime.addEventListener('change', validateTimes);
+
+            function validateTimes() {
+                if (departureTime.value && arrivalTime.value) {
+                    if (arrivalTime.value <= departureTime.value) {
+                        arrivalTime.setCustomValidity('Arrival time must be after departure time');
+                    } else {
+                        arrivalTime.setCustomValidity('');
+                    }
+                }
+            }
+        }
+    })();
+</script>
+</body>
+</html>

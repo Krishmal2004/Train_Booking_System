@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Route</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #f43f5e;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+            --lighter-gray: #f1f5f9;
+            --white: #ffffff;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --border-radius: 12px;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--lighter-gray);
+            color: var(--dark);
+            line-height: 1.5;
+            padding: 30px 20px;
+        }
+
+        .page-container {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background-color: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--primary);
+            padding: 25px 30px;
+            color: var(--white);
+            position: relative;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary) 0%, var(--secondary) 100%);
+        }
+
+        .card-body {
+            padding: 30px;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            padding: 10px 0;
+            margin-bottom: 25px;
+            transition: all 0.2s ease;
+        }
+
+        .back-link:hover {
+            color: var(--primary-dark);
+            transform: translateX(-4px);
+        }
+
+        .form-container {
+            display: grid;
+            gap: 24px;
+        }
+
+        .form-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 15px;
+            border: 1px solid var(--light-gray);
+            border-radius: 8px;
+            background-color: var(--white);
+            color: var(--dark);
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .input-with-icon {
+            padding-left: 42px;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .error-message {
+            color: var(--error);
+            font-size: 13px;
+            margin-top: 4px;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            padding: 14px 24px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-lg {
+            padding: 16px 32px;
+            font-size: 16px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .form-hint {
+            font-size: 13px;
+            color: var(--gray);
+            margin-top: 4px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4px 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-required {
+            background-color: rgba(244, 63, 94, 0.1);
+            color: var(--secondary);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            .card-body {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            input, select, textarea, .btn {
+                padding: 12px 14px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-container">
+    <a href="/routes" class="back-link">
+        <i class="fas fa-chevron-left"></i> Back to Routes
+    </a>
+
+    <div class="card">
+        <div class="card-header">
+            <h1>Create New Route</h1>
+        </div>
+
+        <div class="card-body">
+            <form th:action="@{/routes/create}" th:object="${route}" method="post" class="form-container">
+                <div class="form-group">
+                    <div class="d-flex">
+                        <label for="routeId">Route ID <span class="badge badge-required">Required</span></label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-hashtag input-icon"></i>
+                        <input type="text" id="routeId" th:field="*{routeId}" class="input-with-icon" required placeholder="Enter route identifier">
+                    </div>
+                    <span class="error-message" th:if="${#fields.hasErrors('routeId')}" th:errors="*{routeId}"></span>
+                </div>
+
+                <div class="form-group">
+                    <div class="d-flex">
+                        <label for="origin">Origin <span class="badge badge-required">Required</span></label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt input-icon"></i>
+                        <input type="text" id="origin" th:field="*{origin}" class="input-with-icon" required placeholder="Starting location">
+                    </div>
+                    <span class="error-message" th:if="${#fields.hasErrors('origin')}" th:errors="*{origin}"></span>
+                </div>
+
+                <div class="form-group">
+                    <div class="d-flex">
+                        <label for="destination">Destination <span class="badge badge-required">Required</span></label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-map-marker input-icon"></i>
+                        <input type="text" id="destination" th:field="*{destination}" class="input-with-icon" required placeholder="Ending location">
+                    </div>
+                    <span class="error-message" th:if="${#fields.hasErrors('destination')}" th:errors="*{destination}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="stops">Stops (comma-separated)</label>
+                    <textarea id="stops" th:field="*{stops}" placeholder="List intermediate stops separated by commas"></textarea>
+                    <span class="form-hint">Add any intermediate stops along this route</span>
+                </div>
+
+                <div class="form-group">
+                    <div class="d-flex">
+                        <label for="distance">Distance (km) <span class="badge badge-required">Required</span></label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-ruler input-icon"></i>
+                        <input type="number" id="distance" th:field="*{distance}" step="0.1" min="0.1" class="input-with-icon" required placeholder="Total distance in kilometers">
+                    </div>
+                    <span class="error-message" th:if="${#fields.hasErrors('distance')}" th:errors="*{distance}"></span>
+                </div>
+
+                <div class="form-group">
+                    <div class="d-flex">
+                        <label for="durationMinutes">Duration (minutes) <span class="badge badge-required">Required</span></label>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-clock input-icon"></i>
+                        <input type="number" id="durationMinutes" th:field="*{durationMinutes}" min="1" class="input-with-icon" required placeholder="Travel time in minutes">
+                    </div>
+                    <span class="error-message" th:if="${#fields.hasErrors('durationMinutes')}" th:errors="*{durationMinutes}"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" th:field="*{status}" required>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+                    <span class="error-message" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></span>
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="btn btn-lg">
+                        <i class="fas fa-plus-circle"></i> Create Route
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

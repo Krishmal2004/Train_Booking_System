@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Sales Report</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a3a6e;
+            --primary-light: #2a4b82;
+            --primary-dark: #142c54;
+            --secondary: #e63946;
+            --success: #198754;
+            --danger: #dc3545;
+            --info: #0dcaf0;
+            --warning: #ffc107;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --gray: #6c757d;
+            --border-radius: 8px;
+            --box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        /* Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7f9;
+            color: var(--dark);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        h1:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+            transform: translateY(-3px);
+        }
+
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-body p {
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+
+        .card-body p strong {
+            color: var(--primary);
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: var(--border-radius);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(26, 58, 110, 0.2);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Button Styles */
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(26, 58, 110, 0.2);
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: var(--border-radius);
+            font-weight: 500;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .container {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .button-group {
+                flex-direction: column;
+            }
+
+            .card-body {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .card-header {
+                padding: 12px 15px;
+            }
+
+            .nav-link, button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Edit Report Notes</h1>
+    <div class="card">
+        <div class="card-header"><i class="fas fa-file-alt"></i> Report Details</div>
+        <div class="card-body">
+            <form th:action="@{/sales-reports/{id}/edit(id=${report.id})}" th:object="${report}" method="post">
+                <p><strong>Report Date:</strong> <span th:text="${#temporals.format(report.reportDate, 'yyyy-MM-dd')}"></span></p>
+                <p><strong>Total Revenue:</strong> <span th:text="'$' + ${#numbers.formatDecimal(report.totalRevenue, 1, 'COMMA', 2, 'POINT')}"></span></p>
+                <div class="form-group">
+                    <label for="notes">Notes:</label>
+                    <textarea id="notes" th:field="*{notes}" rows="4" class="form-control"></textarea>
+                </div>
+                <div class="button-group">
+                    <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+                    <a href="/sales-reports" class="nav-link" style="background-color: #6c757d; color: white;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>View Issue Details</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a3a6e;
+      --primary-dark: #132d54;
+      --primary-light: rgba(26, 58, 110, 0.1);
+      --secondary: #e63946;
+      --secondary-light: rgba(230, 57, 70, 0.1);
+      --accent: #a8dadc;
+      --success: #38b000;
+      --warning: #ffaa00;
+      --danger: #d90429;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --border-radius: 12px;
+      --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    h1, h2, h3, h4, h5 {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    h1:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--secondary);
+      display: inline-block;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: var(--gray);
+      margin-bottom: 8px;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    a:hover {
+      color: var(--secondary);
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .nav-link {
+      background-color: white;
+      color: var(--primary);
+      padding: 12px 24px;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      box-shadow: var(--box-shadow);
+      display: inline-flex;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    .nav-link i {
+      margin-right: 8px;
+    }
+
+    .nav-link:hover {
+      transform: translateY(-3px);
+      color: white;
+      background-color: var(--primary);
+      box-shadow: 0 8px 25px rgba(26, 58, 110, 0.2);
+    }
+
+    .user-info {
+      background-color: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .user-info p {
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .user-info i {
+      color: var(--primary);
+      margin-right: 8px;
+      font-size: 1.1rem;
+    }
+
+    .user-info strong {
+      color: var(--secondary);
+      font-weight: 600;
+    }
+
+    .issue-section {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 30px;
+      padding: 30px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+
+    .info-item {
+      margin-bottom: 20px;
+    }
+
+    .info-value {
+      font-weight: 500;
+      font-size: 1.1rem;
+    }
+
+    .description-section {
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 15px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .badge-high {
+      background-color: rgba(217, 4, 41, 0.1);
+      color: var(--danger);
+    }
+
+    .badge-medium {
+      background-color: rgba(255, 170, 0, 0.1);
+      color: var(--warning);
+    }
+
+    .badge-low {
+      background-color: rgba(56, 176, 0, 0.1);
+      color: var(--success);
+    }
+
+    .badge-open {
+      background-color: rgba(26, 58, 110, 0.1);
+      color: var(--primary);
+    }
+
+    .badge-in-progress {
+      background-color: rgba(255, 170, 0, 0.1);
+      color: var(--warning);
+    }
+
+    .badge-resolved {
+      background-color: rgba(56, 176, 0, 0.1);
+      color: var(--success);
+    }
+
+    .badge-closed {
+      background-color: rgba(108, 117, 125, 0.1);
+      color: var(--gray);
+    }
+
+    .timeline {
+      padding-left: 20px;
+      border-left: 2px solid var(--accent);
+      margin-bottom: 30px;
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 15px;
+    }
+
+    .timeline-item:before {
+      content: '';
+      position: absolute;
+      left: -26px;
+      top: 8px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      border: 2px solid var(--accent);
+    }
+
+    .timeline-item span {
+      font-weight: 500;
+    }
+
+    .action-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      box-shadow: var(--box-shadow);
+      display: inline-flex;
+      align-items: center;
+      transition: var(--transition);
+      border: none;
+      cursor: pointer;
+      text-align: center;
+      justify-content: center;
+    }
+
+    .btn i {
+      margin-right: 8px;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(26, 58, 110, 0.2);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #c5001f;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(217, 4, 41, 0.2);
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      padding-top: 20px;
+      border-top: 1px solid #edf2f7;
+      color: var(--gray);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+
+      .user-info {
+        flex-direction: column;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Issue Report Details</h1>
+
+  <div class="nav-links">
+    <a href="/reports" class="nav-link">
+      <i class="fas fa-arrow-left"></i> Back to All Issues
+    </a>
+    <a th:href="@{/reports/{id}/edit(id=${issue.id})}" class="nav-link">
+      <i class="fas fa-edit"></i> Update Issue
+    </a>
+    <a href="/reports/dashboard" class="nav-link">
+      <i class="fas fa-chart-line"></i> Dashboard
+    </a>
+  </div>
+
+  <div class="user-info">
+    <p><i class="fas fa-user-circle"></i> Current User: <strong>Krishmal2004</strong></p>
+    <p><i class="fas fa-clock"></i> Current Date/Time: <span>2025-09-18 08:56:08</span></p>
+  </div>
+
+  <div class="issue-section">
+    <h2>Issue Information</h2>
+
+    <div class="info-grid">
+      <div class="info-item">
+        <h3><i class="fas fa-ticket-alt"></i> Ticket ID</h3>
+        <p class="info-value" th:text="${issue.ticketId}">IT-20250816-1001</p>
+      </div>
+
+      <div class="info-item">
+        <h3><i class="fas fa-heading"></i> Title</h3>
+        <p class="info-value" th:text="${issue.title}">Payment Gateway Issue</p>
+      </div>
+
+      <div class="info-item">
+        <h3><i class="fas fa-server"></i> System Affected</h3>
+        <p class="info-value" th:text="${issue.systemAffected}">Payment System</p>
+      </div>
+
+      <div class="info-item">
+        <h3><i class="fas fa-exclamation-circle"></i> Priority</h3>
+        <p class="info-value">
+          <span th:if="${issue.priority == 'High'}" class="badge badge-high" th:text="${issue.priority}">High</span>
+          <span th:if="${issue.priority == 'Medium'}" class="badge badge-medium" th:text="${issue.priority}">Medium</span>
+          <span th:if="${issue.priority == 'Low'}" class="badge badge-low" th:text="${issue.priority}">Low</span>
+        </p>
+      </div>
+
+      <div class="info-item">
+        <h3><i class="fas fa-tasks"></i> Status</h3>
+        <p class="info-value">
+          <span th:if="${issue.status == 'Open'}" class="badge badge-open" th:text="${issue.status}">Open</span>
+          <span th:if="${issue.status == 'In Progress'}" class="badge badge-in-progress" th:text="${issue.status}">In Progress</span>
+          <span th:if="${issue.status == 'Resolved'}" class="badge badge-resolved" th:text="${issue.status}">Resolved</span>
+          <span th:if="${issue.status == 'Closed'}" class="badge badge-closed" th:text="${issue.status}">Closed</span>
+        </p>
+      </div>
+
+      <div class="info-item">
+        <h3><i class="fas fa-user-edit"></i> Reported By</h3>
+        <p class="info-value" th:text="${issue.reporterName}">Krishmal2004</p>
+      </div>
+
+      <div class="info-item">
+        <h3><i class="fas fa-user-check"></i> Assigned To</h3>
+        <p class="info-value" th:text="${issue.assigneeName != null ? issue.assigneeName : 'Unassigned'}">Unassigned</p>
+      </div>
+    </div>
+
+    <div class="description-section">
+      <h3><i class="fas fa-align-left"></i> Description</h3>
+      <p th:text="${issue.description}">Customers are unable to complete payment transactions. The payment gateway is returning error code 500 when attempting to process credit card payments.</p>
+    </div>
+
+    <div th:if="${issue.resolution != null && !issue.resolution.isEmpty()}" class="description-section">
+      <h3><i class="fas fa-check-double"></i> Resolution</h3>
+      <p th:text="${issue.resolution}">Resolved issue by restarting the payment service and clearing cache.</p>
+    </div>
+
+    <div>
+      <h3><i class="fas fa-history"></i> Issue Timeline</h3>
+      <div class="timeline">
+        <div class="timeline-item">
+          <p>Created: <span th:text="${#temporals.format(issue.createdAt, 'yyyy-MM-dd HH:mm:ss')}">2025-08-16 17:30:00</span></p>
+        </div>
+        <div class="timeline-item">
+          <p>Last Updated: <span th:text="${#temporals.format(issue.updatedAt, 'yyyy-MM-dd HH:mm:ss')}">2025-08-16 17:45:00</span></p>
+        </div>
+        <div class="timeline-item" th:if="${issue.resolvedAt != null}">
+          <p>Resolved: <span th:text="${#temporals.format(issue.resolvedAt, 'yyyy-MM-dd HH:mm:ss')}">2025-08-16 18:15:00</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="action-buttons">
+      <a th:href="@{/reports/{id}/edit(id=${issue.id})}" class="btn btn-primary">
+        <i class="fas fa-edit"></i> Update Issue
+      </a>
+      <a th:href="@{/reports/{id}/delete(id=${issue.id})}" class="btn btn-danger"
+         onclick="return confirm('Are you sure you want to remove this issue report?')">
+        <i class="fas fa-trash"></i> Remove Issue
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <p>IT Support System - Managed by Krishmal2004 - Kapuge K.H.P.P</p>
+    <p>Last updated: 2025-09-18 08:56:08</p>
+  </footer>
+</div>
+</body>
+</html>

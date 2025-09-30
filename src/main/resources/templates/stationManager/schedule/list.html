@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Schedule Management</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a3a6e;
+            --secondary: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #198754;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #0dcaf0;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            padding-top: 56px;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .navbar-brand i {
+            color: var(--secondary);
+            margin-right: 5px;
+        }
+
+        .page-header {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+            url('https://images.pexels.com/photos/5101537/pexels-photo-5101537.jpeg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 80px 0;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 15px;
+        }
+
+        .page-title::after {
+            content: '';
+            position: absolute;
+            left: 25%;
+            right: 25%;
+            bottom: 0;
+            height: 3px;
+            background: var(--secondary);
+        }
+
+        .page-subtitle {
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        .card {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            border-radius: 0.5rem;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            border-bottom: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: #15305e;
+            border-color: #15305e;
+        }
+
+        .btn-success {
+            background-color: var(--success);
+            border-color: var(--success);
+        }
+
+        .btn-danger {
+            background-color: var(--danger);
+            border-color: var(--danger);
+        }
+
+        .btn-warning {
+            background-color: var(--warning);
+            border-color: var(--warning);
+            color: #212529;
+        }
+
+        .btn-info {
+            background-color: var(--info);
+            border-color: var(--info);
+            color: #212529;
+        }
+
+        .table {
+            box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+            background-color: white;
+        }
+
+        .table thead {
+            background-color: var(--primary);
+            color: white;
+            font-weight: 500;
+        }
+
+        .badge {
+            font-weight: 500;
+            padding: 6px 10px;
+            border-radius: 4px;
+        }
+
+        .badge-active {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .badge-cancelled {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .badge-completed {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .btn-view {
+            background-color: var(--primary);
+        }
+
+        .btn-edit {
+            background-color: var(--warning);
+        }
+
+        .btn-delete {
+            background-color: var(--danger);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-icon {
+            font-size: 60px;
+            color: #ccc;
+            margin-bottom: 20px;
+        }
+
+        .empty-message {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            background-color: var(--primary);
+            color: white;
+            padding: 30px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 60px 0;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+        }
+
+        /* Schedule status badges */
+        .schedule-status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background-color: rgba(25, 135, 84, 0.15);
+            color: var(--success);
+        }
+
+        .status-cancelled {
+            background-color: rgba(220, 53, 69, 0.15);
+            color: var(--danger);
+        }
+
+        .status-completed {
+            background-color: rgba(13, 202, 240, 0.15);
+            color: var(--info);
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-train"></i> TrainConnect
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/routes"><i class="fas fa-route"></i> Routes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/schedules"><i class="fas fa-calendar-alt"></i> Schedules</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tickets"><i class="fas fa-ticket-alt"></i> Tickets</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Header -->
+<header class="page-header">
+    <div class="container header-content">
+        <h1 class="page-title">Schedule Management</h1>
+        <p class="page-subtitle">View and manage train schedules, filter by status or date, and generate reports</p>
+    </div>
+</header>
+
+<div class="container">
+    <!-- Success Message -->
+    <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle me-2"></i>
+        <span th:text="${successMessage}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-cogs me-2"></i> Management Actions</span>
+                </div>
+                <div class="card-body d-flex flex-wrap gap-2">
+                    <a href="/" class="btn btn-primary">
+                        <i class="fas fa-home me-2"></i> Home
+                    </a>
+                    <a href="/schedules/create" class="btn btn-success">
+                        <i class="fas fa-plus me-2"></i> Create New Schedule
+                    </a>
+                    <a href="/schedules/report" class="btn btn-info">
+                        <i class="fas fa-file-alt me-2"></i> Generate Report
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-filter me-2"></i> Filter by Status
+                </div>
+                <div class="card-body">
+                    <form action="/schedules" method="get" class="d-flex gap-3">
+                        <select id="status" name="status" class="form-select">
+                            <option value="">All Statuses</option>
+                            <option value="active">Active</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i> Filter
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <i class="fas fa-calendar me-2"></i> Filter by Date
+                </div>
+                <div class="card-body">
+                    <form action="/schedules" method="get" class="d-flex gap-3">
+                        <input type="date" id="date" name="date" class="form-control" th:value="${today}">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-search me-2"></i> Filter
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedules Table -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-list me-2"></i> Schedule List</span>
+            <span class="badge bg-primary" th:text="${schedules != null ? schedules.size() : '0'} + ' schedules'"></span>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead>
+                    <tr>
+                        <th>Schedule ID</th>
+                        <th>Route</th>
+                        <th>Date</th>
+                        <th>Departure</th>
+                        <th>Arrival</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${schedules.empty}">
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <div class="empty-icon">
+                                    <i class="fas fa-calendar-times"></i>
+                                </div>
+                                <div class="empty-message">No schedules found</div>
+                                <a href="/schedules/create" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i> Create First Schedule
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr th:each="schedule : ${schedules}">
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-fingerprint text-primary me-2"></i>
+                                <strong th:text="${schedule.scheduleId}"></strong>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-route text-info me-2"></i>
+                                <span th:text="${schedule.route != null ? schedule.route.routeId + ' (' + schedule.route.origin + ' - ' + schedule.route.destination + ')' : 'N/A'}"></span>
+                            </div>
+                        </td>
+                        <td>
+                            <i class="fas fa-calendar-day text-secondary me-1"></i>
+                            <span th:text="${schedule.scheduleDate}"></span>
+                        </td>
+                        <td>
+                            <i class="fas fa-hourglass-start text-warning me-1"></i>
+                            <span th:text="${schedule.departureTime}"></span>
+                        </td>
+                        <td>
+                            <i class="fas fa-hourglass-end text-success me-1"></i>
+                            <span th:text="${schedule.arrivalTime}"></span>
+                        </td>
+                        <td>
+                                    <span class="schedule-status"
+                                          th:classappend="${schedule.status == 'active' ? 'status-active' :
+                                                          (schedule.status == 'cancelled' ? 'status-cancelled' : 'status-completed')}">
+                                        <i th:class="${schedule.status == 'active' ? 'fas fa-check-circle' :
+                                                     (schedule.status == 'cancelled' ? 'fas fa-times-circle' : 'fas fa-flag-checkered')}"></i>
+                                        <span th:text="${schedule.status}"></span>
+                                    </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a th:href="@{/schedules/{id}(id=${schedule.id})}" class="action-btn btn-view" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a th:href="@{/schedules/{id}/edit(id=${schedule.id})}" class="action-btn btn-edit" title="Edit Schedule">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="#" class="action-btn btn-delete" title="Delete Schedule"
+                                   data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                   th:data-schedule-id="${schedule.id}"
+                                   th:data-schedule-name="${schedule.scheduleId}">
+                                    <i class="fas fa-trash"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title">
+                    <i class="fas fa-exclamation-triangle me-2"></i> Confirm Deletion
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete schedule <strong id="scheduleToDelete"></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i> Cancel
+                </button>
+                <a href="#" id="confirmDeleteBtn" class="btn btn-danger">
+                    <i class="fas fa-trash me-2"></i> Delete
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div>
+                <p class="mb-0">&copy; 2025 TrainConnect. All rights reserved.</p>
+            </div>
+            <div class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/routes" class="footer-link">Routes</a>
+                <a href="/schedules" class="footer-link">Schedules</a>
+                <a href="/tickets" class="footer-link">Tickets</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Bootstrap JS with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Handle delete confirmation modal
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteModal = document.getElementById('deleteModal');
+        const scheduleToDelete = document.getElementById('scheduleToDelete');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+
+        if (deleteModal) {
+            deleteModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const scheduleId = button.getAttribute('data-schedule-id');
+                const scheduleName = button.getAttribute('data-schedule-name');
+
+                scheduleToDelete.textContent = scheduleName;
+                confirmDeleteBtn.href = `/schedules/${scheduleId}/delete`;
+            });
+        }
+    });
+</script>
+</body>
+</html>

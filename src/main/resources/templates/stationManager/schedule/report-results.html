@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Schedule Report Results</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1a3a6e;
+            --secondary: #e63946;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #198754;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --info: #0dcaf0;
+            --border-radius: 8px;
+            --box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding-top: 70px;
+        }
+
+        /* Header/Navbar */
+        .navbar {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .navbar-brand i {
+            color: var(--secondary);
+        }
+
+        .navbar-nav {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 500;
+            transition: var(--transition);
+            padding: 8px 15px;
+            border-radius: 30px;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .nav-link i {
+            margin-right: 5px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-name {
+            font-weight: 500;
+        }
+
+        /* Main content */
+        .page-header {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+            url('https://images.pexels.com/photos/5101548/pexels-photo-5101548.jpeg');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 60px 0;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .page-subtitle {
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            opacity: 0.9;
+        }
+
+        /* Action buttons */
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #132d54;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-info {
+            background-color: var(--info);
+            color: var(--dark);
+        }
+
+        .btn-info:hover {
+            background-color: #0bb2d4;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn i {
+            margin-right: 8px;
+        }
+
+        /* Report summary */
+        .report-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .summary-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .summary-primary {
+            background-color: rgba(26, 58, 110, 0.1);
+            color: var(--primary);
+        }
+
+        .summary-secondary {
+            background-color: rgba(230, 57, 70, 0.1);
+            color: var(--secondary);
+        }
+
+        .summary-success {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: var(--success);
+        }
+
+        .summary-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .summary-label {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Report parameters */
+        .report-parameters {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .parameters-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .parameters-body {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .parameter-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .parameter-label {
+            font-weight: 500;
+            color: #6c757d;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .parameter-value {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Table styles */
+        .report-results {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 40px;
+            overflow: hidden;
+        }
+
+        .results-header {
+            background-color: var(--primary);
+            color: white;
+            padding: 15px 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .results-total {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background-color: #f8f9fa;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        th {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        tbody tr:hover {
+            background-color: rgba(0, 0, 0, 0.02);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-active {
+            background-color: rgba(25, 135, 84, 0.1);
+            color: var(--success);
+        }
+
+        .status-completed {
+            background-color: rgba(13, 202, 240, 0.1);
+            color: var(--info);
+        }
+
+        .status-cancelled {
+            background-color: rgba(220, 53, 69, 0.1);
+            color: var(--danger);
+        }
+
+        .empty-results {
+            padding: 40px;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: #dee2e6;
+            margin-bottom: 15px;
+        }
+
+        /* Export options */
+        .export-options {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .export-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-radius: var(--border-radius);
+            color: var(--dark);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .export-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .export-pdf {
+            color: #e74c3c;
+        }
+
+        .export-excel {
+            color: #27ae60;
+        }
+
+        .export-csv {
+            color: #3498db;
+        }
+
+        .export-print {
+            color: #9b59b6;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 40px 0;
+            margin-top: 60px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-brand i {
+            color: var(--secondary);
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.875rem;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .navbar-nav {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .page-header {
+                padding: 40px 0;
+            }
+
+            .parameters-body {
+                grid-template-columns: 1fr;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .action-bar {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .export-options {
+                flex-direction: column;
+            }
+
+            .export-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar">
+    <div class="container">
+        <div class="navbar-content">
+            <a href="/" class="navbar-brand">
+                <i class="fas fa-train"></i>
+                TrainConnect
+            </a>
+            <ul class="navbar-nav">
+                <li>
+                    <a href="/" class="nav-link">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li>
+                    <a href="/routes" class="nav-link">
+                        <i class="fas fa-route"></i> Routes
+                    </a>
+                </li>
+                <li>
+                    <a href="/schedules" class="nav-link active">
+                        <i class="fas fa-calendar-alt"></i> Schedules
+                    </a>
+                </li>
+                <li>
+                    <a href="/tickets" class="nav-link">
+                        <i class="fas fa-ticket-alt"></i> Tickets
+                    </a>
+                </li>
+            </ul>
+            <div class="user-info">
+                <div class="user-avatar">
+                    <span>K</span>
+                </div>
+                <span class="user-name">Krishmal2004</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Page Header -->
+<header class="page-header">
+    <div class="container">
+        <h1 class="page-title">Schedule Report Results</h1>
+        <p class="page-subtitle">View and analyze schedule data based on your selected parameters</p>
+    </div>
+</header>
+
+<div class="container">
+    <!-- Action Bar -->
+    <div class="action-bar">
+        <a href="/schedules" class="btn btn-primary">
+            <i class="fas fa-arrow-left"></i> Back to Schedules
+        </a>
+        <a href="/schedules/report" class="btn btn-info">
+            <i class="fas fa-file-alt"></i> New Report
+        </a>
+    </div>
+
+    <!-- Report Summary -->
+    <div class="report-summary">
+        <div class="summary-card">
+            <div class="summary-icon summary-primary">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <div class="summary-value" th:text="${schedules.size()}">5</div>
+            <div class="summary-label">Total Schedules</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon summary-secondary">
+                <i class="fas fa-route"></i>
+            </div>
+            <!-- Fixed expression with simpler logic -->
+            <div class="summary-value" th:text="${route != null ? 1 : 0}">3</div>
+            <div class="summary-label">Routes Covered</div>
+        </div>
+
+        <div class="summary-card">
+            <div class="summary-icon summary-success">
+                <i class="fas fa-clock"></i>
+            </div>
+            <div class="summary-value">21:19</div>
+            <div class="summary-label">Report Generated At</div>
+        </div>
+    </div>
+
+    <!-- Report Parameters -->
+    <div class="report-parameters">
+        <div class="parameters-header">
+            <i class="fas fa-filter"></i> Report Parameters
+        </div>
+        <div class="parameters-body">
+            <div class="parameter-group">
+                <div class="parameter-label">Start Date</div>
+                <div class="parameter-value" th:text="${startDate}">2025-09-01</div>
+            </div>
+
+            <div class="parameter-group">
+                <div class="parameter-label">End Date</div>
+                <div class="parameter-value" th:text="${endDate}">2025-09-15</div>
+            </div>
+
+            <div class="parameter-group">
+                <div class="parameter-label">Route</div>
+                <div class="parameter-value" th:if="${route != null}" th:text="${route.routeId + ' (' + route.origin + ' - ' + route.destination + ')'}">RT001 (New York - Boston)</div>
+                <div class="parameter-value" th:if="${route == null}">All Routes</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Results -->
+    <div class="report-results">
+        <div class="results-header">
+            <div><i class="fas fa-table"></i> Schedule Data</div>
+            <div class="results-total" th:text="${schedules.size()} + ' records found'">5 records found</div>
+        </div>
+        <div class="table-container">
+            <table>
+                <thead>
+                <tr>
+                    <th>Schedule ID</th>
+                    <th>Route</th>
+                    <th>Date</th>
+                    <th>Departure</th>
+                    <th>Arrival</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:if="${schedules.empty}">
+                    <td colspan="6" class="empty-results">
+                        <div class="empty-icon">
+                            <i class="fas fa-search"></i>
+                        </div>
+                        <div>No schedules found for the specified criteria</div>
+                    </td>
+                </tr>
+                <tr th:each="schedule : ${schedules}">
+                    <td>
+                        <strong th:text="${schedule.scheduleId}">SCH001</strong>
+                    </td>
+                    <td th:text="${schedule.route != null ? schedule.route.routeId + ' (' + schedule.route.origin + ' - ' + schedule.route.destination + ')' : 'N/A'}">RT001 (New York - Boston)</td>
+                    <td th:text="${schedule.scheduleDate}">2025-09-10</td>
+                    <td th:text="${schedule.departureTime}">08:30</td>
+                    <td th:text="${schedule.arrivalTime}">12:45</td>
+                    <td>
+                                <span class="status-badge"
+                                      th:classappend="${schedule.status == 'active' ? 'status-active' :
+                                                    (schedule.status == 'cancelled' ? 'status-cancelled' : 'status-completed')}">
+                                    <i th:class="${schedule.status == 'active' ? 'fas fa-check-circle' :
+                                                (schedule.status == 'cancelled' ? 'fas fa-times-circle' : 'fas fa-flag-checkered')}"></i>
+                                    <span th:text="${schedule.status}">Active</span>
+                                </span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Export Options -->
+    <div class="export-options">
+        <a href="#" class="export-btn export-pdf">
+            <i class="fas fa-file-pdf"></i> Export as PDF
+        </a>
+        <a href="#" class="export-btn export-excel">
+            <i class="fas fa-file-excel"></i> Export as Excel
+        </a>
+        <a href="#" class="export-btn export-csv">
+            <i class="fas fa-file-csv"></i> Export as CSV
+        </a>
+        <a href="#" class="export-btn export-print" onclick="window.print(); return false;">
+            <i class="fas fa-print"></i> Print Report
+        </a>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <i class="fas fa-train"></i>
+                TrainConnect
+            </div>
+            <div class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/routes" class="footer-link">Routes</a>
+                <a href="/schedules" class="footer-link">Schedules</a>
+                <a href="/tickets" class="footer-link">Tickets</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 TrainConnect. All rights reserved.</p>
+            <p>Report generated: 2025-09-15 21:19:56 | User: Krishmal2004</p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>

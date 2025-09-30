@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>TrainConnect - Seasonal Package Report</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Custom CSS -->
+  <style>
+    :root {
+      --primary-color: #1a3a6e;
+      --secondary-color: #e63946;
+      --light-color: #f1faee;
+      --dark-color: #1d3557;
+      --accent-color: #a8dadc;
+      --gradient-primary: linear-gradient(135deg, #1a3a6e 0%, #2a5298 100%);
+      --gradient-secondary: linear-gradient(135deg, #e63946 0%, #ff616f 100%);
+      --box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      --transition: all 0.3s ease;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    h1, h2, h3, h4, h5 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .content-wrapper {
+      flex: 1 0 auto;
+    }
+
+    /* NAVBAR STYLING */
+    .navbar {
+      background-color: rgba(26, 58, 110, 0.95);
+      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+      padding: 15px 0;
+      transition: var(--transition);
+    }
+
+    .navbar-brand {
+      font-weight: 700;
+      color: white;
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+    }
+
+    .navbar-brand .train-icon {
+      color: var(--secondary-color);
+    }
+
+    /* Page header */
+    .page-header {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 30px 0;
+      margin-bottom: 30px;
+    }
+
+    .page-header h1 {
+      margin-bottom: 0;
+      color: white;
+    }
+
+    .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin: 10px 0 0;
+    }
+
+    .breadcrumb-item a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .breadcrumb-item a:hover {
+      color: white;
+    }
+
+    .breadcrumb-item.active {
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* Form styling */
+    .form-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: var(--box-shadow);
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .form-card-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .form-card-header h5 {
+      margin-bottom: 0;
+      color: white;
+      font-size: 1.2rem;
+    }
+
+    .form-card-body {
+      padding: 30px;
+    }
+
+    .form-label {
+      font-weight: 500;
+      margin-bottom: 8px;
+      color: var(--dark-color);
+    }
+
+    .form-control, .form-select {
+      border-radius: 8px;
+      padding: 12px 15px;
+      border: 1px solid #ced4da;
+      transition: var(--transition);
+      height: auto;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 0.25rem rgba(168, 218, 220, 0.25);
+    }
+
+    .form-text {
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+
+    /* Button styling */
+    .btn {
+      border-radius: 50px;
+      padding: 12px 25px;
+      font-weight: 500;
+      transition: var(--transition);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 0.85rem;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn i {
+      margin-right: 8px;
+    }
+
+    .btn-primary {
+      background: var(--gradient-secondary);
+      border: none;
+      box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(230, 57, 70, 0.4);
+      background: linear-gradient(135deg, #d12836 0%, #e63946 100%);
+    }
+
+    .btn-secondary {
+      background-color: #6c757d;
+      border: none;
+    }
+
+    .btn-secondary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
+    }
+
+    /* User info card */
+    .user-info-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: var(--box-shadow);
+      margin-bottom: 30px;
+      overflow: hidden;
+    }
+
+    .user-info-header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .user-info-header h5 {
+      margin-bottom: 0;
+      color: white;
+      font-size: 1.1rem;
+    }
+
+    .user-info-body {
+      padding: 15px 20px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background-color: var(--accent-color);
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-right: 15px;
+    }
+
+    .user-details h6 {
+      margin-bottom: 0;
+      font-size: 1rem;
+    }
+
+    .user-details p {
+      margin-bottom: 0;
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+
+    .datetime {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-bottom: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .datetime i {
+      margin-right: 5px;
+      color: var(--primary-color);
+    }
+
+    /* GitHub activity */
+    .github-activity {
+      margin-top: 15px;
+      border-top: 1px solid #eee;
+      padding-top: 15px;
+    }
+
+    .github-activity h6 {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+      color: var(--primary-color);
+    }
+
+    .repo-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .repo-list li {
+      margin-bottom: 8px;
+      font-size: 0.85rem;
+    }
+
+    .repo-list a {
+      color: var(--primary-color);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    .repo-list a:hover {
+      color: var(--secondary-color);
+    }
+
+    .repo-list a i {
+      margin-right: 5px;
+      color: #333;
+    }
+
+    /* FOOTER STYLING */
+    .footer {
+      background: var(--gradient-primary);
+      color: white;
+      padding: 60px 0 20px;
+      margin-top: 60px;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .footer:before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 10px;
+      background: var(--secondary-color);
+    }
+
+    .footer h5 {
+      position: relative;
+      padding-bottom: 15px;
+      margin-bottom: 25px;
+      font-size: 1.3rem;
+      color: white;
+    }
+
+    .footer h5:after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 40px;
+      height: 2px;
+      background-color: var(--secondary-color);
+    }
+
+    .footer-link {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 10px;
+      transition: var(--transition);
+    }
+
+    .footer-link:hover {
+      color: white;
+      transform: translateX(5px);
+    }
+
+    .social-links a {
+      display: inline-block;
+      width: 36px;
+      height: 36px;
+      line-height: 36px;
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      margin-right: 10px;
+      transition: var(--transition);
+      color: white;
+    }
+
+    .social-links a:hover {
+      background-color: var(--secondary-color);
+      transform: translateY(-3px);
+    }
+
+    /* Report info card */
+    .report-info-card {
+      background-color: rgba(168, 218, 220, 0.15);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-left: 4px solid var(--accent-color);
+    }
+
+    .report-info-card h5 {
+      color: var(--primary-color);
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+    }
+
+    .report-info-card ul {
+      padding-left: 20px;
+      margin-bottom: 0;
+    }
+
+    .report-info-card li {
+      margin-bottom: 8px;
+      font-size: 0.9rem;
+    }
+
+    /* Report preview */
+    .report-preview {
+      background-color: #f8f9fa;
+      border: 1px dashed #ced4da;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    .report-preview i {
+      font-size: 2.5rem;
+      color: #6c757d;
+      margin-bottom: 15px;
+    }
+
+    .report-preview h6 {
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    .report-preview p {
+      font-size: 0.9rem;
+      color: #6c757d;
+      margin-bottom: 0;
+    }
+
+    /* Date range selector */
+    .date-range-selector {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .date-range-selector .separator {
+      color: #6c757d;
+      font-weight: 500;
+    }
+
+    /* Date presets */
+    .date-presets {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .date-preset-btn {
+      background-color: #f8f9fa;
+      border: 1px solid #ced4da;
+      border-radius: 50px;
+      padding: 8px 15px;
+      font-size: 0.85rem;
+      color: var(--dark-color);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .date-preset-btn:hover {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+      color: var(--primary-color);
+    }
+
+    .date-preset-btn.active {
+      background-color: var(--accent-color);
+      border-color: var(--accent-color);
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+  </style>
+</head>
+<body>
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <i class="fas fa-train me-2 train-icon"></i>TrainConnect
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/routes"><i class="fas fa-route me-1"></i> Routes</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/attractions"><i class="fas fa-mountain me-1"></i> Attractions</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/schedules"><i class="fas fa-calendar-alt me-1"></i> Schedules</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link active" href="/packages"><i class="fas fa-gift me-1"></i> Packages</a>
+        </li>
+        <li class="nav-item ms-lg-3">
+          <a class="btn btn-primary" href="/logout"><i class="fas fa-sign-out-alt me-1"></i> Logout</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="content-wrapper">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="container">
+      <h1><i class="fas fa-chart-bar me-2"></i> Seasonal Package Report</h1>
+      <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i> Home</a></li>
+          <li class="breadcrumb-item"><a href="/packages">Seasonal Packages</a></li>
+          <li class="breadcrumb-item active">Generate Report</li>
+        </ol>
+      </nav>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <!-- Main Content -->
+      <div class="col-lg-8">
+        <div class="form-card">
+          <div class="form-card-header">
+            <h5><i class="fas fa-filter me-2"></i> Report Parameters</h5>
+          </div>
+          <div class="form-card-body">
+            <form action="/packages/generate-report" method="get" class="needs-validation" novalidate>
+              <!-- Date Presets -->
+              <div class="mb-4">
+                <label class="form-label">Quick Date Range</label>
+                <div class="date-presets">
+                  <button type="button" class="date-preset-btn" data-days="7">Last 7 Days</button>
+                  <button type="button" class="date-preset-btn" data-days="30">Last 30 Days</button>
+                  <button type="button" class="date-preset-btn" data-days="90">Last 90 Days</button>
+                  <button type="button" class="date-preset-btn" data-range="current-month">Current Month</button>
+                  <button type="button" class="date-preset-btn" data-range="last-month">Last Month</button>
+                  <button type="button" class="date-preset-btn" data-range="year-to-date">Year to Date</button>
+                </div>
+              </div>
+
+              <!-- Custom Date Range -->
+              <div class="mb-4">
+                <label class="form-label">Custom Date Range</label>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                    <label for="startDate" class="form-label">Start Date <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="startDate" name="startDate" required>
+                    <div class="invalid-feedback">Please select a start date.</div>
+                  </div>
+                  <div class="col-md-6 mb-3">
+                    <label for="endDate" class="form-label">End Date <span class="text-danger">*</span></label>
+                    <input type="date" class="form-control" id="endDate" name="endDate" required>
+                    <div class="invalid-feedback">Please select an end date.</div>
+                    <small class="form-text">End date must be after start date.</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Route Selection -->
+              <div class="mb-4">
+                <label for="routeId" class="form-label">Route Filter</label>
+                <select class="form-select" id="routeId" name="routeId">
+                  <option value="">All Routes</option>
+                  <option th:each="route : ${routes}"
+                          th:value="${route.id}"
+                          th:text="${route.routeId + ' (' + route.origin + ' - ' + route.destination + ')'}">
+                  </option>
+                </select>
+                <small class="form-text">Leave as "All Routes" to include packages from all routes.</small>
+              </div>
+
+              <!-- Report Format -->
+              <div class="mb-4">
+                <label class="form-label">Report Format</label>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="reportFormat" id="formatHtml" value="html" checked>
+                  <label class="form-check-label" for="formatHtml">
+                    <i class="fas fa-file-code me-2"></i> HTML
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="reportFormat" id="formatPdf" value="pdf">
+                  <label class="form-check-label" for="formatPdf">
+                    <i class="fas fa-file-pdf me-2"></i> PDF
+                  </label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="reportFormat" id="formatCsv" value="csv">
+                  <label class="form-check-label" for="formatCsv">
+                    <i class="fas fa-file-csv me-2"></i> CSV
+                  </label>
+                </div>
+              </div>
+
+              <!-- Report Preview -->
+              <div class="report-preview">
+                <i class="fas fa-chart-line"></i>
+                <h6>Report Preview</h6>
+                <p>Select date range and route to preview report data here</p>
+              </div>
+
+              <div class="d-flex gap-3 mt-4">
+                <button type="submit" class="btn btn-primary">
+                  <i class="fas fa-file-export me-2"></i> Generate Report
+                </button>
+                <a href="/packages" class="btn btn-secondary">
+                  <i class="fas fa-arrow-left me-2"></i> Back to Packages
+                </a>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-lg-4">
+        <!-- User Info Card -->
+        <div class="user-info-card">
+          <div class="user-info-header">
+            <h5><i class="fas fa-user-circle me-2"></i> User Information</h5>
+          </div>
+          <div class="user-info-body">
+            <div class="user-profile">
+              <div class="user-avatar">
+                <i class="fas fa-user"></i>
+              </div>
+              <div class="user-details">
+                <h6>Krishmal2004</h6>
+                <p>Operations Manager</p>
+              </div>
+            </div>
+            <p class="datetime">
+              <i class="far fa-clock"></i> 2025-09-16 12:51:14
+            </p>
+
+          </div>
+        </div>
+
+        <!-- Report Info Card -->
+        <div class="report-info-card">
+          <h5><i class="fas fa-info-circle me-2"></i> About Package Reports</h5>
+          <ul>
+            <li><strong>Package Summary:</strong> Get an overview of all packages within the selected date range</li>
+            <li><strong>Performance Metrics:</strong> View booking statistics and revenue data for each package</li>
+            <li><strong>Route Analysis:</strong> Filter by specific routes to analyze performance by location</li>
+            <li><strong>Seasonal Trends:</strong> Compare package performance across different time periods</li>
+            <li><strong>Export Options:</strong> Download reports in various formats for presentations or further analysis</li>
+          </ul>
+        </div>
+
+        <!-- Recently Generated Reports -->
+        <div class="form-card">
+          <div class="form-card-header">
+            <h5><i class="fas fa-history me-2"></i> Recent Reports</h5>
+          </div>
+          <div class="list-group list-group-flush">
+            <a href="#" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">Q3 2025 Package Summary</h6>
+                <small>2 days ago</small>
+              </div>
+              <p class="mb-1">Jul 1 - Sep 30, 2025 • All Routes</p>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">Mountain Express Analysis</h6>
+                <small>1 week ago</small>
+              </div>
+              <p class="mb-1">Jan 1 - Aug 31, 2025 • Route #R201</p>
+            </a>
+            <a href="#" class="list-group-item list-group-item-action">
+              <div class="d-flex w-100 justify-content-between">
+                <h6 class="mb-1">Summer Package Performance</h6>
+                <small>2 weeks ago</small>
+              </div>
+              <p class="mb-1">Jun 1 - Aug 31, 2025 • All Routes</p>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 mb-4 mb-md-0">
+        <h5>TrainConnect</h5>
+        <p>Modern railway management and booking system for seamless passenger experience. Explore scenic routes and unforgettable journeys.</p>
+        <div class="social-links mt-4">
+          <a href="#"><i class="fab fa-facebook-f"></i></a>
+          <a href="#"><i class="fab fa-twitter"></i></a>
+          <a href="#"><i class="fab fa-instagram"></i></a>
+          <a href="#"><i class="fab fa-linkedin-in"></i></a>
+          <a href="#"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="col-md-2 mb-4 mb-md-0">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="/" class="footer-link">Home</a></li>
+          <li><a href="/routes" class="footer-link">Routes</a></li>
+          <li><a href="/attractions" class="footer-link">Attractions</a></li>
+          <li><a href="/schedules" class="footer-link">Schedules</a></li>
+          <li><a href="/packages" class="footer-link">Packages</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3 mb-4 mb-md-0">
+        <h5>Contact Us</h5>
+        <address class="mb-0">
+          <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Railway Street, City</p>
+          <p class="mb-2"><i class="fas fa-phone me-2"></i> (123) 456-7890</p>
+          <p class="mb-2"><i class="fas fa-envelope me-2"></i> info@trainconnect.com</p>
+          <p class="mb-2"><i class="fas fa-clock me-2"></i> Mon-Fri: 9AM - 6PM</p>
+        </address>
+      </div>
+      <div class="col-md-3">
+        <h5>Newsletter</h5>
+        <p>Subscribe for updates on new routes and special offers.</p>
+        <div class="input-group mb-3">
+          <input type="email" class="form-control" placeholder="Your email">
+          <button class="btn btn-secondary" type="button">Subscribe</button>
+        </div>
+        <p class="small">By subscribing, you agree to our Privacy Policy and Terms of Service.</p>
+      </div>
+    </div>
+    <hr class="my-4 bg-light opacity-25">
+    <div class="text-center">
+      <p class="mb-0">&copy; 2025 TrainConnect. All rights reserved.</p>
+      <p class="mb-0">Current time: 2025-09-16 12:51:14 | User: Krishmal2004</p>
+    </div>
+  </div>
+</footer>
+
+<!-- Bootstrap JS Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Custom script for date presets and validation -->
+<script>
+  // Date validation
+  document.getElementById('endDate').addEventListener('change', function() {
+    const startDate = new Date(document.getElementById('startDate').value);
+    const endDate = new Date(this.value);
+
+    if (endDate < startDate) {
+      alert('End date cannot be before start date');
+      this.value = '';
+    }
+  });
+
+  // Date preset buttons
+  document.querySelectorAll('.date-preset-btn').forEach(button => {
+    button.addEventListener('click', function() {
+      // Remove active class from all buttons
+      document.querySelectorAll('.date-preset-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Add active class to clicked button
+      this.classList.add('active');
+
+      const today = new Date();
+      let startDate = new Date();
+      let endDate = new Date();
+
+      // Handle days preset
+      if (this.dataset.days) {
+        const days = parseInt(this.dataset.days);
+        startDate.setDate(today.getDate() - days);
+        endDate = today;
+      }
+
+      // Handle predefined ranges
+      if (this.dataset.range) {
+        switch(this.dataset.range) {
+          case 'current-month':
+            startDate = new Date(today.getFullYear(), today.getMonth(), 1);
+            endDate = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+            break;
+          case 'last-month':
+            startDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+            endDate = new Date(today.getFullYear(), today.getMonth(), 0);
+            break;
+          case 'year-to-date':
+            startDate = new Date(today.getFullYear(), 0, 1);
+            endDate = today;
+            break;
+        }
+      }
+
+      // Format dates for input fields (YYYY-MM-DD)
+      document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+      document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+
+      // Update preview
+      updateReportPreview();
+    });
+  });
+
+  // Update report preview
+  function updateReportPreview() {
+    const startDate = document.getElementById('startDate').value;
+    const endDate = document.getElementById('endDate').value;
+    const routeSelect = document.getElementById('routeId');
+    const routeText = routeSelect.options[routeSelect.selectedIndex].text;
+
+    if (startDate && endDate) {
+      const previewText = `
+        <i class="fas fa-chart-line"></i>
+        <h6>Report Preview</h6>
+        <p>Package report for ${formatDate(startDate)} to ${formatDate(endDate)}</p>
+        <p>${routeSelect.value ? 'Route: ' + routeText : 'All Routes'}</p>
+      `;
+      document.querySelector('.report-preview').innerHTML = previewText;
+    }
+  }
+
+  // Format date for display
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric'
+    }).format(date);
+  }
+
+  // Add event listeners for input changes
+  document.getElementById('startDate').addEventListener('change', updateReportPreview);
+  document.getElementById('endDate').addEventListener('change', updateReportPreview);
+  document.getElementById('routeId').addEventListener('change', updateReportPreview);
+
+  // Form validation
+  (function() {
+    'use strict';
+
+    // Fetch all forms we want to apply validation to
+    var forms = document.querySelectorAll('.needs-validation');
+
+    // Loop over them and prevent submission
+    Array.prototype.slice.call(forms)
+            .forEach(function(form) {
+              form.addEventListener('submit', function(event) {
+                if (!form.checkValidity()) {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+              }, false);
+            });
+  })();
+</script>
+</body>
+</html>

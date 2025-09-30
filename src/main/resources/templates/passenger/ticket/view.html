@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>View Ticket</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a3a6e; --secondary: #e63946; --light: #f8f9fa; --dark: #212529;
+            --success: #198754; --warning: #ffc107; --danger: #dc3545; --info: #0dcaf0;
+        }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f5f7fa; padding-top: 56px; }
+        .navbar-brand i { color: var(--secondary); }
+        .page-header { background: var(--primary); color: white; padding: 60px 0; margin-bottom: 40px; text-align: center; }
+        .page-title { font-size: 2.5rem; font-weight: 700; }
+        .card { border: none; box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); border-radius: 0.5rem; }
+        .card-header { background-color: var(--primary); color: white; font-weight: 600; }
+        .list-group-item { border-color: #e9ecef; }
+        .list-group-item strong { color: var(--dark); min-width: 150px; display: inline-block; }
+        .status-badge { font-size: 1rem; padding: 0.5em 1em; border-radius: 50px; }
+        .status-confirmed { background-color: var(--success); color: white; }
+        .status-pending { background-color: var(--warning); color: #212529; }
+        .status-cancelled { background-color: var(--danger); color: white; }
+        .btn i { margin-right: 8px; }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/"><i class="fas fa-train"></i> TrainConnect</a>
+    </div>
+</nav>
+
+<header class="page-header">
+    <div class="container">
+        <h1 class="page-title">Ticket Details</h1>
+    </div>
+</header>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="fas fa-ticket-alt me-2"></i> Ticket ID: <span th:text="${ticket.ticketId}"></span></span>
+                    <span class="status-badge"
+                          th:classappend="${ticket.status == 'confirmed' ? 'status-confirmed' : (ticket.status == 'pending' ? 'status-pending' : 'status-cancelled')}"
+                          th:text="${#strings.capitalize(ticket.status)}">
+                        Status
+                    </span>
+                </div>
+                <div class="card-body">
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item"><strong>Passenger Name:</strong> <span th:text="${ticket.passengerName}"></span></li>
+                        <li class="list-group-item" th:if="${ticket.route != null}"><strong>Route:</strong> <span th:text="${ticket.route.origin} + ' to ' + ${ticket.route.destination}"></span></li>
+                        <li class="list-group-item"><strong>Travel Date:</strong> <span th:text="${#temporals.format(ticket.travelDate, 'MMMM dd, yyyy')}"></span></li>
+                        <li class="list-group-item"><strong>Seat Number:</strong> <span th:text="${ticket.seatNumber}"></span></li>
+                        <li class="list-group-item"><strong>Class:</strong> <span th:text="${ticket.ticketClass}"></span></li>
+                        <li class="list-group-item"><strong>Price:</strong> <span th:text="${'$' + #numbers.formatDecimal(ticket.price, 1, 'COMMA', 2, 'POINT')}"></span></li>
+                        <li class="list-group-item"><strong>Booking Date:</strong> <span th:text="${#temporals.format(ticket.createdAt, 'MMM dd, yyyy, hh:mm a')}"></span></li>
+                    </ul>
+                </div>
+                <div class="card-footer text-center">
+                    <a th:href="@{/dashboard}" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+
+                    <form th:action="@{/tickets/{id}/delete(id=${ticket.id})}" method="post" class="d-inline" th:if="${ticket.status != 'cancelled'}">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to cancel this ticket?');">
+                            <i class="fas fa-times-circle"></i> Cancel Ticket
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

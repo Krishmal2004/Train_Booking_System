@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>Confirm Issue Removal</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1a3a6e;
+      --primary-dark: #132d54;
+      --primary-light: rgba(26, 58, 110, 0.1);
+      --secondary: #e63946;
+      --secondary-light: rgba(230, 57, 70, 0.1);
+      --accent: #a8dadc;
+      --success: #38b000;
+      --warning: #ffaa00;
+      --danger: #d90429;
+      --light: #f8f9fa;
+      --dark: #212529;
+      --gray: #6c757d;
+      --border-radius: 12px;
+      --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      line-height: 1.6;
+      padding: 30px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    h1, h2, h3, h4, h5 {
+      font-family: 'Montserrat', sans-serif;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    h1:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      border-radius: 2px;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      color: var(--danger);
+      margin-bottom: 25px;
+      padding: 15px;
+      background-color: rgba(217, 4, 41, 0.1);
+      border-radius: var(--border-radius);
+      text-align: center;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: var(--dark);
+      margin-bottom: 10px;
+    }
+
+    a {
+      color: var(--primary);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    a:hover {
+      color: var(--secondary);
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 30px;
+      gap: 20px;
+    }
+
+    .nav-link {
+      background-color: white;
+      color: var(--primary);
+      padding: 12px 24px;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      box-shadow: var(--box-shadow);
+      display: inline-flex;
+      align-items: center;
+      transition: var(--transition);
+    }
+
+    .nav-link i {
+      margin-right: 8px;
+    }
+
+    .nav-link:hover {
+      transform: translateY(-3px);
+      color: white;
+      background-color: var(--primary);
+      box-shadow: 0 8px 25px rgba(26, 58, 110, 0.2);
+    }
+
+    .user-info {
+      background-color: white;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .user-info p {
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .user-info i {
+      color: var(--primary);
+      margin-right: 8px;
+      font-size: 1.1rem;
+    }
+
+    .user-info strong {
+      color: var(--secondary);
+      font-weight: 600;
+    }
+
+    .confirmation-container {
+      background-color: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      margin-bottom: 30px;
+      padding: 30px;
+    }
+
+    .issue-info {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+      background-color: var(--light);
+      padding: 20px;
+      border-radius: var(--border-radius);
+    }
+
+    .info-item {
+      margin-bottom: 15px;
+    }
+
+    .info-item h3 {
+      color: var(--gray);
+      font-size: 1rem;
+      margin-bottom: 5px;
+      display: flex;
+      align-items: center;
+    }
+
+    .info-item h3 i {
+      margin-right: 8px;
+      color: var(--primary);
+    }
+
+    .info-item p {
+      font-weight: 500;
+      font-size: 1.1rem;
+      margin: 0;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--primary);
+    }
+
+    select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+
+    select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 58, 110, 0.1);
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 15px;
+      margin-top: 30px;
+    }
+
+    button {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    button[type="submit"] {
+      background-color: var(--danger);
+      color: white;
+    }
+
+    button[type="submit"]:hover {
+      background-color: #c5001f;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(217, 4, 41, 0.2);
+    }
+
+    button[type="button"] {
+      background-color: var(--light);
+      color: var(--dark);
+      border: 1px solid #ddd;
+    }
+
+    button[type="button"]:hover {
+      background-color: #e9ecef;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .note {
+      background-color: var(--primary-light);
+      padding: 15px;
+      border-radius: var(--border-radius);
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+    }
+
+    .note i {
+      margin-right: 10px;
+      font-size: 1.1rem;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 50px;
+      padding-top: 20px;
+      border-top: 1px solid #edf2f7;
+      color: var(--gray);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 15px;
+      }
+
+      .user-info {
+        flex-direction: column;
+      }
+
+      .issue-info {
+        grid-template-columns: 1fr;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Confirm Issue Removal</h1>
+
+  <div class="nav-links">
+    <a href="/reports" class="nav-link">
+      <i class="fas fa-arrow-left"></i> Back to All Issues
+    </a>
+    <a th:href="@{/reports/{id}(id=${issue.id})}" class="nav-link">
+      <i class="fas fa-eye"></i> View Issue Details
+    </a>
+  </div>
+
+  <div class="user-info">
+    <p><i class="fas fa-user-circle"></i> Current User: <strong>Krishmal2004</strong></p>
+    <p><i class="fas fa-clock"></i> Current Date/Time: <span>2025-09-18 08:56:08</span></p>
+  </div>
+
+  <div class="confirmation-container">
+    <h2><i class="fas fa-exclamation-triangle"></i> Warning: You are about to remove the following issue report</h2>
+
+    <div class="issue-info">
+      <div class="info-item">
+        <h3><i class="fas fa-ticket-alt"></i> Ticket ID</h3>
+        <p th:text="${issue.ticketId}">IT-20250816-1001</p>
+      </div>
+
+      <div class="info-item">
+        <h3><i class="fas fa-heading"></i> Title</h3>
+        <p th:text="${issue.title}">Payment Gateway Issue</p>
+      </div>
+
+      <div class="info-item">
+        <h3><i class="fas fa-server"></i> System Affected</h3>
+        <p th:text="${issue.systemAffected}">Payment System</p>
+      </div>
+
+      <div class="info-item">
+        <h3><i class="fas fa-tasks"></i> Current Status</h3>
+        <p th:text="${issue.status}">Open</p>
+      </div>
+    </div>
+
+    <div>
+      <h3><i class="fas fa-question-circle"></i> Reason for Removal</h3>
+      <form th:action="@{/reports/{id}/delete-confirm(id=${issue.id})}" method="post">
+        <div class="form-group">
+          <select name="removalReason" required>
+            <option value="">-- Select Reason --</option>
+            <option value="Issue Resolved">Issue Resolved</option>
+            <option value="Duplicate Issue">Duplicate Issue</option>
+            <option value="Invalid Issue">Invalid Issue</option>
+            <option value="No Longer Relevant">No Longer Relevant</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <textarea name="removalNotes" rows="3"
+                    placeholder="Additional notes about removal (optional)"></textarea>
+        </div>
+
+        <div class="button-group">
+          <button type="submit"><i class="fas fa-trash"></i> Confirm Removal</button>
+          <button type="button" onclick="window.location.href='/reports'"><i class="fas fa-times"></i> Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="note">
+      <i class="fas fa-info-circle"></i>
+      <p>Note: Removed issues will be archived and not permanently deleted from the system.</p>
+    </div>
+  </div>
+
+  <footer>
+    <p>IT Support System - Managed by Krishmal2004 - Kapuge K.H.P.P</p>
+    <p>Last updated: 2025-09-18 08:56:08</p>
+  </footer>
+</div>
+</body>
+</html>
