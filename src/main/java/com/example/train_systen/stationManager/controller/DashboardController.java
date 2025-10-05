@@ -1,9 +1,7 @@
 package com.example.train_systen.stationManager.controller;
 
+import com.example.train_systen.stationManager.model.*;
 import com.example.train_systen.stationManager.model.Package;
-import com.example.train_systen.stationManager.model.Route;
-import com.example.train_systen.stationManager.model.Schedule;
-import com.example.train_systen.stationManager.model.Ticket;
 import com.example.train_systen.stationManager.service.PackageService;
 import com.example.train_systen.stationManager.service.RouteService;
 import com.example.train_systen.stationManager.service.ScheduleService;
@@ -57,11 +55,13 @@ public class DashboardController {
         List<Package> allPackages = packageService.getAllPackages();
         model.addAttribute("packages", allPackages);
 
-        // --- NEW ---
+
         // Fetch all train schedules
         List<Schedule> allSchedules = scheduleService.getAllSchedules();
         model.addAttribute("schedules", allSchedules);
         // --- END NEW ---
+
+        model.addAttribute("issue", new Issue());
 
         model.addAttribute("currentUser", username);
         return "dashboard";

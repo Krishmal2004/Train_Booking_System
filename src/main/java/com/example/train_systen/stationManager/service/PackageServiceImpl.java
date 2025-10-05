@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,13 +58,14 @@ public class PackageServiceImpl implements PackageService {
 
     @Override
     public Package savePackage(Package pack) {
-        // Add creation timestamp for new packages
-        if (pack.getId() == null) {
-            // Could add audit info here
-            // pack.setCreatedBy("IT24103866");
-        } else {
-            // Could add audit info here
-            // pack.setUpdatedBy("IT24103866");
+        // --- MODIFIED: Automatically generate Package ID for new packages ---
+        if (pack.getId() == null && (pack.getPackageID() == null || pack.getPackageID().isEmpty())) {
+            int year = Year.now().getValue();
+            // Get the count of all packages to create a simple sequence.
+            // For a more robust solution, you might query for the max sequence number for the current year.
+            long sequence = packageRepository.count() + 1;
+            String generatedId = String.format("PKG-%d-%04d", year, sequence);
+            pack.setPackageID(generatedId);
         }
         return packageRepository.save(pack);
     }

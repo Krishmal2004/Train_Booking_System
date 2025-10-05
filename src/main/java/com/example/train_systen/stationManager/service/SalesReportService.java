@@ -33,6 +33,12 @@ public class SalesReportService {
         LocalDate end = date;
         return generateReport(start, end, "DAILY", generatedBy);
     }
+    public SalesReport generateWeeklyReport(LocalDate startDate, LocalDate endDate, String generatedBy) {
+        return generateReport(startDate, endDate, "WEEKLY", generatedBy);
+    }
+    public SalesReport generateMonthlyReport(LocalDate startDate, LocalDate endDate, String generatedBy) {
+        return generateReport(startDate, endDate, "MONTHLY", generatedBy);
+    }
 
     public Map<String, Object> getDashboardSummary() {
         Map<String, Object> summary = new HashMap<>();
@@ -59,7 +65,8 @@ public class SalesReportService {
     }
 
     private SalesReport generateReport(LocalDate startDate, LocalDate endDate, String reportType, String generatedBy) {
-        List<Ticket> tickets = ticketRepository.findByTravelDateBetween(startDate, endDate);
+        // UPDATED: Fetch only tickets with the status "CONFIRMED"
+        List<Ticket> tickets = ticketRepository.findByTravelDateBetweenAndStatus(startDate, endDate, "CONFIRMED");
 
         BigDecimal totalRevenue = tickets.stream()
                 .map(Ticket::getPrice)
