@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>TrainConnect - Schedules & Timetables</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a3a6e;
+            --secondary-color: #e63946;
+            --light-color: #f1faee;
+            --dark-color: #1d3557;
+            --accent-color: #a8dadc;
+            --gradient-primary: linear-gradient(135deg, #1a3a6e 0%, #2a5298 100%);
+            --gradient-secondary: linear-gradient(135deg, #e63946 0%, #ff616f 100%);
+            --box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            --transition: all 0.3s ease;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+        }
+
+        /* NAVBAR STYLING */
+        .navbar {
+            background-color: rgba(26, 58, 110, 0.95);
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+            padding: 15px 0;
+            transition: var(--transition);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+        }
+
+        .navbar-brand .train-icon {
+            color: var(--secondary-color);
+        }
+
+        .nav-link {
+            position: relative;
+            margin: 0 5px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background-color: var(--secondary-color);
+            bottom: 0;
+            left: 0;
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover:after,
+        .nav-link.active:after {
+            width: 100%;
+        }
+
+        /* HERO SECTION STYLING */
+        .hero-section {
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+            url('https://images.pexels.com/photos/226589/pexels-photo-226589.jpeg'); /* Schedule background */
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            padding: 150px 0;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-section:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 100px;
+            background: linear-gradient(to top, rgba(248, 249, 250, 1), transparent);
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* BUTTON STYLING */
+        .btn {
+            border-radius: 50px;
+            padding: 12px 30px;
+            font-weight: 500;
+            transition: var(--transition);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .btn-lg {
+            padding: 15px 40px;
+        }
+
+        .btn-primary {
+            background: var(--gradient-secondary);
+            border: none;
+            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(230, 57, 70, 0.4);
+            background: linear-gradient(135deg, #d12836 0%, #e63946 100%);
+        }
+
+        /* SECTION STYLING */
+        .section-title {
+            position: relative;
+            padding-bottom: 20px;
+            margin-bottom: 50px;
+            color: var(--dark-color);
+            text-align: center;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--gradient-secondary);
+        }
+
+        /* SCHEDULE SEARCH & TABLE STYLING */
+        .search-card {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: var(--box-shadow);
+        }
+
+        .table thead th {
+            border-bottom: 2px solid var(--dark-color);
+            color: var(--dark-color);
+        }
+
+        .table tbody tr:hover {
+            background-color: var(--light-color);
+        }
+
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-active {
+            background-color: rgba(40, 167, 69, 0.1);
+            color: #1e7e34;
+        }
+        .status-delayed {
+            background-color: rgba(255, 193, 7, 0.1);
+            color: #b98500;
+        }
+
+        /* CTA SECTION */
+        .cta-section {
+            background: linear-gradient(rgba(26, 58, 110, 0.9), rgba(26, 58, 110, 0.9)),
+            url('https://images.pexels.com/photos/2790396/pexels-photo-2790396.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            padding: 80px 0;
+            border-radius: 20px;
+            margin: 60px 0;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+            color: white;
+        }
+
+        /* FOOTER STYLING */
+        .footer {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 80px 0 20px;
+            margin-top: 60px;
+            position: relative;
+        }
+
+        .footer:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 10px;
+            background: var(--secondary-color);
+        }
+
+        .footer h5 {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            font-size: 1.3rem;
+        }
+
+        .footer h5:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+            transition: var(--transition);
+        }
+
+        .footer-link:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .social-links a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            line-height: 40px;
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            margin-right: 10px;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-3px);
+        }
+
+        /* RESPONSIVE ADJUSTMENTS */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.5rem;
+            }
+            .hero-section {
+                padding: 100px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="fas fa-train me-2 train-icon"></i>TrainConnect
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/route"><i class="fas fa-route me-1"></i> Routes</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/attractions"><i class="fas fa-mountain me-1"></i> Attractions</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/schedules"><i class="fas fa-calendar-alt me-1"></i> Schedules</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/tickets"><i class="fas fa-ticket-alt me-1"></i> Tickets</a>
+                </li>
+                <li class="nav-item ms-lg-3">
+                    <a class="btn btn-primary" href="/login"><i class="fas fa-user me-1"></i> Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<section class="hero-section text-center">
+    <div class="container hero-content">
+        <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">Find Your Train</h1>
+        <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">Access real-time schedules, check train availability, and plan your journey across Sri Lanka with ease.</p>
+        <div data-aos="fade-up" data-aos-delay="300">
+            <a href="#schedule-search" class="btn btn-primary btn-lg">Search Schedules</a>
+        </div>
+    </div>
+</section>
+
+<div class="container">
+    <section id="schedule-search" class="py-5" data-aos="fade-up">
+        <h2 class="section-title">Search for Schedules</h2>
+        <div class="search-card">
+            <form>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label for="from-station" class="form-label"><i class="fas fa-map-marker-alt me-2"></i>From</label>
+                        <input type="text" class="form-control form-control-lg" id="from-station" placeholder="e.g., Colombo Fort">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="to-station" class="form-label"><i class="fas fa-map-signs me-2"></i>To</label>
+                        <input type="text" class="form-control form-control-lg" id="to-station" placeholder="e.g., Kandy">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="travel-date" class="form-label"><i class="fas fa-calendar-day me-2"></i>Date</label>
+                        <input type="date" class="form-control form-control-lg" id="travel-date">
+                    </div>
+                    <div class="col-md-1 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100 btn-lg"><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </section>
+
+    <section class="py-5" data-aos="fade-up">
+        <h2 class="section-title">Available Trains</h2>
+        <div class="table-container table-responsive">
+            <table class="table table-hover align-middle">
+                <thead class="text-uppercase">
+                <tr>
+                    <th>Train ID</th>
+                    <th>Route</th>
+                    <th>Departure</th>
+                    <th>Arrival</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><strong>S-001</strong></td>
+                    <td>Colombo Fort &rarr; Kandy</td>
+                    <td>08:30 AM</td>
+                    <td>11:15 AM</td>
+                    <td><span class="status-badge status-active">On Time</span></td>
+                    <td><a href="/tickets" class="btn btn-primary btn-sm">Book Now</a></td>
+                </tr>
+                <tr>
+                    <td><strong>S-002</strong></td>
+                    <td>Colombo Fort &rarr; Galle</td>
+                    <td>09:10 AM</td>
+                    <td>11:40 AM</td>
+                    <td><span class="status-badge status-active">On Time</span></td>
+                    <td><a href="/tickets" class="btn btn-primary btn-sm">Book Now</a></td>
+                </tr>
+                <tr>
+                    <td><strong>S-003</strong></td>
+                    <td>Kandy &rarr; Ella</td>
+                    <td>10:00 AM</td>
+                    <td>04:30 PM</td>
+                    <td><span class="status-badge status-delayed">Delayed</span></td>
+                    <td><a href="/tickets" class="btn btn-primary btn-sm">Book Now</a></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="cta-section text-center" data-aos="fade-up">
+        <div class="container">
+            <h2 class="mb-4">Let the Journey Begin</h2>
+            <p class="lead mb-5">The best way to experience these wonders is by train. Book your tickets today and travel through the heart of Sri Lanka!</p>
+            <a href="/tickets" class="btn btn-primary btn-lg px-5">Find a Train</a>
+        </div>
+    </section>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 mb-4 mb-md-0">
+                <h5>TrainConnect</h5>
+                <p>Modern railway management and booking system for seamless passenger experience. Explore scenic routes and unforgettable journeys.</p>
+                <div class="social-links mt-4">
+                    <a href="#" class="text-white"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="text-white"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="col-md-2 mb-4 mb-md-0">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/" class="footer-link">Home</a></li>
+                    <li><a href="/route" class="footer-link">Routes</a></li>
+                    <li><a href="/attractions" class="footer-link">Attractions</a></li>
+                    <li><a href="/schedules" class="footer-link">Schedules</a></li>
+                    <li><a href="/packages" class="footer-link">Packages</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3 mb-4 mb-md-0">
+                <h5>Contact Us</h5>
+                <address class="mb-0">
+                    <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Railway Street, Colombo</p>
+                    <p class="mb-2"><i class="fas fa-phone me-2"></i> (+94) 781-540091</p>
+                    <p class="mb-2"><i class="fas fa-envelope me-2"></i> info@trainconnect.com</p>
+                    <p class="mb-2"><i class="fas fa-clock me-2"></i> Mon-Fri: 9AM - 6PM</p>
+                </address>
+            </div>
+            <div class="col-md-3">
+                <h5>Newsletter</h5>
+                <p>Subscribe for updates on new routes and special offers.</p>
+                <div class="input-group mb-3">
+                    <input type="email" class="form-control" placeholder="Your email">
+                    <button class="btn btn-secondary" type="button">Subscribe</button>
+                </div>
+                <p class="small">By subscribing, you agree to our Privacy Policy and Terms of Service.</p>
+            </div>
+        </div>
+        <hr class="my-4 bg-light opacity-25">
+        <div class="text-center">
+            <p class="mb-0">&copy; 2025 TrainConnect. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    // Initialize AOS animations
+    AOS.init({
+        duration: 800,
+        easing: 'ease-in-out',
+        once: true
+    });
+</script>
+</body>
+</html>

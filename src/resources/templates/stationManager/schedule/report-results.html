@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Schedule Report</title>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; background-color: #f5f7fa; margin: 20px; }
+        .report-container { max-width: 1000px; margin: 0 auto; background: white; padding: 40px; box-shadow: 0 8px 30px rgba(0,0,0,0.12); border-radius: 10px; }
+        .report-header { text-align: center; margin-bottom: 40px; border-bottom: 2px solid #eee; padding-bottom: 20px; }
+        .report-header h1 { margin: 0; color: #2c3e50; }
+        .report-header p { margin: 5px 0 0; font-size: 16px; color: #555; }
+        .action-bar { margin-bottom: 20px; text-align: right; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; border: none; cursor: pointer; color: white; }
+        .btn-print { background-color: #3498db; }
+        .btn-back { background-color: #7f8c8d; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #ddd; }
+        thead th { background-color: #ecf0f1; font-size: 13px; text-transform: uppercase; }
+        .empty-state { text-align: center; padding: 50px; }
+        @media print {
+            body { background-color: white; margin: 0; }
+            .action-bar { display: none; }
+            .report-container { box-shadow: none; border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+<div class="report-container">
+    <div class="action-bar">
+        <a href="/schedules/report" class="btn btn-back"><i class="fas fa-arrow-left"></i> Back</a>
+        <button onclick="window.print()" class="btn btn-print"><i class="fas fa-print"></i> Print Report</button>
+    </div>
+
+    <div class="report-header">
+        <h1>Schedule Report</h1>
+        <p>
+            For the period of <strong th:text="${#temporals.format(startDate, 'dd MMMM yyyy')}"></strong>
+            to <strong th:text="${#temporals.format(endDate, 'dd MMMM yyyy')}"></strong>
+        </p>
+        <p th:if="${route != null}">
+            Filtered by Route: <strong th:text="${route.origin + ' → ' + route.destination}"></strong>
+        </p>
+    </div>
+
+    <div th:if="${schedules.empty}" class="empty-state">
+        <h2>No schedules found for the selected criteria.</h2>
+    </div>
+
+    <table th:if="${!schedules.empty}">
+        <thead>
+        <tr>
+            <th>Schedule ID</th>
+            <th>Route</th>
+            <th>Date</th>
+            <th>Departure</th>
+            <th>Arrival</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="schedule : ${schedules}">
+            <td th:text="${schedule.scheduleId}"></td>
+            <td th:text="${schedule.route.origin + ' → ' + schedule.route.destination}"></td>
+            <td th:text="${#temporals.format(schedule.scheduleDate, 'dd-MMM-yyyy')}"></td>
+            <td th:text="${#temporals.format(schedule.departureTime, 'hh:mm a')}"></td>
+            <td th:text="${#temporals.format(schedule.arrivalTime, 'hh:mm a')}"></td>
+            <td th:text="${schedule.status}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

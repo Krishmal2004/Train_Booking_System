@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Generate Schedule Report</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary-color: #2c3e50; --accent-color: #3498db; --border-radius: 10px; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .form-container { background-color: white; border-radius: var(--border-radius); box-shadow: 0 8px 30px rgba(0,0,0,0.12); width: 100%; max-width: 600px; }
+        .form-header { background-color: var(--accent-color); color: white; padding: 20px; border-top-left-radius: var(--border-radius); border-top-right-radius: var(--border-radius); }
+        .form-header h1 { margin: 0; font-size: 24px; }
+        .form-body { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .form-row { display: flex; gap: 20px; }
+        .form-row .form-group { flex: 1; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 14px; border-radius: 8px; border: none; background-color: var(--accent-color); color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: var(--primary-color); text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <div class="form-header">
+        <h1><i class="fas fa-chart-line"></i> Generate Schedule Report</h1>
+    </div>
+    <div class="form-body">
+        <form th:action="@{/schedules/generate-report}" method="get">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="startDate">Start Date</label>
+                    <input type="date" id="startDate" name="startDate" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="endDate">End Date</label>
+                    <input type="date" id="endDate" name="endDate" class="form-control" required>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="routeId">Filter by Route (Optional)</label>
+                <select id="routeId" name="routeId" class="form-control">
+                    <option value="">-- All Routes --</option>
+                    <option th:each="route : ${routes}"
+                            th:value="${route.id}"
+                            th:text="${route.origin + ' → ' + route.destination}"></option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn"><i class="fas fa-cogs"></i> Generate Report</button>
+        </form>
+        <a href="/schedules" class="back-link">Back to Schedules</a>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Resolve Issue</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1a3a6e; --primary-dark: #142c54; --success: #198754; --border-radius: 8px; --box-shadow: 0 2px 15px rgba(0,0,0,0.08); }
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f9; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: 1.5rem; }
+        .card { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
+        .card-header { background-color: var(--success); color: white; padding: 15px 20px; font-weight: 500; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .card-body { padding: 25px; }
+        .issue-details { background-color: #f8f9fa; padding: 20px; border-radius: var(--border-radius); border: 1px solid #e9ecef; margin-bottom: 25px; }
+        .issue-details h3 { margin-top: 0; color: var(--primary); }
+        .form-group { margin-bottom: 25px; }
+        label { display: block; margin-bottom: 10px; font-weight: 500; }
+        textarea { width: 100%; padding: 12px 15px; border: 1px solid #ced4da; border-radius: var(--border-radius); min-height: 150px; font-size: 1rem; }
+        button, .nav-link { display: inline-flex; align-items: center; gap: 8px; border: none; padding: 14px 24px; border-radius: var(--border-radius); cursor: pointer; font-weight: 500; font-size: 1rem; text-decoration: none; }
+        button { background-color: var(--success); color: white; }
+        .nav-link { background-color: #6c757d; color: white; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Resolve Issue #<span th:text="${issue.id}">101</span></h1>
+    <div class="card">
+        <div class="card-header"><i class="fas fa-check-circle"></i> Confirm Resolution</div>
+        <div class="card-body">
+            <div class="issue-details">
+                <h3><span th:text="${issue.title}">Issue Title</span></h3>
+                <p><strong>Reporter:</strong> <span th:text="${issue.reporterName}"></span></p>
+                <p><strong>Description:</strong> <span th:text="${issue.description}"></span></p>
+            </div>
+            <form th:action="@{/issues/{id}/resolve(id=${issue.id})}" method="post">
+                <div class="form-group">
+                    <label for="resolution">Resolution Comment</label>
+                    <textarea id="resolution" name="resolution" class="form-control" required placeholder="Describe how the issue was resolved..."></textarea>
+                </div>
+                <div class="button-group" style="display: flex; gap: 12px;">
+                    <button type="submit"><i class="fas fa-check"></i> Mark as Resolved</button>
+                    <a href="/issues" class="nav-link">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

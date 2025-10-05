@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <title>Sales Dashboard</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --primary: #1a3a6e;
+      --primary-light: #2a4b82;
+      --primary-dark: #142c54;
+      --secondary: #e63946;
+      --success: #198754;
+      --danger: #dc3545;
+      --info: #0dcaf0;
+      --warning: #ffc107;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --gray: #6c757d;
+      --border-radius: 10px;
+      --box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s ease;
+    }
+
+    /* Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f4f7f9;
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    /* Header Styles */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2.5rem;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      color: var(--primary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header h1 i {
+      color: var(--primary);
+      font-size: 2.2rem;
+    }
+
+    .header .nav-links {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .header .nav-links a {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      background-color: var(--primary);
+      color: white;
+      padding: 12px 20px;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      transition: var(--transition);
+    }
+
+    .header .nav-links a:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .header .nav-links a.logout {
+      background-color: var(--danger);
+    }
+
+    .header .nav-links a.logout:hover {
+      background-color: #bb2d3b;
+    }
+
+    /* User Session Bar */
+    .user-session-bar {
+      background-color: white;
+      border-radius: var(--border-radius);
+      padding: 15px;
+      margin-bottom: 25px;
+      box-shadow: var(--box-shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background-color: var(--primary-light);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+
+    .user-details {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-name {
+      font-weight: 600;
+      color: var(--dark);
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+
+    .session-details {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .session-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .session-item i {
+      color: var(--primary);
+    }
+
+    .session-label {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+
+    .session-value {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      transition: var(--transition);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .stat-card .icon {
+      font-size: 2.5rem;
+      width: 70px;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+
+    .stat-card:hover .icon {
+      transform: scale(1.1);
+    }
+
+    .stat-card .icon-revenue {
+      color: var(--success);
+      background-color: #e8f5e9;
+    }
+
+    .stat-card .icon-tickets {
+      color: var(--info);
+      background-color: #e0f7fa;
+    }
+
+    .stat-card .icon-monthly {
+      color: var(--secondary);
+      background-color: #fce4ec;
+    }
+
+    .stat-card .stat-info .value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.2;
+      margin-bottom: 5px;
+    }
+
+    .stat-card .stat-info .label {
+      font-size: 0.9rem;
+      color: var(--gray);
+      font-weight: 500;
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: 1.5rem;
+    }
+
+    .chart-card {
+      background: white;
+      padding: 1.8rem;
+      border-radius: var(--border-radius);
+      box-shadow: var(--box-shadow);
+      transition: var(--transition);
+    }
+
+    .chart-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+
+    .chart-card h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      margin-bottom: 1.5rem;
+      color: var(--primary);
+      font-weight: 600;
+      position: relative;
+      display: inline-block;
+    }
+
+    .chart-card h2::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -8px;
+      width: 40px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 2px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .stats-grid, .charts-grid, .user-session-bar {
+      animation: fadeIn 0.6s ease-out forwards;
+    }
+
+    .stat-card:nth-child(1) { animation-delay: 0.1s; }
+    .stat-card:nth-child(2) { animation-delay: 0.2s; }
+    .stat-card:nth-child(3) { animation-delay: 0.3s; }
+    .stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 15px;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header .nav-links {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .user-session-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .session-details {
+        width: 100%;
+        justify-content: space-between;
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .header .nav-links {
+        flex-direction: column;
+      }
+
+      .header .nav-links a {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .stat-card {
+        padding: 1.2rem;
+      }
+
+      .stat-card .icon {
+        width: 60px;
+        height: 60px;
+        font-size: 2rem;
+      }
+
+      .stat-card .stat-info .value {
+        font-size: 1.7rem;
+      }
+
+      .chart-card {
+        padding: 1.5rem;
+      }
+    }
+
+    @media (max-width: 576px) {
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .session-details {
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+      }
+
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1><i class="fas fa-chart-line"></i> Sales Dashboard</h1>
+    <div class="nav-links">
+      <a href="/sales-reports"><i class="fas fa-list-alt"></i> View All Reports</a>
+      <a href="/logout" class="logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+  </div>
+
+  <!-- User Session Bar -->
+  <div class="user-session-bar">
+    <div class="user-info">
+      <div class="user-avatar">
+        <span th:text="${session.userName != null ? #strings.substring(session.userName, 0, 1).toUpperCase() : 'G'}">G</span>
+      </div>
+      <div class="user-details">
+        <div class="user-name" th:text="${session.userName != null ? session.userName : 'Guest User'}">Guest User</div>
+        <div class="user-role" th:text="${session.userRole != null ? session.userRole : 'Visitor'}">Visitor</div>
+      </div>
+    </div>
+    <div class="session-details">
+      <div class="session-item">
+        <i class="fas fa-clock"></i>
+        <div>
+          <div class="session-label">Login Time</div>
+          <div class="session-value" th:text="${#dates.format(session.loginTime, 'yyyy-MM-dd HH:mm')}">2025-09-30 12:34</div>
+        </div>
+      </div>
+      <div class="session-item">
+        <i class="fas fa-key"></i>
+        <div>
+          <div class="session-label">Session ID</div>
+          <div class="session-value" th:text="${session.id != null ? #strings.substring(session.id, 0, 8) + '...' : 'N/A'}">N/A</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="icon icon-revenue"><i class="fas fa-dollar-sign"></i></div>
+      <div class="stat-info">
+        <div class="value" th:text="'$' + ${#numbers.formatDecimal(totalRevenue, 1, 'COMMA', 2, 'POINT')}"></div>
+        <div class="label">Total Lifetime Revenue</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="icon icon-tickets"><i class="fas fa-ticket-alt"></i></div>
+      <div class="stat-info">
+        <div class="value" th:text="${totalTicketsSold}"></div>
+        <div class="label">Total Tickets Sold</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="icon icon-monthly"><i class="fas fa-calendar-day"></i></div>
+      <div class="stat-info">
+        <div class="value" th:text="'$' + ${#numbers.formatDecimal(monthlyRevenue, 1, 'COMMA', 2, 'POINT')}"></div>
+        <div class="label">Sales This Month</div>
+      </div>
+    </div>
+    <div class="stat-card">
+      <div class="icon icon-revenue"><i class="fas fa-calendar-alt"></i></div>
+      <div class="stat-info">
+        <div class="value" th:text="'$' + ${#numbers.formatDecimal(yearlyRevenue, 1, 'COMMA', 2, 'POINT')}"></div>
+        <div class="label">Sales This Year</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card">
+      <h2>Monthly Revenue (<span th:text="${#temporals.format(#temporals.createNow(), 'yyyy')}"></span>)</h2>
+      <canvas id="monthlySalesChart"></canvas>
+    </div>
+    <div class="chart-card">
+      <h2>Ticket Class Breakdown</h2>
+      <canvas id="classDistributionChart"></canvas>
+    </div>
+  </div>
+</div>
+
+<script th:inline="javascript">
+  /*<![CDATA[*/
+  document.addEventListener('DOMContentLoaded', function () {
+    // Record user activity for session management
+    document.addEventListener('click', function() {
+      localStorage.setItem('lastActivity', new Date().getTime());
+    });
+
+    // Check session timeout every minute
+    setInterval(function() {
+      let lastActivity = localStorage.getItem('lastActivity');
+      if (lastActivity) {
+        let now = new Date().getTime();
+        // If inactive for more than 28 minutes, warn user
+        if ((now - lastActivity) > 28 * 60 * 1000) {
+          alert('Your session will expire in 2 minutes due to inactivity. Please save your work.');
+          // Refresh activity to prevent multiple alerts
+          localStorage.setItem('lastActivity', new Date().getTime());
+        }
+      }
+    }, 60000);
+
+    // === Monthly Sales Chart ===
+    const monthlySalesData = /*[[${monthlySalesData}]]*/ [];
+    const monthLabels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const salesData = Array(12).fill(0);
+
+    monthlySalesData.forEach(item => {
+      if (item.month >= 1 && item.month <= 12) {
+        salesData[item.month - 1] = item.totalRevenue;
+      }
+    });
+
+    const monthlyCtx = document.getElementById('monthlySalesChart').getContext('2d');
+    new Chart(monthlyCtx, {
+      type: 'bar',
+      data: {
+        labels: monthLabels,
+        datasets: [{
+          label: 'Monthly Revenue',
+          data: salesData,
+          backgroundColor: 'rgba(26, 58, 110, 0.7)',
+          borderColor: 'rgba(26, 58, 110, 1)',
+          borderWidth: 1,
+          borderRadius: 5,
+          hoverBackgroundColor: 'rgba(26, 58, 110, 0.9)'
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(26, 58, 110, 0.9)',
+            titleFont: {
+              size: 14,
+              family: 'Poppins'
+            },
+            bodyFont: {
+              size: 13,
+              family: 'Poppins'
+            },
+            padding: 10,
+            cornerRadius: 6,
+            displayColors: false,
+            callbacks: {
+              label: function(context) {
+                return '$ ' + context.parsed.y.toLocaleString();
+              }
+            }
+          }
+        },
+        animation: {
+          duration: 2000,
+          easing: 'easeOutQuart'
+        }
+      }
+    });
+
+    // === Ticket Class Distribution (Doughnut Chart) ===
+    const classCtx = document.getElementById('classDistributionChart').getContext('2d');
+    new Chart(classCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Economy', 'Business', 'First Class'],
+        datasets: [{
+          label: 'Ticket Classes',
+          data: [150, 85, 40], // Example data
+          backgroundColor: ['#0dcaf0', '#1a3a6e', '#e63946'],
+          borderColor: 'white',
+          borderWidth: 2,
+          hoverOffset: 15,
+          hoverBorderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        cutout: '70%',
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: {
+              font: {
+                family: 'Poppins',
+                size: 12
+              },
+              padding: 20
+            }
+          },
+          tooltip: {
+            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            titleFont: {
+              size: 14,
+              family: 'Poppins'
+            },
+            bodyFont: {
+              size: 13,
+              family: 'Poppins'
+            },
+            padding: 10,
+            cornerRadius: 6
+          }
+        },
+        animation: {
+          animateRotate: true,
+          animateScale: true,
+          duration: 2000,
+          easing: 'easeOutBack'
+        }
+      }
+    });
+  });
+  /*]]>*/
+</script>
+</body>
+</html>

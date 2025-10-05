@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Seasonal Packages</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .navbar {
+      background: linear-gradient(to right, #1a2980, #26d0ce);
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .card {
+      border: none;
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card-header {
+      background: linear-gradient(to right, #3494e6, #ec6ead);
+      color: white;
+    }
+    .btn-primary {
+      background: linear-gradient(to right, #4e54c8, #8f94fb);
+      border: none;
+    }
+    .btn-danger {
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      border: none;
+    }
+    .btn-success {
+      background: linear-gradient(to right, #11998e, #38ef7d);
+      border: none;
+    }
+    .alert {
+      border-radius: 0.5rem;
+    }
+    .table {
+      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    .table thead {
+      background-color: #f8f9fa;
+    }
+    .badge {
+      font-size: 0.85em;
+      padding: 0.4em 0.8em;
+    }
+    .badge-active {
+      background-color: #28a745;
+    }
+    .badge-inactive {
+      background-color: #dc3545;
+    }
+    .badge-pending {
+      background-color: #ffc107;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .filter-card {
+      margin-bottom: 20px;
+      background: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+  </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <i class="bi bi-train-front me-2"></i>
+      Train System
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+      </ul>
+      <div class="user-info text-white">
+        <i class="bi bi-person-circle"></i>
+        <span th:text="${username}">Username</span>
+        <a href="/logout" class="btn btn-sm btn-outline-light ms-3">Logout</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${successMessage}">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <span th:text="${successMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Seasonal Packages</h1>
+    <div>
+      <a href="/packages/report" class="btn btn-outline-primary me-2">
+        <i class="bi bi-bar-chart-fill me-1"></i> Generate Report
+      </a>
+      <a href="/packages/create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Add New Package
+      </a>
+    </div>
+  </div>
+
+  <div class="filter-card">
+    <h5 class="mb-3">Filter Packages</h5>
+    <form method="get" action="/packages" class="row g-3">
+      <div class="col-md-4">
+        <label for="status" class="form-label">Status</label>
+        <select id="status" name="status" class="form-select">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+          <option value="Pending">Pending</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label for="startDate" class="form-label">Start Date</label>
+        <input type="date" id="startDate" name="startDate" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label for="routeId" class="form-label">Route</label>
+        <select id="routeId" name="routeId" class="form-select">
+          <option value="">All Routes</option>
+          <option th:each="route : ${routes}" th:value="${route.id}" th:text="${route.origin + ' - ' + route.destination}"></option>
+        </select>
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-filter me-1"></i> Apply Filter
+        </button>
+        <a href="/packages" class="btn btn-outline-secondary ms-2">
+          <i class="bi bi-x-circle me-1"></i> Clear Filters
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Package List</h5>
+    </div>
+    <div class="card-body">
+      <div th:if="${#lists.isEmpty(packages)}" class="alert alert-info">
+        <i class="bi bi-info-circle-fill me-2"></i> No packages found.
+      </div>
+      <div class="table-responsive" th:unless="${#lists.isEmpty(packages)}">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>Package ID</th>
+            <th>Route</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="package : ${packages}">
+            <td th:text="${package.packageID}">PKG-2025-0001</td>
+            <td th:text="${package.route != null ? package.route.origin + ' - ' + package.route.destination : 'N/A'}">Colombo - Kandy</td>
+            <td th:text="${#temporals.format(package.startDate, 'yyyy-MM-dd')}">2025-10-01</td>
+            <td th:text="${#temporals.format(package.endDate, 'yyyy-MM-dd')}">2025-10-31</td>
+            <td>
+              <span th:class="${'badge ' + (package.status == 'Active' ? 'bg-success' : (package.status == 'Inactive' ? 'bg-danger' : 'bg-warning'))}"
+                    th:text="${package.status}">
+                  Active
+              </span>
+            </td>
+            <td>
+              <div class="btn-group btn-group-sm">
+                <a th:href="@{/packages/{id}(id=${package.packageID})}" class="btn btn-info" title="View">
+                  <i class="bi bi-eye-fill"></i>
+                </a>
+                <a th:href="@{/packages/{id}/edit(id=${package.packageID})}" class="btn btn-primary" title="Edit">
+                  <i class="bi bi-pencil-fill"></i>
+                </a>
+                <button type="button" class="btn btn-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteConfirmationModal"
+                        th:data-package-id="${package.packageID}"
+                        th:data-form-action="@{/packages/{id}/delete(id=${package.packageID})}"
+                        title="Delete">
+                  <i class="bi bi-trash-fill"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer text-muted">
+      Total packages: <span th:text="${packages.size()}">0</span>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete package <span class="fw-bold" id="packageIdToDelete"></span>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form id="deleteForm" method="post">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="bg-dark text-white py-4 mt-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h5>Train System - Station Manager</h5>
+        <p>Efficiently manage seasonal packages for your train routes.</p>
+      </div>
+      <div class="col-md-3">
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="/dashboard" class="text-white">Dashboard</a></li>
+          <li><a href="/packages" class="text-white">Packages</a></li>
+          <li><a href="/routes" class="text-white">Routes</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5>Contact</h5>
+        <address>
+          <i class="bi bi-geo-alt-fill me-2"></i> Colombo, Sri Lanka<br>
+          <i class="bi bi-envelope-fill me-2"></i> info@trainsystem.com<br>
+          <i class="bi bi-telephone-fill me-2"></i> +94 11 123 4567
+        </address>
+      </div>
+    </div>
+    <hr>
+    <div class="text-center">
+      <p class="mb-0">© 2025 Train System. All rights reserved.</p>
+      <p class="mb-0">Current time: <span th:text="${#temporals.format(currentDateTime, 'yyyy-MM-dd HH:mm:ss')}">2025-10-03 11:34:03</span></p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(function() {
+      const successAlert = document.querySelector('.alert-success');
+      if (successAlert) {
+        new bootstrap.Alert(successAlert).close();
+      }
+    }, 5000);
+
+    // SCRIPT TO CONNECT THE BUTTON TO THE MODAL
+    const deleteModal = document.getElementById('deleteConfirmationModal');
+    if (deleteModal) {
+      deleteModal.addEventListener('show.bs.modal', function(event) {
+        // Button that triggered the modal
+        const button = event.relatedTarget;
+
+        // Extract info from data-* attributes
+        const packageId = button.getAttribute('data-package-id');
+        const formAction = button.getAttribute('data-form-action');
+
+        // Update the modal's content
+        const modalPackageIdSpan = deleteModal.querySelector('#packageIdToDelete');
+        const deleteForm = deleteModal.querySelector('#deleteForm');
+
+        modalPackageIdSpan.textContent = packageId;
+        deleteForm.setAttribute('action', formAction);
+      });
+    }
+  });
+</script>
+</body>
+</html>

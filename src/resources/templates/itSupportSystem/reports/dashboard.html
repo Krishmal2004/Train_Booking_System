@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Issue Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1a3a6e; --primary-light: #2a4b82; --primary-dark: #142c54; --secondary: #e63946; --success: #198754; --danger: #dc3545; --info: #0dcaf0; --warning: #ffc107; --light: #f8f9fa; --dark: #343a40; --gray: #6c757d; --border-radius: 10px; --box-shadow: 0 2px 15px rgba(0,0,0,0.08); --transition: all 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f9; color: var(--dark); line-height: 1.6; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 20px; }
+        .header h1 { font-size: 2.5rem; color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 12px; }
+        .header h1 i { color: var(--primary); font-size: 2.2rem; }
+        .header .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
+        .header .nav-links a { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; background-color: var(--primary); color: white; padding: 12px 20px; border-radius: var(--border-radius); font-weight: 500; transition: var(--transition); }
+        .header .nav-links a:hover { background-color: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow); display: flex; align-items: center; gap: 1.2rem; transition: var(--transition); }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .stat-card .icon { font-size: 2.5rem; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+        .stat-card .icon-open { color: var(--info); background-color: #e0f7fa; }
+        .stat-card .icon-progress { color: var(--warning); background-color: #fff8e1; }
+        .stat-card .icon-resolved { color: var(--success); background-color: #e8f5e9; }
+        .stat-card .icon-high-priority { color: var(--danger); background-color: #fce4ec; }
+        .stat-card .stat-info .value { font-size: 2rem; font-weight: 700; color: var(--primary); line-height: 1.2; margin-bottom: 5px; }
+        .stat-card .stat-info .label { font-size: 0.9rem; color: var(--gray); font-weight: 500; }
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .chart-card { background: white; padding: 1.8rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
+        .chart-card h2 { font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--primary); font-weight: 600; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .stats-grid, .charts-grid { animation: fadeIn 0.6s ease-out forwards; }
+        @media (max-width: 992px) { .charts-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-tasks"></i> Issue Dashboard</h1>
+        <div class="nav-links">
+            <a href="/issues"><i class="fas fa-list-alt"></i> View All Issues</a>
+            <a href="/logout" class="nav-link" style="background-color: var(--danger);">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="icon icon-open"><i class="fas fa-folder-open"></i></div>
+            <div class="stat-info">
+                <div class="value" th:text="${openIssuesCount}">12</div>
+                <div class="label">Open Issues</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon icon-progress"><i class="fas fa-spinner"></i></div>
+            <div class="stat-info">
+                <div class="value" th:text="${inProgressIssuesCount}">5</div>
+                <div class="label">In Progress</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon icon-resolved"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-info">
+                <div class="value" th:text="${resolvedTodayCount}">3</div>
+                <div class="label">Resolved Today</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon icon-high-priority"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="stat-info">
+                <div class="value" th:text="${highPriorityIssuesCount}">4</div>
+                <div class="label">High Priority</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h2>Issues by Status</h2>
+            <canvas id="statusChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h2>Issues by Priority</h2>
+            <canvas id="priorityChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const statusData = /*[[${statusCounts}]]*/ { open: 12, inProgress: 5, resolved: 28 };
+        const priorityData = /*[[${priorityCounts}]]*/ { low: 15, medium: 24, high: 4 };
+
+        // Status Doughnut Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Open', 'In Progress', 'Resolved'],
+                datasets: [{
+                    data: [statusData.open, statusData.inProgress, statusData.resolved],
+                    backgroundColor: ['#0dcaf0', '#ffc107', '#198754'],
+                    borderColor: 'white',
+                    borderWidth: 2,
+                    hoverOffset: 10
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: true, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+        });
+
+        // Priority Bar Chart
+        const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+        new Chart(priorityCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Low', 'Medium', 'High'],
+                datasets: [{
+                    label: 'Issue Count',
+                    data: [priorityData.low, priorityData.medium, priorityData.high],
+                    backgroundColor: ['#198754', '#ffc107', '#dc3545'],
+                    borderRadius: 5
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: true, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+        });
+    });
+</script>
+</body>
+</html>

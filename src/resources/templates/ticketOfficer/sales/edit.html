@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Sales Report</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1a3a6e; --light: #f8f9fa; --border-radius: 8px; --box-shadow: 0 2px 15px rgba(0,0,0,0.08); }
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f9; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .card { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); margin-bottom: 1.5rem; }
+        .card-header { background-color: var(--primary); color: white; padding: 15px 20px; font-size: 1.1rem; }
+        .card-body { padding: 25px; }
+        .form-group { margin-bottom: 25px; }
+        label { display: block; margin-bottom: 10px; font-weight: 500; }
+        .form-control, textarea { width: 100%; padding: 12px 15px; border: 1px solid #ced4da; border-radius: var(--border-radius); box-sizing: border-box; }
+        .form-control-plaintext { background-color: var(--light); border: 1px solid #ddd; padding: 10px; border-radius: var(--border-radius); }
+        .button-group { display: flex; gap: 12px; margin-top: 25px; }
+        button, .nav-link { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background-color: var(--primary); color: white; border: none; padding: 14px 24px; border-radius: var(--border-radius); cursor: pointer; text-decoration: none; font-size: 1rem; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="card-header"><i class="fas fa-edit"></i> Edit Sales Report</div>
+        <div class="card-body">
+            <form th:action="@{/sales-reports/{id}/edit(id=${report.id})}" th:object="${report}" method="post">
+                <div class.form-group>
+                    <label>Report Date</label>
+                    <div class="form-control-plaintext" th:text="${#temporals.format(report.reportDate, 'dd MMMM yyyy')}"></div>
+                </div>
+                <div class.form-group>
+                    <label>Total Revenue</label>
+                    <div class="form-control-plaintext" th:text="${'$' + report.totalRevenue}"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="notes">Notes</label>
+                    <textarea id="notes" th:field="*{notes}" rows="4" class="form-control"></textarea>
+                </div>
+
+                <input type="hidden" th:field="*{reportDate}" />
+                <input type="hidden" th:field="*{reportType}" />
+                <input type="hidden" th:field="*{totalRevenue}" />
+                <input type="hidden" th:field="*{ticketsSold}" />
+                <input type="hidden" th:field="*{averageTicketPrice}" />
+                <input type="hidden" th:field="*{generatedAt}" />
+                <input type="hidden" th:field="*{generatedBy}" />
+
+
+                <div class="button-group">
+                    <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+                    <a href="/sales-reports" class="nav-link" style="background-color: #6c757d;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

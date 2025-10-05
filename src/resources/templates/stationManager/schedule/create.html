@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Create Schedule</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root { --primary-color: #2c3e50; --danger-color: #e74c3c; --border-radius: 10px; }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f5f7fa; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .form-container { background-color: white; border-radius: var(--border-radius); box-shadow: 0 8px 30px rgba(0,0,0,0.12); width: 100%; max-width: 600px; }
+        .form-header { background-color: var(--primary-color); color: white; padding: 20px; border-top-left-radius: var(--border-radius); border-top-right-radius: var(--border-radius); }
+        .form-header h1 { margin: 0; font-size: 24px; }
+        .form-body { padding: 30px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 8px; }
+        .form-control { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        .form-row { display: flex; gap: 20px; }
+        .form-row .form-group { flex: 1; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; width: 100%; padding: 14px; border-radius: 8px; border: none; background-color: var(--primary-color); color: white; font-size: 16px; font-weight: 600; cursor: pointer; }
+        .error { color: var(--danger-color); font-size: 14px; margin-top: 5px; }
+        .back-link { display: block; text-align: center; margin-top: 20px; color: var(--primary-color); text-decoration: none; }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <div class="form-header">
+        <h1>Create New Schedule</h1>
+    </div>
+    <div class="form-body">
+        <form th:action="@{/schedules/create}" th:object="${schedule}" method="post">
+            <div class="form-group">
+                <label for="scheduleId">Schedule ID</label>
+                <input type="text" id="scheduleId" th:field="*{scheduleId}" class="form-control" placeholder="e.g., S-001" required>
+                <div th:if="${#fields.hasErrors('scheduleId')}" th:errors="*{scheduleId}" class="error"></div>
+            </div>
+
+            <div class="form-group">
+                <label for="route">Route</label>
+                <select id="route" name="routeId" class="form-control" required>
+                    <option value="">-- Select a Route --</option>
+                    <option th:each="route : ${routes}" th:value="${route.id}" th:text="${route.origin + ' → ' + route.destination}"></option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="scheduleDate">Date</label>
+                <input type="date" id="scheduleDate" th:field="*{scheduleDate}" class="form-control" required>
+                <div th:if="${#fields.hasErrors('scheduleDate')}" th:errors="*{scheduleDate}" class="error"></div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="departureTime">Departure Time</label>
+                    <input type="time" id="departureTime" th:field="*{departureTime}" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="arrivalTime">Arrival Time</label>
+                    <input type="time" id="arrivalTime" th:field="*{arrivalTime}" class="form-control" required>
+                    <div th:if="${#fields.hasErrors('arrivalTime')}" th:errors="*{arrivalTime}" class="error"></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select id="status" th:field="*{status}" class="form-control">
+                    <option value="active">Active</option>
+                    <option value="cancelled">Cancelled</option>
+                    <option value="completed">Completed</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="remarks">Remarks (Optional)</label>
+                <textarea id="remarks" th:field="*{remarks}" class="form-control" rows="3"></textarea>
+            </div>
+
+            <button type="submit" class="btn"><i class="fas fa-plus-circle"></i> Create Schedule</button>
+        </form>
+        <a href="/schedules" class="back-link">Back to List</a>
+    </div>
+</div>
+</body>
+</html>

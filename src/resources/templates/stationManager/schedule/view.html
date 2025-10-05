@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Schedule Details</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --light-color: #ecf0f1;
+            --border-radius: 10px;
+        }
+        body { font-family: 'Montserrat', sans-serif; background-color: #f5f7fa; line-height: 1.6; margin: 0; padding: 20px; }
+        .main-content { max-width: 900px; margin: 40px auto; }
+        .action-bar { display: flex; gap: 15px; margin-bottom: 30px; }
+        .btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border-radius: 8px; text-decoration: none; font-weight: 500; border: none; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-warning { background-color: #f39c12; color: white; }
+        .schedule-card { background-color: white; border-radius: var(--border-radius); box-shadow: 0 8px 30px rgba(0,0,0,0.12); }
+        .schedule-header { background-color: var(--primary-color); color: white; padding: 25px; border-top-left-radius: var(--border-radius); border-top-right-radius: var(--border-radius); display: flex; justify-content: space-between; align-items: center; }
+        .schedule-title { font-size: 22px; margin: 0; }
+        .schedule-id { opacity: 0.8; }
+        .status-badge { padding: 6px 15px; border-radius: 30px; font-size: 13px; font-weight: 600; }
+        .schedule-content { padding: 30px; }
+        .details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+        .detail-group label { font-size: 14px; font-weight: 600; color: #555; display: block; margin-bottom: 8px; }
+        .detail-value { background-color: var(--light-color); padding: 15px; border-radius: 8px; font-size: 16px; }
+        .remarks { grid-column: 1 / -1; } /* Span full width */
+    </style>
+</head>
+<body>
+<div class="main-content">
+    <div class="action-bar">
+        <a href="/schedules" class="btn btn-primary"><i class="fas fa-arrow-left"></i> Back to Schedules</a>
+        <a th:href="@{/schedules/{id}/edit(id=${schedule.id})}" class="btn btn-warning"><i class="fas fa-edit"></i> Edit Schedule</a>
+    </div>
+
+    <div class="schedule-card">
+        <div class="schedule-header">
+            <div>
+                <h1 class="schedule-title" th:text="${schedule.route != null ? schedule.route.origin + ' → ' + schedule.route.destination : 'N/A'}">Route</h1>
+                <div class="schedule-id">Schedule ID: <span th:text="${schedule.scheduleId}"></span></div>
+            </div>
+            <div class="status-badge" th:text="${schedule.status}" style="background-color: var(--accent-color); color: white;">Status</div>
+        </div>
+
+        <div class="schedule-content">
+            <div class="details-grid">
+                <div class="detail-group">
+                    <label><i class="fas fa-route"></i> Route ID</label>
+                    <div class="detail-value" th:text="${schedule.route != null ? schedule.route.routeId : 'N/A'}">R-101</div>
+                </div>
+                <div class="detail-group">
+                    <label><i class="fas fa-calendar-alt"></i> Date</label>
+                    <div class="detail-value" th:text="${#temporals.format(schedule.scheduleDate, 'dd MMMM yyyy')}">03 October 2025</div>
+                </div>
+                <div class="detail-group">
+                    <label><i class="fas fa-clock"></i> Departure Time</label>
+                    <div class="detail-value" th:text="${#temporals.format(schedule.departureTime, 'hh:mm a')}">08:00 AM</div>
+                </div>
+                <div class="detail-group">
+                    <label><i class="fas fa-flag-checkered"></i> Arrival Time</label>
+                    <div class="detail-value" th:text="${#temporals.format(schedule.arrivalTime, 'hh:mm a')}">12:30 PM</div>
+                </div>
+                <div class="detail-group remarks" th:if="${schedule.remarks != null and !schedule.remarks.isEmpty()}">
+                    <label><i class="fas fa-info-circle"></i> Remarks</label>
+                    <div class="detail-value" th:text="${schedule.remarks}">Notes about the schedule.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

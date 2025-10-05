@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Seasonal Package</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(to right, #1a2980, #26d0ce);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        }
+        .card-header {
+            background: linear-gradient(to right, #3494e6, #ec6ead);
+            color: white;
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #4e54c8, #8f94fb);
+            border: none;
+        }
+        .btn-secondary {
+            background: linear-gradient(to right, #606c88, #3f4c6b);
+            border: none;
+        }
+        .form-floating label {
+            color: #6c757d;
+        }
+        .form-floating>.form-control:focus~label {
+            color: #4e54c8;
+        }
+        .form-control:focus {
+            border-color: #8f94fb;
+            box-shadow: 0 0 0 0.25rem rgba(78, 84, 200, 0.25);
+        }
+        .invalid-feedback {
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .required-label::after {
+            content: " *";
+            color: red;
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
+    <div class="container">
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-train-front me-2"></i>
+            Train System
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+            </ul>
+            <div class="user-info text-white">
+                <i class="bi bi-person-circle"></i>
+                <span th:text="${username}">Username</span>
+                <a href="/logout" class="btn btn-sm btn-outline-light ms-3">Logout</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/packages">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/packages">Packages</a></li>
+            <li class="breadcrumb-item active">Create Package</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Create New Seasonal Package</h5>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/packages/create}" th:object="${package}" method="post" class="needs-validation" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-6 mb-3">
+                        <label for="packageID" class="form-label required-label">Package ID</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                            <input type="text" class="form-control" id="packageID" th:field="*{packageID}"
+                                   placeholder="PKG###" aria-describedby="packageIDHelp">
+                        </div>
+                        <small id="packageIDHelp" class="form-text text-muted">
+                            If left empty, system will auto-generate an ID (PKG###)
+                        </small>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('packageID')}" th:errors="*{packageID}">
+                            Package ID error
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="route" class="form-label">Route</label>
+                        <select class="form-select" id="route" name="routeId">
+                            <option value="">-- Select Route --</option>
+                            <option th:each="route : ${routes}"
+                                    th:value="${route.id}"
+                                    th:text="${route.origin + ' - ' + route.destination}">
+                                Colombo - Kandy
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="startDate" class="form-label required-label">Start Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                            <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required>
+                        </div>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}">
+                            Start date error
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="endDate" class="form-label required-label">End Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                            <input type="date" class="form-control" id="endDate" th:field="*{endDate}" required>
+                        </div>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}">
+                            End date error
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="status" class="form-label required-label">Status</label>
+                        <select class="form-select" id="status" th:field="*{status}" required>
+                            <option value="">-- Select Status --</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('status')}" th:errors="*{status}">
+                            Status error
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label for="remarks" class="form-label">Remarks</label>
+                        <textarea class="form-control" id="remarks" th:field="*{remarks}" rows="3"
+                                  placeholder="Additional information about this seasonal package"></textarea>
+                    </div>
+
+                    <div class="col-12 d-flex justify-content-end gap-2">
+                        <a href="/packages" class="btn btn-secondary">
+                            <i class="bi bi-x-circle me-1"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Create Package
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<footer class="bg-dark text-white py-4 mt-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Train System - Station Manager</h5>
+                <p>Efficiently manage seasonal packages for your train routes.</p>
+            </div>
+            <div class="col-md-3">
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/packages" class="text-white">Dashboard</a></li>
+                    <li><a href="/packages" class="text-white">Packages</a></li>
+                    <li><a href="/routes" class="text-white">Routes</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Contact</h5>
+                <address>
+                    <i class="bi bi-geo-alt-fill me-2"></i> Colombo, Sri Lanka<br>
+                    <i class="bi bi-envelope-fill me-2"></i> info@trainsystem.com<br>
+                    <i class="bi bi-telephone-fill me-2"></i> +94 11 123 4567
+                </address>
+            </div>
+        </div>
+        <hr>
+        <div class="text-center">
+            <p class="mb-0">© 2025 Train System. All rights reserved.</p>
+            <p class="mb-0">Current time: <span th:text="${#temporals.format(currentDateTime, 'yyyy-MM-dd HH:mm:ss')}">2025-10-03 11:34:03</span></p>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Enable form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fetch all forms that need validation
+        const forms = document.querySelectorAll('.needs-validation');
+
+        // Loop over them and prevent submission
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Date validation logic
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+
+        endDateInput.addEventListener('change', function() {
+            if (startDateInput.value && endDateInput.value) {
+                if (new Date(endDateInput.value) < new Date(startDateInput.value)) {
+                    endDateInput.setCustomValidity('End date must be after start date');
+                } else {
+                    endDateInput.setCustomValidity('');
+                }
+            }
+        });
+
+        startDateInput.addEventListener('change', function() {
+            if (startDateInput.value && endDateInput.value) {
+                if (new Date(endDateInput.value) < new Date(startDateInput.value)) {
+                    endDateInput.setCustomValidity('End date must be after start date');
+                } else {
+                    endDateInput.setCustomValidity('');
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
