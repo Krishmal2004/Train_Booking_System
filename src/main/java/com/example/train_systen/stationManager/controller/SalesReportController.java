@@ -47,14 +47,54 @@ public class SalesReportController {
     }
 
     @PostMapping("/generate")
-    public String generateReport(@RequestParam("reportDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+    public String generateReport(@RequestParam("reportType") String reportType,
+                                 @RequestParam(value = "reportDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate reportDate,
+                                 @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                 @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                                  HttpSession session, RedirectAttributes redirectAttributes) {
-        if (session.getAttribute("user") == null) return "redirect:/login";
+
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         String username = (String) session.getAttribute("username");
-        salesReportService.generateDailyReport(reportDate, username);
-        redirectAttributes.addFlashAttribute("successMessage", "Daily sales report for " + reportDate + " generated successfully.");
-        // Change this line to redirect to the dashboard
-        return "redirect:/sales-reports";
+        String successMessage = "";
+
+        // Use a switch to handle different report types
+        switch (reportType) {
+            case "daily":
+                if (reportDate == null) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Please select a date for the daily report.");
+                    return "redirect:/sales-reports/generate";
+                }
+                salesReportService.generateDailyReport(reportDate, username);
+                successMessage = "Daily sales report for " + reportDate + " generated successfully.";
+                break;
+
+            case "weekly":
+                if (startDate == null || endDate == null) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Please select a start and end date for the weekly report.");
+                    return "redirect:/sales-reports/generate";
+                }
+                salesReportService.generateWeeklyReport(startDate, endDate, username);
+                successMessage = "Weekly sales report from " + startDate + " to " + endDate + " generated successfully.";
+                break;
+
+            case "monthly":
+                if (startDate == null || endDate == null) {
+                    redirectAttributes.addFlashAttribute("errorMessage", "Please select a start and end date for the monthly report.");
+                    return "redirect:/sales-reports/generate";
+                }
+                salesReportService.generateMonthlyReport(startDate, endDate, username);
+                successMessage = "Monthly sales report from " + startDate + " to " + endDate + " generated successfully.";
+                break;
+
+            default:
+                redirectAttributes.addFlashAttribute("errorMessage", "Invalid report type selected.");
+                return "redirect:/sales-reports/generate";
+        }
+
+        redirectAttributes.addFlashAttribute("successMessage", successMessage);
+        return "redirect:/sales-reports"; // Redirect to the list of reports
     }
 
     @GetMapping("/{id}/edit")
@@ -67,11 +107,25 @@ public class SalesReportController {
     }
 
     @PostMapping("/{id}/edit")
-    public String updateReport(@PathVariable Long id, @ModelAttribute SalesReport report,
-                               RedirectAttributes redirectAttributes, HttpSession session) {
-        if (session.getAttribute("user") == null) return "redirect:/login";
-        report.setId(id); // Ensure the ID is set for the update
-        salesReportService.saveReport(report);
+    public String updateReport(@PathVariable Long id,
+                               @ModelAttribute("report") SalesReport reportDetails, // Contains data from the form
+                               RedirectAttributes redirectAttributes,
+                               HttpSession session) {
+
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
+
+        // 1. Fetch the existing report from the database
+        SalesReport existingReport = salesReportService.getReportById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid report ID:" + id));
+
+        // 2. Update only the fields you want to change
+        existingReport.setNotes(reportDetails.getNotes());
+
+        // 3. Save the updated existing report
+        salesReportService.saveReport(existingReport);
+
         redirectAttributes.addFlashAttribute("successMessage", "Report updated successfully.");
         return "redirect:/sales-reports";
     }
