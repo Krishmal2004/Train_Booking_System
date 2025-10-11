@@ -156,6 +156,14 @@ public class Ticket {
         return updatedAt;
     }
 
+    private String passengerEmail;
+    public String getPassengerEmail() {
+        return passengerEmail;
+    }
+    public void setPassengerEmail(String passengerEmail) {
+        this.passengerEmail = passengerEmail;
+    }
+
     @Override
     public String toString() {
         return "Ticket{" +

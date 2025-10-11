@@ -13,7 +13,7 @@ public class Route {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "Route ID is required")
+    // --- FIX IS HERE: The @NotBlank annotation has been removed ---
     @Column(name = "route_id", unique = true)
     private String routeId;
 
