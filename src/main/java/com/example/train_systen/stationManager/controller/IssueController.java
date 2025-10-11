@@ -2,270 +2,120 @@ package com.example.train_systen.stationManager.controller;
 
 import com.example.train_systen.stationManager.model.Issue;
 import com.example.train_systen.stationManager.service.IssueService;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 @Controller
-@RequestMapping("/reports")
+@RequestMapping("/issues") // Base path for all issue-related endpoints
 public class IssueController {
 
     private final IssueService issueService;
-    private static final DateTimeFormatter DATETIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-    // Constructor injection
+    @Autowired
     public IssueController(IssueService issueService) {
         this.issueService = issueService;
     }
 
-    /**
-     * List all issues with optional filtering
-     */
-    @GetMapping
-    public String listIssues(
-            @RequestParam(required = false) String status,
-            @RequestParam(required = false) String priority,
-            @RequestParam(required = false) String system,
-            Model model) {
+    @GetMapping("/dashboard")
+    public String showDashboard(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/login";
 
-        List<Issue> issues = issueService.filterIssues(status, priority, system);
-        model.addAttribute("issues", issues);
-        model.addAttribute("currentUser", "IT24103866");
-        model.addAttribute("currentDateTime", LocalDateTime.now().format(DATETIME_FORMATTER));
-
-        // Add GitHub repositories as list for list.html
-        model.addAttribute("githubRepos", new String[]{
-                "IT24103866/Train",
-                "IT2120-PS/lab-sheet-submissions-IT24103866",
-                "IT2140-DDD/lab-sheet-submissions-IT24103866",
-                "IT2011-AI-ML/lab-sheet-submissions-IT24103866",
-                "SE2030-Y2S1/se2030-lab-IT24103866"
-        });
-
-        return "itSupportSystem/reports/list"; // Just use the template name without the path
+        model.addAllAttributes(issueService.getDashboardSummary());
+        // Assuming your HTML views are in 'resources/templates/stationManager/issues/'
+        return "itSupportSystem/reports/dashboard";
     }
 
-    /**
-     * Search for issues
-     */
-    @GetMapping("/search")
-    public String searchIssues(@RequestParam String keyword, Model model) {
-        List<Issue> issues = issueService.searchIssues(keyword);
-        model.addAttribute("issues", issues);
-        model.addAttribute("currentUser", "IT24103866");
-        model.addAttribute("currentDateTime", LocalDateTime.now().format(DATETIME_FORMATTER));
+    @GetMapping
+    public String listIssues(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/login";
 
-        // Add GitHub repositories
-        model.addAttribute("githubRepos", new String[]{
-                "IT24103866/Train",
-                "IT2120-PS/lab-sheet-submissions-IT24103866",
-                "IT2140-DDD/lab-sheet-submissions-IT24103866",
-                "IT2011-AI-ML/lab-sheet-submissions-IT24103866",
-                "SE2030-Y2S1/se2030-lab-IT24103866"
-        });
-
+        model.addAttribute("issues", issueService.getAllIssues());
         return "itSupportSystem/reports/list";
     }
 
-    /**
-     * Show issue creation form
-     */
     @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/login";
+
         model.addAttribute("issue", new Issue());
-        model.addAttribute("currentUser", "IT24103866");
-        model.addAttribute("currentDateTime", LocalDateTime.now().format(DATETIME_FORMATTER));
         return "itSupportSystem/reports/create";
     }
 
-    /**
-     * Process issue creation
-     */
     @PostMapping("/create")
-    public String createIssue(@Valid @ModelAttribute("issue") Issue issue,
-                              BindingResult result,
-                              Model model,
-                              RedirectAttributes redirectAttributes) {
+    public String createIssue(@ModelAttribute Issue issue, RedirectAttributes redirectAttributes, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/login";
 
-        if (result.hasErrors()) {
-            model.addAttribute("currentUser", "IT24103866");
-            model.addAttribute("currentDateTime", LocalDateTime.now().format(DATETIME_FORMATTER));
-            return "itSupportSystem/reports/create";
+        // Set reporter name from session if available, otherwise it's from the form
+        String username = (String) session.getAttribute("username");
+        if (username != null && (issue.getReporterName() == null || issue.getReporterName().isEmpty())) {
+            issue.setReporterName(username);
         }
 
-        issueService.createIssue(issue);
-        redirectAttributes.addFlashAttribute("successMessage", "Issue report created successfully");
-
-        return "redirect:/reports/dashboard";
+        issueService.saveIssue(issue);
+        redirectAttributes.addFlashAttribute("successMessage", "Issue reported successfully!");
+        return "redirect:/issues";
     }
 
-    /**
-     * View issue details
-     */
-    @GetMapping("/{id}")
-    public String viewIssue(@PathVariable Long id, Model model) {
-        Issue issue = issueService.getIssueById(id);
+    @GetMapping("/{id}/update")
+    public String showUpdateForm(@PathVariable Long id, Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/login";
+
+        Issue issue = issueService.getIssueById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid issue ID: " + id));
         model.addAttribute("issue", issue);
-        model.addAttribute("currentUser", "IT24103866");
-        model.addAttribute("currentDateTime", LocalDateTime.now().format(DATETIME_FORMATTER));
-
-        return "itSupportSystem/reports/view";
+        return "itSupportSystem/reports/update";
     }
 
-    /**
-     * Show issue edit form
-     */
-    @GetMapping("/{id}/edit")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        Issue issue = issueService.getIssueById(id);
-        model.addAttribute("issue", issue);
-        model.addAttribute("currentUser", "IT24103866");
-        model.addAttribute("currentDateTime", LocalDateTime.now().format(DATETIME_FORMATTER));
+    @PostMapping("/{id}/update")
+    public String updateIssue(@PathVariable Long id, @ModelAttribute Issue issueDetails, RedirectAttributes redirectAttributes, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/login";
 
-        // Add GitHub repositories
-        model.addAttribute("githubRepos", new String[]{
-                "IT24103866/Train",
-                "IT2120-PS/lab-sheet-submissions-IT24103866",
-                "IT2140-DDD/lab-sheet-submissions-IT24103866",
-                "IT2011-AI-ML/lab-sheet-submissions-IT24103866",
-                "SE2030-Y2S1/se2030-lab-IT24103866"
-        });
+        Issue existingIssue = issueService.getIssueById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid issue ID: " + id));
 
-        return "itSupportSystem/reports/edit";
+        // Update only the editable fields
+        existingIssue.setTitle(issueDetails.getTitle());
+        existingIssue.setDescription(issueDetails.getDescription());
+        existingIssue.setStatus(issueDetails.getStatus());
+        existingIssue.setPriority(issueDetails.getPriority());
+
+        issueService.saveIssue(existingIssue);
+        redirectAttributes.addFlashAttribute("successMessage", "Issue #" + id + " updated successfully.");
+        return "redirect:/issues";
     }
 
-    /**
-     * Process issue update
-     */
-    @PostMapping("/{id}/edit")
-    public String updateIssue(@PathVariable Long id,
-                              @Valid @ModelAttribute("issue") Issue issue,
-                              BindingResult result,
-                              Model model,
-                              RedirectAttributes redirectAttributes) {
-
-        if (result.hasErrors()) {
-            model.addAttribute("currentUser", "IT24103866");
-            model.addAttribute("currentDateTime", LocalDateTime.now().format(DATETIME_FORMATTER));
-
-            // Add GitHub repositories
-            model.addAttribute("githubRepos", new String[]{
-                    "IT24103866/Train",
-                    "IT2120-PS/lab-sheet-submissions-IT24103866",
-                    "IT2140-DDD/lab-sheet-submissions-IT24103866",
-                    "IT2011-AI-ML/lab-sheet-submissions-IT24103866",
-                    "SE2030-Y2S1/se2030-lab-IT24103866"
-            });
-
-            return "itSupportSystem/reports/edit";
-        }
-
-        issueService.updateIssue(id, issue);
-        redirectAttributes.addFlashAttribute("successMessage", "Issue report updated successfully");
-
-        return "redirect:/itSupportSystem/reports";
-    }
-
-    /**
-     * Quick status update
-     */
-    @PostMapping("/{id}/status")
-    public String updateStatus(@PathVariable Long id,
-                               @RequestParam String newStatus,
-                               RedirectAttributes redirectAttributes) {
-
-        issueService.updateIssueStatus(id, newStatus);
-        redirectAttributes.addFlashAttribute("successMessage", "Issue status updated successfully");
-
-        return "redirect:/itSupportSystem/reports/dashboard";
-    }
-
-    /**
-     * Show delete confirmation
-     */
     @GetMapping("/{id}/delete")
-    public String showDeleteConfirmation(@PathVariable Long id, Model model) {
-        Issue issue = issueService.getIssueById(id);
-        model.addAttribute("issue", issue);
-        model.addAttribute("currentUser", "IT24103866");
-        model.addAttribute("currentDateTime", LocalDateTime.now().format(DATETIME_FORMATTER));
-
-        return "itSupportSystem/reports/delete-confirmation";
-    }
-
-    /**
-     * Process issue deletion
-     */
-    @PostMapping("/{id}/delete-confirm")
-    public String deleteIssue(@PathVariable Long id,
-                              @RequestParam String removalReason,
-                              @RequestParam(required = false) String removalNotes,
-                              RedirectAttributes redirectAttributes) {
+    public String deleteIssue(@PathVariable Long id, RedirectAttributes redirectAttributes, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/login";
 
         issueService.deleteIssue(id);
-        redirectAttributes.addFlashAttribute("successMessage", "Issue report removed successfully");
-
-        return "redirect:/itSupportSystem/reports";
+        redirectAttributes.addFlashAttribute("successMessage", "Issue #" + id + " has been deleted.");
+        return "redirect:/issues";
     }
 
-    /**
-     * Dashboard view
-     */
-    @GetMapping("/dashboard")
-    public String dashboard(Model model) {
-        model.addAttribute("currentUser", "IT24103866");
-        model.addAttribute("currentDateTime", LocalDateTime.now().format(DATETIME_FORMATTER));
+    @GetMapping("/{id}/resolve")
+    public String showResolveForm(@PathVariable Long id, Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/login";
 
-        // Get dashboard stats
-        var stats = issueService.getDashboardStats();
-        model.addAllAttributes(stats);
-
-        // Add GitHub repositories as objects with url and name for dashboard.html
-        List<Map<String, String>> repos = new ArrayList<>();
-        repos.add(createRepo("IT24103866/Train", "https://github.com/IT24103866/Train"));
-        repos.add(createRepo("IT2120-PS/lab-sheet-submissions-IT24103866", "https://github.com/IT2120-PS/lab-sheet-submissions-IT24103866"));
-        repos.add(createRepo("IT2140-DDD/lab-sheet-submissions-IT24103866", "https://github.com/IT2140-DDD/lab-sheet-submissions-IT24103866"));
-        repos.add(createRepo("IT2011-AI-ML/lab-sheet-submissions-IT24103866", "https://github.com/IT2011-AI-ML/lab-sheet-submissions-IT24103866"));
-        repos.add(createRepo("SE2030-Y2S1/se2030-lab-IT24103866", "https://github.com/SE2030-Y2S1/se2030-lab-IT24103866"));
-
-        model.addAttribute("githubRepos", repos);
-
-        // Change this to match where your dashboard.html actually is
-        return "/itSupportSystem/reports/dashboard"; // If it's at src/main/resources/templates/dashboard.html
+        Issue issue = issueService.getIssueById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid issue ID: " + id));
+        model.addAttribute("issue", issue);
+        return "itSupportSystem/reports/resolve";
     }
 
-    private Map<String, String> createRepo(String name, String url) {
-        Map<String, String> repo = new HashMap<>();
-        repo.put("name", name);
-        repo.put("url", url);
-        return repo;
-    }
+    @PostMapping("/{id}/resolve")
+    public String resolveIssue(@PathVariable Long id,
+                               @RequestParam("resolution") String resolution,
+                               RedirectAttributes redirectAttributes,
+                               HttpSession session) {
+        if (session.getAttribute("user") == null) return "redirect:/login";
 
-    /**
-     * Export issues to CSV
-     */
-    @GetMapping("/export/csv")
-    public String exportToCsv() {
-        // Implementation for CSV export would go here
-        return "redirect:/itSupportSystem/reports/dashboard";
-    }
-
-    /**
-     * Export issues to PDF
-     */
-    @GetMapping("/export/pdf")
-    public String exportToPdf() {
-        // Implementation for PDF export would go here
-        return "redirect:/itSupportSystem/reports/dashboard";
+        issueService.resolveIssue(id, resolution);
+        redirectAttributes.addFlashAttribute("successMessage", "Issue #" + id + " has been resolved.");
+        return "redirect:/issues";
     }
 }

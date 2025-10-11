@@ -3,6 +3,7 @@ package com.example.train_systen.stationManager.controller;
 import com.example.train_systen.stationManager.model.Package;
 import com.example.train_systen.stationManager.service.PackageService;
 import com.example.train_systen.stationManager.service.RouteService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.time.Year;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -28,14 +31,22 @@ public class PackageController {
         this.routeService = routeService;
     }
 
+    private void addCommonAttributes(Model model, HttpSession session) {
+        model.addAttribute("username", session.getAttribute("username"));
+        model.addAttribute("currentDateTime", LocalDateTime.now());
+    }
+
     @GetMapping
-    public String listPackages(Model model,
+    public String listPackages(Model model, HttpSession session,
                                @RequestParam(required = false) String status,
                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                @RequestParam(required = false) Long routeId) {
 
-        List<Package> packages;
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
 
+        List<Package> packages;
         if (status != null && !status.isEmpty()) {
             packages = packageService.getPackagesByStatus(status);
         } else if (startDate != null) {
@@ -47,14 +58,20 @@ public class PackageController {
         }
 
         model.addAttribute("packages", packages);
-        model.addAttribute("today", LocalDate.now());
+        addCommonAttributes(model, session);
+        // CORRECTED PATH
         return "operationManager/package/list";
     }
 
     @GetMapping("/create")
-    public String showCreateForm(Model model) {
+    public String showCreateForm(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("package", new Package());
         model.addAttribute("routes", routeService.getAllRoutes());
+        addCommonAttributes(model, session);
+        // CORRECTED PATH
         return "operationManager/package/create";
     }
 
@@ -63,48 +80,55 @@ public class PackageController {
                                 BindingResult result,
                                 @RequestParam(required = false) Long routeId,
                                 RedirectAttributes redirectAttributes,
-                                Model model) {
-
+                                Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         if (packageService.isPackageIdExists(pack.getPackageID())) {
             result.rejectValue("packageID", "error.package", "Package ID already exists");
         }
-
-        // Validate dates
         if (pack.getStartDate() != null && pack.getEndDate() != null &&
                 pack.getStartDate().isAfter(pack.getEndDate())) {
             result.rejectValue("endDate", "error.package", "End date must be after start date");
         }
-
         if (result.hasErrors()) {
             model.addAttribute("routes", routeService.getAllRoutes());
+            addCommonAttributes(model, session);
+            // CORRECTED PATH
             return "operationManager/package/create";
         }
-
-        // Set the route if provided
         if (routeId != null) {
             routeService.getRouteById(routeId).ifPresent(pack::setRoute);
         }
-
         packageService.savePackage(pack);
         redirectAttributes.addFlashAttribute("successMessage", "Seasonal package created successfully");
         return "redirect:/packages";
     }
 
     @GetMapping("/{id}")
-    public String viewPackage(@PathVariable String id, Model model) {
+    public String viewPackage(@PathVariable String id, Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         Package pack = packageService.getPackageById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid package ID: " + id));
         model.addAttribute("package", pack);
+        addCommonAttributes(model, session);
+        // CORRECTED PATH
         return "operationManager/package/view";
     }
 
     @GetMapping("/{id}/edit")
-    public String showEditForm(@PathVariable String id, Model model) {
+    public String showEditForm(@PathVariable String id, Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         Package pack = packageService.getPackageById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid package ID: " + id));
-
         model.addAttribute("package", pack);
         model.addAttribute("routes", routeService.getAllRoutes());
+        addCommonAttributes(model, session);
+        // CORRECTED PATH
         return "operationManager/package/edit";
     }
 
@@ -114,39 +138,46 @@ public class PackageController {
                                 BindingResult result,
                                 @RequestParam(required = false) Long routeId,
                                 RedirectAttributes redirectAttributes,
-                                Model model) {
-
-        // Validate dates
+                                Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         if (pack.getStartDate() != null && pack.getEndDate() != null &&
                 pack.getStartDate().isAfter(pack.getEndDate())) {
             result.rejectValue("endDate", "error.package", "End date must be after start date");
         }
-
         if (result.hasErrors()) {
             model.addAttribute("routes", routeService.getAllRoutes());
+            addCommonAttributes(model, session);
+            // CORRECTED PATH
             return "operationManager/package/edit";
         }
-
-        // Set the route if provided
         if (routeId != null) {
             routeService.getRouteById(routeId).ifPresent(pack::setRoute);
         }
-
         packageService.savePackage(pack);
         redirectAttributes.addFlashAttribute("successMessage", "Seasonal package updated successfully");
         return "redirect:/packages";
     }
 
-    @GetMapping("/{id}/delete")
-    public String deletePackage(@PathVariable String id, RedirectAttributes redirectAttributes) {
+    @PostMapping("/{id}/delete")
+    public String deletePackage(@PathVariable String id, RedirectAttributes redirectAttributes, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         packageService.deletePackage(id);
         redirectAttributes.addFlashAttribute("successMessage", "Seasonal package deleted successfully");
         return "redirect:/packages";
     }
 
     @GetMapping("/report")
-    public String showReportForm(Model model) {
+    public String showReportForm(Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         model.addAttribute("routes", routeService.getAllRoutes());
+        addCommonAttributes(model, session);
+        // CORRECTED PATH
         return "operationManager/package/report";
     }
 
@@ -154,27 +185,25 @@ public class PackageController {
     public String generateReport(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                  @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
                                  @RequestParam(required = false) Long routeId,
-                                 Model model) {
-
+                                 Model model, HttpSession session) {
+        if (session.getAttribute("user") == null) {
+            return "redirect:/login";
+        }
         List<Package> packages = packageService.getPackagesByDateRange(startDate, endDate);
-
         if (routeId != null) {
-            // Filter by route if specified
             packages = packages.stream()
                     .filter(p -> p.getRoute() != null && p.getRoute().getId().equals(routeId))
                     .toList();
         }
-
         model.addAttribute("packages", packages);
         model.addAttribute("startDate", startDate);
         model.addAttribute("endDate", endDate);
         model.addAttribute("routeId", routeId);
-
-        // Get the route details if routeId is provided
         if (routeId != null) {
             routeService.getRouteById(routeId).ifPresent(route -> model.addAttribute("route", route));
         }
-
+        addCommonAttributes(model, session);
+        // CORRECTED PATH
         return "operationManager/package/report-result";
     }
 }

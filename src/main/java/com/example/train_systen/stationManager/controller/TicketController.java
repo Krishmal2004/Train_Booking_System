@@ -3,6 +3,7 @@ package com.example.train_systen.stationManager.controller;
 import com.example.train_systen.stationManager.model.Route;
 import com.example.train_systen.stationManager.model.Ticket;
 import com.example.train_systen.stationManager.model.User;
+import com.example.train_systen.stationManager.service.EmailService;
 import com.example.train_systen.stationManager.service.RouteService;
 import com.example.train_systen.stationManager.service.TicketService;
 import jakarta.servlet.http.HttpSession;
@@ -31,11 +32,13 @@ public class TicketController {
 
     private final TicketService ticketService;
     private final RouteService routeService;
+    private final EmailService emailService;
 
     @Autowired
-    public TicketController(TicketService ticketService, RouteService routeService) {
+    public TicketController(TicketService ticketService, RouteService routeService, EmailService emailService) {
         this.ticketService = ticketService;
         this.routeService = routeService;
+        this.emailService = emailService;
     }
 
     private String getCurrentDateTime() {
@@ -116,10 +119,7 @@ public class TicketController {
         String username = (String) session.getAttribute("username");
         logger.info("Processing ticket creation by user: {}", username);
 
-        // --- NEW ---
-        // Ensure the passenger name from the session is set, overriding any form input
         ticket.setPassengerName(username);
-        // --- END NEW ---
 
         if (result.hasErrors()) {
             model.addAttribute("routes", routeService.getAllRoutes());
@@ -127,6 +127,30 @@ public class TicketController {
             model.addAttribute("currentDateTime", getCurrentDateTime());
             return "passenger/ticket/create";
         }
+
+        // --- SEAT BOOKING VALIDATION START ---
+        // Check if the seat is already booked right before saving.
+        boolean alreadyBooked = ticketService.isSeatBooked(
+                ticket.getRoute().getId(),
+                ticket.getTravelDate(),
+                ticket.getSeatNumber()
+        );
+
+        if (alreadyBooked) {
+            logger.warn("Double booking attempt by user {} for seat {} on route {} for date {}",
+                    username, ticket.getSeatNumber(), ticket.getRoute().getId(), ticket.getTravelDate());
+
+            // Add an error message to display on the form.
+            model.addAttribute("errorMessage", "Sorry, this seat has just been booked by another passenger. Please choose another seat.");
+
+            // Repopulate the necessary data and return to the form.
+            model.addAttribute("routes", routeService.getAllRoutes());
+            model.addAttribute("currentUser", username);
+            model.addAttribute("currentDateTime", getCurrentDateTime());
+            return "passenger/ticket/create"; // Stay on the create page
+        }
+        // --- SEAT BOOKING VALIDATION END ---
+
 
         ticketService.saveTicket(ticket);
         redirectAttributes.addFlashAttribute("successMessage", "Ticket created successfully for " + username);
