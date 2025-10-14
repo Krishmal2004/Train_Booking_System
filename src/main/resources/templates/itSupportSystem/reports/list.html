@@ -1,636 +1,91 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Issue Reports</title>
+  <title>All System Issues</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #1a3a6e;
-      --primary-dark: #132d54;
-      --primary-light: rgba(26, 58, 110, 0.1);
-      --secondary: #e63946;
-      --secondary-light: rgba(230, 57, 70, 0.1);
-      --accent: #a8dadc;
-      --success: #38b000;
-      --warning: #ffaa00;
-      --danger: #d90429;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --gray: #6c757d;
-      --border-radius: 12px;
-      --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      --transition: all 0.3s ease;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f5f7fa;
-      color: #333;
-      line-height: 1.6;
-      padding: 30px;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    h1, h2, h3, h4, h5 {
-      font-family: 'Montserrat', sans-serif;
-      color: var(--primary);
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      text-align: center;
-      margin-bottom: 30px;
-      position: relative;
-      padding-bottom: 15px;
-    }
-
-    h1:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 4px;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      border-radius: 2px;
-    }
-
-    h3 {
-      font-size: 1.4rem;
-      font-weight: 600;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-    }
-
-    h3 i {
-      margin-right: 10px;
-      color: var(--secondary);
-    }
-
-    a {
-      color: var(--primary);
-      text-decoration: none;
-      transition: var(--transition);
-    }
-
-    a:hover {
-      color: var(--secondary);
-    }
-
-    .nav-links {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 30px;
-      gap: 20px;
-    }
-
-    .nav-link {
-      background-color: white;
-      color: var(--primary);
-      padding: 12px 24px;
-      border-radius: var(--border-radius);
-      font-weight: 500;
-      box-shadow: var(--box-shadow);
-      display: inline-flex;
-      align-items: center;
-      transition: var(--transition);
-    }
-
-    .nav-link i {
-      margin-right: 8px;
-    }
-
-    .nav-link:hover {
-      transform: translateY(-3px);
-      color: white;
-      background-color: var(--primary);
-      box-shadow: 0 8px 25px rgba(26, 58, 110, 0.2);
-    }
-
-    .user-info {
-      background-color: white;
-      padding: 20px;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      margin-bottom: 30px;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .user-info p {
-      margin: 0;
-      display: flex;
-      align-items: center;
-    }
-
-    .user-info i {
-      color: var(--primary);
-      margin-right: 8px;
-      font-size: 1.1rem;
-    }
-
-    .user-info strong {
-      color: var(--secondary);
-      font-weight: 600;
-    }
-
-    .card {
-      background-color: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      margin-bottom: 30px;
-      overflow: hidden;
-    }
-
-    .card-header {
-      background-color: var(--primary);
-      color: white;
-      padding: 15px 20px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-    }
-
-    .card-header i {
-      margin-right: 10px;
-    }
-
-    .card-body {
-      padding: 20px;
-    }
-
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .form-group {
-      flex: 1;
-      min-width: 200px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: var(--dark);
-    }
-
-    select, input {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.95rem;
-      transition: var(--transition);
-    }
-
-    select:focus, input:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(26, 58, 110, 0.1);
-    }
-
-    .button-group {
-      display: flex;
-      gap: 10px;
-    }
-
-    button {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 500;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    button:hover {
-      background-color: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(26, 58, 110, 0.2);
-    }
-
-    button.secondary {
-      background-color: #f8f9fa;
-      color: var(--dark);
-      border: 1px solid #ddd;
-    }
-
-    button.secondary:hover {
-      background-color: #e9ecef;
-    }
-
-    .success-message {
-      background-color: rgba(56, 176, 0, 0.1);
-      color: var(--success);
-      padding: 15px 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      display: flex;
-      align-items: center;
-      font-weight: 500;
-    }
-
-    .success-message i {
-      margin-right: 10px;
-      font-size: 1.1rem;
-    }
-
-    .table-container {
-      border-radius: var(--border-radius);
-      overflow: hidden;
-      box-shadow: var(--box-shadow);
-      margin-bottom: 30px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background-color: white;
-    }
-
-    th {
-      background-color: var(--primary);
-      color: white;
-      padding: 15px;
-      text-align: left;
-      font-weight: 600;
-    }
-
-    td {
-      padding: 15px;
-      border-bottom: 1px solid #edf2f7;
-    }
-
-    tr:last-child td {
-      border-bottom: none;
-    }
-
-    tr:hover {
-      background-color: #f8f9fa;
-    }
-
-    .empty-row td {
-      text-align: center;
-      padding: 40px;
-      color: var(--gray);
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 5px 12px;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .badge-high {
-      background-color: rgba(217, 4, 41, 0.1);
-      color: var(--danger);
-    }
-
-    .badge-medium {
-      background-color: rgba(255, 170, 0, 0.1);
-      color: var(--warning);
-    }
-
-    .badge-low {
-      background-color: rgba(56, 176, 0, 0.1);
-      color: var(--success);
-    }
-
-    .badge-open {
-      background-color: rgba(26, 58, 110, 0.1);
-      color: var(--primary);
-    }
-
-    .badge-in-progress {
-      background-color: rgba(255, 170, 0, 0.1);
-      color: var(--warning);
-    }
-
-    .badge-resolved {
-      background-color: rgba(56, 176, 0, 0.1);
-      color: var(--success);
-    }
-
-    .badge-closed {
-      background-color: rgba(108, 117, 125, 0.1);
-      color: var(--gray);
-    }
-
-    .action-links {
-      display: flex;
-      gap: 8px;
-    }
-
-    .action-link {
-      width: 32px;
-      height: 32px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 8px;
-      transition: var(--transition);
-    }
-
-    .action-link-view {
-      background-color: rgba(26, 58, 110, 0.1);
-      color: var(--primary);
-    }
-
-    .action-link-edit {
-      background-color: rgba(255, 170, 0, 0.1);
-      color: var(--warning);
-    }
-
-    .action-link-delete {
-      background-color: rgba(217, 4, 41, 0.1);
-      color: var(--danger);
-    }
-
-    .action-link:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .export-options {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 30px;
-    }
-
-    .export-link {
-      background-color: white;
-      padding: 12px 24px;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 500;
-      transition: var(--transition);
-    }
-
-    .export-link:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
-    }
-
-    .export-link-csv {
-      color: var(--success);
-    }
-
-    .export-link-pdf {
-      color: var(--danger);
-    }
-
-    footer {
-      margin-top: 60px;
-      text-align: center;
-      color: var(--gray);
-      padding-top: 20px;
-      border-top: 1px solid #edf2f7;
-    }
-
-    footer p {
-      margin-bottom: 10px;
-    }
-
-    @media (max-width: 768px) {
-      body {
-        padding: 15px;
-      }
-
-      .user-info {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .form-row {
-        flex-direction: column;
-      }
-
-      .button-group {
-        flex-direction: column;
-      }
-
-      .export-options {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      .table-container {
-        overflow-x: auto;
-      }
-
-      table {
-        min-width: 800px;
-      }
-    }
+    :root { --primary: #1a3a6e; --primary-dark: #142c54; --danger: #dc3545; --gray: #6c757d; --border-radius: 8px; --box-shadow: 0 2px 15px rgba(0,0,0,0.08); --transition: all 0.3s ease; }
+    body { font-family: 'Poppins', sans-serif; background-color: #f4f7f9; color: #343a40; padding: 20px; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: 1.5rem; font-weight: 600; }
+    .nav-links { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+    .nav-link { display: inline-flex; align-items: center; text-decoration: none; background-color: var(--primary); color: white; padding: 10px 18px; border-radius: var(--border-radius); font-weight: 500; transition: var(--transition); gap: 8px; }
+    .nav-link:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+    .table-container { overflow-x: auto; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
+    table { width: 100%; border-collapse: collapse; background-color: white; }
+    th { background-color: var(--primary); color: white; padding: 14px 16px; text-align: left; font-weight: 500; }
+    td { padding: 14px 16px; border-bottom: 1px solid #e9ecef; vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    tbody tr:hover { background-color: #f8f9fa; }
+    .empty-row { text-align: center; padding: 40px; color: var(--gray); }
+    .badge { padding: 5px 12px; border-radius: 15px; font-size: 0.8rem; font-weight: 600; display: inline-block; text-transform: uppercase; }
+    .badge-open { background-color: #e3f2fd; color: #0d6efd; }
+    .badge-progress { background-color: #fff3cd; color: #ffc107; }
+    .badge-resolved { background-color: #d1e7dd; color: #198754; }
+    .badge-low { background-color: #d1e7dd; color: #198754; }
+    .badge-medium { background-color: #fff3cd; color: #ffc107; }
+    .badge-high { background-color: #f8d7da; color: var(--danger); }
+    .action-links { display: flex; gap: 10px; }
+    .action-link { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border-radius: 50%; text-decoration: none; transition: var(--transition); }
+    .action-link-edit { background-color: #e3f2fd; color: #0d6efd; }
+    .action-link-edit:hover { background-color: #0d6efd; color: white; }
+    .action-link-delete { background-color: #f8d7da; color: var(--danger); }
+    .action-link-delete:hover { background-color: var(--danger); color: white; }
+    .action-link-resolve { background-color: #d1e7dd; color: #198754; }
+    .action-link-resolve:hover { background-color: #198754; color: white; }
+    .success-message { background-color: #d4edda; color: #155724; padding: 15px; border-radius: var(--border-radius); margin-bottom: 20px; }
   </style>
 </head>
 <body>
 <div class="container">
-  <h1>All Issue Reports</h1>
-
+  <h1>All System Issues</h1>
   <div class="nav-links">
-    <a href="/reports/create" class="nav-link">
-      <i class="fas fa-plus-circle"></i> Create New Issue
-    </a>
-    <a href="/reports/dashboard" class="nav-link">
-      <i class="fas fa-chart-line"></i> Dashboard
-    </a>
+    <a href="/issues/create" class="nav-link"><i class="fas fa-plus-circle"></i> Report New Issue</a>
+    <a href="/issues/dashboard" class="nav-link"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
   </div>
-
-  <div class="user-info">
-    <p><i class="fas fa-user-circle"></i> Current User: <strong>Krishmal2004</strong></p>
-    <p><i class="fas fa-clock"></i> Current Date/Time: <span>2025-09-18 06:53:26</span></p>
-  </div>
-
   <div th:if="${successMessage}" class="success-message">
-    <i class="fas fa-check-circle"></i>
-    <span th:text="${successMessage}">Operation completed successfully!</span>
+    <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
   </div>
-
-  <div class="card">
-    <div class="card-header">
-      <i class="fas fa-filter"></i> Filter Issues
-    </div>
-    <div class="card-body">
-      <form action="/reports" method="get">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="status">Status:</label>
-            <select id="status" name="status">
-              <option value="">All Statuses</option>
-              <option value="Open">Open</option>
-              <option value="In Progress">In Progress</option>
-              <option value="Resolved">Resolved</option>
-              <option value="Closed">Closed</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="priority">Priority:</label>
-            <select id="priority" name="priority">
-              <option value="">All Priorities</option>
-              <option value="High">High</option>
-              <option value="Medium">Medium</option>
-              <option value="Low">Low</option>
-            </select>
-          </div>
-
-          <div class="form-group">
-            <label for="system">System:</label>
-            <select id="system" name="system">
-              <option value="">All Systems</option>
-              <option value="Payment System">Payment System</option>
-              <option value="Network Infrastructure">Network Infrastructure</option>
-              <option value="Database">Database</option>
-              <option value="Web Application">Web Application</option>
-              <option value="Mobile App">Mobile App</option>
-              <option value="Email System">Email System</option>
-              <option value="Third-party Integration">Third-party Integration</option>
-              <option value="Other">Other</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="button-group">
-          <button type="submit"><i class="fas fa-filter"></i> Apply Filters</button>
-          <button type="button" onclick="window.location.href='/reports'" class="secondary">
-            <i class="fas fa-sync-alt"></i> Clear Filters
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div class="card">
-    <div class="card-header">
-      <i class="fas fa-search"></i> Search Issues
-    </div>
-    <div class="card-body">
-      <form action="/reports/search" method="get">
-        <div class="form-row">
-          <div class="form-group" style="flex-grow: 2;">
-            <label for="keyword">Search:</label>
-            <input type="text" id="keyword" name="keyword" placeholder="Search by title, ID, or description">
-          </div>
-          <div class="form-group" style="align-self: flex-end;">
-            <button type="submit"><i class="fas fa-search"></i> Search</button>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-
   <div class="table-container">
     <table>
       <thead>
       <tr>
-        <th>Ticket ID</th>
+        <th>ID</th>
         <th>Title</th>
-        <th>System Affected</th>
-        <th>Priority</th>
         <th>Status</th>
+        <th>Priority</th>
         <th>Reporter</th>
-        <th>Assignee</th>
         <th>Created At</th>
         <th>Actions</th>
       </tr>
       </thead>
       <tbody>
-      <tr th:if="${issues == null || issues.empty}" class="empty-row">
-        <td colspan="9">
-          <i class="fas fa-search fa-3x" style="display: block; margin-bottom: 15px; color: #cbd5e0;"></i>
-          No issue reports found
-        </td>
-      </tr>
-      <tr th:each="issue : ${issues}" th:if="${issues != null}">
-        <td th:text="${issue.ticketId}">IT-20250918-1001</td>
-        <td th:text="${issue.title}">Payment Gateway Issue</td>
-        <td th:text="${issue.systemAffected}">Payment System</td>
+      <tr th:if="${issues.empty}"><td colspan="7" class="empty-row">No issues found.</td></tr>
+      <tr th:each="issue : ${issues}">
+        <td th:text="${issue.id}"></td>
+        <td th:text="${issue.title}"></td>
         <td>
-          <span th:if="${issue.priority == 'High'}" th:text="${issue.priority}" class="badge badge-high">High</span>
-          <span th:if="${issue.priority == 'Medium'}" th:text="${issue.priority}" class="badge badge-medium">Medium</span>
-          <span th:if="${issue.priority == 'Low'}" th:text="${issue.priority}" class="badge badge-low">Low</span>
+          <span class="badge" th:classappend="${issue.status == 'Open' ? 'badge-open' : (issue.status == 'In Progress' ? 'badge-progress' : 'badge-resolved')}" th:text="${issue.status}"></span>
         </td>
         <td>
-          <span th:if="${issue.status == 'Open'}" th:text="${issue.status}" class="badge badge-open">Open</span>
-          <span th:if="${issue.status == 'In Progress'}" th:text="${issue.status}" class="badge badge-in-progress">In Progress</span>
-          <span th:if="${issue.status == 'Resolved'}" th:text="${issue.status}" class="badge badge-resolved">Resolved</span>
-          <span th:if="${issue.status == 'Closed'}" th:text="${issue.status}" class="badge badge-closed">Closed</span>
+          <span class="badge" th:classappend="${issue.priority == 'Low' ? 'badge-low' : (issue.priority == 'Medium' ? 'badge-medium' : 'badge-high')}" th:text="${issue.priority}"></span>
         </td>
-        <td th:text="${issue.reporterName}">Krishmal2004</td>
-        <td th:text="${issue.assigneeName != null ? issue.assigneeName : 'Unassigned'}">Unassigned</td>
-        <td th:text="${#temporals.format(issue.createdAt, 'yyyy-MM-dd HH:mm')}">2025-09-18 06:53</td>
+        <td th:text="${issue.reporterName}"></td>
+        <td th:text="${#temporals.format(issue.createdAt, 'yyyy-MM-dd HH:mm')}"></td>
         <td>
           <div class="action-links">
-            <a th:href="@{/reports/{id}(id=${issue.id})}" class="action-link action-link-view" title="View">
-              <i class="fas fa-eye"></i>
-            </a>
-            <a th:href="@{/reports/{id}/edit(id=${issue.id})}" class="action-link action-link-edit" title="Update">
-              <i class="fas fa-pencil-alt"></i>
-            </a>
-            <a th:href="@{/reports/{id}/delete(id=${issue.id})}" class="action-link action-link-delete" title="Remove"
-               onclick="return confirm('Are you sure you want to remove this issue report?')">
-              <i class="fas fa-trash-alt"></i>
-            </a>
+            <a th:href="@{/issues/{id}/update(id=${issue.id})}" class="action-link action-link-edit" title="Update"><i class="fas fa-pencil-alt"></i></a>
+            <a th:if="${issue.status != 'Resolved'}" th:href="@{/issues/{id}/resolve(id=${issue.id})}" class="action-link action-link-resolve" title="Resolve"><i class="fas fa-check-circle"></i></a>
+            <a th:href="@{/issues/{id}/delete(id=${issue.id})}" class="action-link action-link-delete" title="Delete" onclick="return confirm('Are you sure you want to delete this issue?')"><i class="fas fa-trash-alt"></i></a>
           </div>
         </td>
       </tr>
       </tbody>
     </table>
   </div>
-
-  <div class="export-options">
-    <a href="/reports/export/csv" class="export-link export-link-csv">
-      <i class="fas fa-file-csv"></i> Export to CSV
-    </a>
-    <a href="/reports/export/pdf" class="export-link export-link-pdf">
-      <i class="fas fa-file-pdf"></i> Export to PDF
-    </a>
-  </div>
-
-  <footer>
-    <p>Train System - Managed by <strong>Krishmal2004</strong></p>
-    <p>Last updated: 2025-09-18 06:53:26</p>
-  </footer>
 </div>
 </body>
 </html>

@@ -1,652 +1,260 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>TrainConnect - Create Seasonal Package</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Custom CSS -->
+    <title>Create Seasonal Package</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
     <style>
-        :root {
-            --primary-color: #1a3a6e;
-            --secondary-color: #e63946;
-            --light-color: #f1faee;
-            --dark-color: #1d3557;
-            --accent-color: #a8dadc;
-            --gradient-primary: linear-gradient(135deg, #1a3a6e 0%, #2a5298 100%);
-            --gradient-secondary: linear-gradient(135deg, #e63946 0%, #ff616f 100%);
-            --box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            --transition: all 0.3s ease;
-        }
-
         body {
-            font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
-            color: #333;
-            line-height: 1.6;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        h1, h2, h3, h4, h5 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 600;
-            color: var(--primary-color);
-        }
-
-        .content-wrapper {
-            flex: 1 0 auto;
-        }
-
-        /* NAVBAR STYLING */
         .navbar {
-            background-color: rgba(26, 58, 110, 0.95);
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            padding: 15px 0;
-            transition: var(--transition);
+            background: linear-gradient(to right, #1a2980, #26d0ce);
         }
-
-        .navbar-brand {
-            font-weight: 700;
-            color: white;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.6rem;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
-
-        .navbar-brand .train-icon {
-            color: var(--secondary-color);
+        .card {
+            border: none;
+            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
         }
-
-        /* Page header */
-        .page-header {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 30px 0;
-            margin-bottom: 30px;
-        }
-
-        .page-header h1 {
-            margin-bottom: 0;
+        .card-header {
+            background: linear-gradient(to right, #3494e6, #ec6ead);
             color: white;
         }
-
-        .breadcrumb {
-            background: transparent;
-            padding: 0;
-            margin: 10px 0 0;
-        }
-
-        .breadcrumb-item a {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .breadcrumb-item a:hover {
-            color: white;
-        }
-
-        .breadcrumb-item.active {
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* Form styling */
-        .form-card {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: var(--box-shadow);
-            margin-bottom: 30px;
-            overflow: hidden;
-        }
-
-        .form-card-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .form-card-header h5 {
-            margin-bottom: 0;
-            color: white;
-            font-size: 1.2rem;
-        }
-
-        .form-card-body {
-            padding: 30px;
-        }
-
-        .form-label {
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: var(--dark-color);
-        }
-
-        .form-control, .form-select {
-            border-radius: 8px;
-            padding: 12px 15px;
-            border: 1px solid #ced4da;
-            transition: var(--transition);
-            height: auto;
-        }
-
-        .form-control:focus, .form-select:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 0.25rem rgba(168, 218, 220, 0.25);
-        }
-
-        .form-text {
-            font-size: 0.85rem;
-            color: #6c757d;
-        }
-
-        .invalid-feedback {
-            font-size: 0.85rem;
-            color: var(--secondary-color);
-        }
-
-        /* Button styling */
-        .btn {
-            border-radius: 50px;
-            padding: 12px 25px;
-            font-weight: 500;
-            transition: var(--transition);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .btn i {
-            margin-right: 8px;
-        }
-
         .btn-primary {
-            background: var(--gradient-secondary);
+            background: linear-gradient(to right, #4e54c8, #8f94fb);
             border: none;
-            box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
         }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(230, 57, 70, 0.4);
-            background: linear-gradient(135deg, #d12836 0%, #e63946 100%);
-        }
-
         .btn-secondary {
-            background-color: #6c757d;
+            background: linear-gradient(to right, #606c88, #3f4c6b);
             border: none;
         }
-
-        .btn-secondary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(108, 117, 125, 0.4);
-        }
-
-        /* User info card */
-        .user-info-card {
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: var(--box-shadow);
-            margin-bottom: 30px;
-            overflow: hidden;
-        }
-
-        .user-info-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 15px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .user-info-header h5 {
-            margin-bottom: 0;
-            color: white;
-            font-size: 1.1rem;
-        }
-
-        .user-info-body {
-            padding: 15px 20px;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-
-        .user-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--accent-color);
-            color: var(--primary-color);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            margin-right: 15px;
-        }
-
-        .user-details h6 {
-            margin-bottom: 0;
-            font-size: 1rem;
-        }
-
-        .user-details p {
-            margin-bottom: 0;
-            font-size: 0.85rem;
+        .form-floating label {
             color: #6c757d;
         }
-
-        .datetime {
-            font-size: 0.85rem;
-            color: #6c757d;
-            margin-bottom: 0;
+        .form-floating>.form-control:focus~label {
+            color: #4e54c8;
+        }
+        .form-control:focus {
+            border-color: #8f94fb;
+            box-shadow: 0 0 0 0.25rem rgba(78, 84, 200, 0.25);
+        }
+        .invalid-feedback {
+            font-size: 0.875em;
+            color: #dc3545;
+        }
+        .user-info {
             display: flex;
             align-items: center;
+            gap: 10px;
         }
-
-        .datetime i {
-            margin-right: 5px;
-            color: var(--primary-color);
-        }
-
-        /* GitHub activity */
-        .github-activity {
-            margin-top: 15px;
-            border-top: 1px solid #eee;
-            padding-top: 15px;
-        }
-
-        .github-activity h6 {
-            font-size: 0.9rem;
-            margin-bottom: 10px;
-            color: var(--primary-color);
-        }
-
-        .repo-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .repo-list li {
-            margin-bottom: 8px;
-            font-size: 0.85rem;
-        }
-
-        .repo-list a {
-            color: var(--primary-color);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            transition: var(--transition);
-        }
-
-        .repo-list a:hover {
-            color: var(--secondary-color);
-        }
-
-        .repo-list a i {
-            margin-right: 5px;
-            color: #333;
-        }
-
-        /* FOOTER STYLING */
-        .footer {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 60px 0 20px;
-            margin-top: 60px;
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .footer:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 10px;
-            background: var(--secondary-color);
-        }
-
-        .footer h5 {
-            position: relative;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-            font-size: 1.3rem;
-            color: white;
-        }
-
-        .footer h5:after {
-            content: '';
-            position: absolute;
-            left: 0;
-            bottom: 0;
-            width: 40px;
-            height: 2px;
-            background-color: var(--secondary-color);
-        }
-
-        .footer-link {
-            color: rgba(255, 255, 255, 0.8);
-            text-decoration: none;
-            display: block;
-            margin-bottom: 10px;
-            transition: var(--transition);
-        }
-
-        .footer-link:hover {
-            color: white;
-            transform: translateX(5px);
-        }
-
-        .social-links a {
-            display: inline-block;
-            width: 36px;
-            height: 36px;
-            line-height: 36px;
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            margin-right: 10px;
-            transition: var(--transition);
-            color: white;
-        }
-
-        .social-links a:hover {
-            background-color: var(--secondary-color);
-            transform: translateY(-3px);
-        }
-
-        /* Tips card */
-        .tips-card {
-            background-color: rgba(168, 218, 220, 0.15);
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 30px;
-            border-left: 4px solid var(--accent-color);
-        }
-
-        .tips-card h5 {
-            color: var(--primary-color);
-            font-size: 1.1rem;
-            margin-bottom: 15px;
-        }
-
-        .tips-card ul {
-            padding-left: 20px;
-            margin-bottom: 0;
-        }
-
-        .tips-card li {
-            margin-bottom: 8px;
-            font-size: 0.9rem;
+        .required-label::after {
+            content: " *";
+            color: red;
         }
     </style>
 </head>
 <body>
-<!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="/">
-            <i class="fas fa-train me-2 train-icon"></i>TrainConnect
+        <a class="navbar-brand" href="#">
+            <i class="bi bi-train-front me-2"></i>
+            Train System
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/routes"><i class="fas fa-route me-1"></i> Routes</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/attractions"><i class="fas fa-mountain me-1"></i> Attractions</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/schedules"><i class="fas fa-calendar-alt me-1"></i> Schedules</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/packages"><i class="fas fa-gift me-1"></i> Packages</a>
-                </li>
-                <li class="nav-item ms-lg-3">
-                    <a class="btn btn-primary" href="/logout"><i class="fas fa-sign-out-alt me-1"></i> Logout</a>
-                </li>
+            <ul class="navbar-nav me-auto">
             </ul>
+            <div class="user-info text-white">
+                <i class="bi bi-person-circle"></i>
+                <span th:text="${username}">Username</span>
+                <a href="/logout" class="btn btn-sm btn-outline-light ms-3">Logout</a>
+            </div>
         </div>
     </div>
 </nav>
 
-<div class="content-wrapper">
-    <!-- Page Header -->
-    <div class="page-header">
-        <div class="container">
-            <h1><i class="fas fa-plus-circle me-2"></i> Create New Seasonal Package</h1>
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i> Home</a></li>
-                    <li class="breadcrumb-item"><a href="/packages">Seasonal Packages</a></li>
-                    <li class="breadcrumb-item active">Create New Package</li>
-                </ol>
-            </nav>
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/packages">Dashboard</a></li>
+            <li class="breadcrumb-item"><a href="/packages">Packages</a></li>
+            <li class="breadcrumb-item active">Create Package</li>
+        </ol>
+    </nav>
+
+    <div class="card shadow-sm">
+        <div class="card-header">
+            <h5 class="card-title mb-0">Create New Seasonal Package</h5>
         </div>
-    </div>
-
-    <div class="container">
-        <div class="row">
-            <!-- Main Content -->
-            <div class="col-lg-8">
-                <div class="form-card">
-                    <div class="form-card-header">
-                        <h5><i class="fas fa-edit me-2"></i> Package Details</h5>
-                    </div>
-                    <div class="form-card-body">
-                        <form th:action="@{/packages/create}" th:object="${package}" method="post" class="needs-validation" novalidate>
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="packageID" class="form-label">Package ID <span class="text-danger">*</span></label>
-                                    <input type="text" class="form-control" id="packageID" th:field="*{packageID}" required
-                                           placeholder="Enter package ID (e.g. PKG-2025-001)">
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('packageID')}" th:errors="*{packageID}">
-                                        Please provide a valid package ID.
-                                    </div>
-                                    <small class="form-text">Use a unique identifier for this seasonal package.</small>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="startDate" class="form-label">Start Date <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}">
-                                        Please select a start date.
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="endDate" class="form-label">End Date <span class="text-danger">*</span></label>
-                                    <input type="date" class="form-control" id="endDate" th:field="*{endDate}" required>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}">
-                                        Please select an end date.
-                                    </div>
-                                    <small class="form-text">End date must be after start date.</small>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-md-6">
-                                    <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
-                                    <select class="form-select" id="status" th:field="*{status}" required>
-                                        <option value="">-- Select Status --</option>
-                                        <option value="ACTIVE">Active</option>
-                                        <option value="SCHEDULED">Scheduled</option>
-                                        <option value="COMPLETED">Completed</option>
-                                        <option value="CANCELLED">Cancelled</option>
-                                    </select>
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('status')}" th:errors="*{status}">
-                                        Please select a status.
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="remarks" class="form-label">Remarks</label>
-                                <textarea class="form-control" id="remarks" th:field="*{remarks}" rows="4"
-                                          placeholder="Enter any additional information about this package"></textarea>
-                            </div>
-
-                            <div class="d-flex gap-3">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-save me-2"></i> Create Package
-                                </button>
-                                <a href="/packages" class="btn btn-secondary">
-                                    <i class="fas fa-arrow-left me-2"></i> Back to Packages
-                                </a>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sidebar -->
-            <div class="col-lg-4">
-                <!-- User Info Card -->
-                <div class="user-info-card">
-                    <div class="user-info-header">
-                        <h5><i class="fas fa-user-circle me-2"></i> User Information</h5>
-                    </div>
-                    <div class="user-info-body">
-                        <div class="user-profile">
-                            <div class="user-avatar">
-                                <i class="fas fa-user"></i>
-                            </div>
-                            <div class="user-details">
-                                <h6>Krishmal2004</h6>
-                                <p>Operations Manager</p>
-                            </div>
+        <div class="card-body">
+            <form th:action="@{/packages/create}" th:object="${package}" method="post" class="needs-validation" novalidate>
+                <div class="row g-3">
+                    <div class="col-md-6 mb-3">
+                        <label for="packageID" class="form-label required-label">Package ID</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-tag"></i></span>
+                            <input type="text" class="form-control" id="packageID" th:field="*{packageID}"
+                                   placeholder="PKG###" aria-describedby="packageIDHelp">
                         </div>
-                        <p class="datetime">
-                            <i class="far fa-clock"></i> 2025-09-16 12:41:12
-                        </p>
+                        <small id="packageIDHelp" class="form-text text-muted">
+                            If left empty, system will auto-generate an ID (PKG###)
+                        </small>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('packageID')}" th:errors="*{packageID}">
+                            Package ID error
+                        </div>
+                    </div>
 
+                    <div class="col-md-6 mb-3">
+                        <label for="route" class="form-label">Route</label>
+                        <select class="form-select" id="route" name="routeId">
+                            <option value="">-- Select Route --</option>
+                            <option th:each="route : ${routes}"
+                                    th:value="${route.id}"
+                                    th:text="${route.origin + ' - ' + route.destination}">
+                                Colombo - Kandy
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="startDate" class="form-label required-label">Start Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                            <input type="date" class="form-control" id="startDate" th:field="*{startDate}" required>
+                        </div>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}">
+                            Start date error
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="endDate" class="form-label required-label">End Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-calendar-event"></i></span>
+                            <input type="date" class="form-control" id="endDate" th:field="*{endDate}" required>
+                        </div>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}">
+                            End date error
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <label for="status" class="form-label required-label">Status</label>
+                        <select class="form-select" id="status" th:field="*{status}" required>
+                            <option value="">-- Select Status --</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                            <option value="Pending">Pending</option>
+                        </select>
+                        <div class="invalid-feedback" th:if="${#fields.hasErrors('status')}" th:errors="*{status}">
+                            Status error
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <label for="remarks" class="form-label">Remarks</label>
+                        <textarea class="form-control" id="remarks" th:field="*{remarks}" rows="3"
+                                  placeholder="Additional information about this seasonal package"></textarea>
+                    </div>
+
+                    <div class="col-12 d-flex justify-content-end gap-2">
+                        <a href="/packages" class="btn btn-secondary">
+                            <i class="bi bi-x-circle me-1"></i> Cancel
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check-circle me-1"></i> Create Package
+                        </button>
                     </div>
                 </div>
-
-                <!-- Tips Card -->
-                <div class="tips-card">
-                    <h5><i class="fas fa-lightbulb me-2"></i> Package Creation Tips</h5>
-                    <ul>
-                        <li><strong>Package ID</strong> should follow the format PKG-YYYY-XXX where YYYY is the year and XXX is a sequential number</li>
-                        <li>Set the <strong>Status</strong> to "Scheduled" for future packages or "Active" for immediate availability</li>
-                        <li>Add detailed <strong>Remarks</strong> to help team members understand the package details</li>
-                        <li>Ensure the <strong>End Date</strong> is after the <strong>Start Date</strong></li>
-                        <li>Seasonal packages typically range from 1 week to 3 months in duration</li>
-                    </ul>
-                </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
 
-<!-- Footer -->
-<footer class="footer">
+<footer class="bg-dark text-white py-4 mt-5">
     <div class="container">
         <div class="row">
-            <div class="col-md-4 mb-4 mb-md-0">
-                <h5>TrainConnect</h5>
-                <p>Modern railway management and booking system for seamless passenger experience. Explore scenic routes and unforgettable journeys.</p>
-                <div class="social-links mt-4">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
-                </div>
-            </div>
-            <div class="col-md-2 mb-4 mb-md-0">
-                <h5>Quick Links</h5>
-                <ul class="list-unstyled">
-                    <li><a href="/" class="footer-link">Home</a></li>
-                    <li><a href="/routes" class="footer-link">Routes</a></li>
-                    <li><a href="/attractions" class="footer-link">Attractions</a></li>
-                    <li><a href="/schedules" class="footer-link">Schedules</a></li>
-                    <li><a href="/packages" class="footer-link">Packages</a></li>
-                </ul>
-            </div>
-            <div class="col-md-3 mb-4 mb-md-0">
-                <h5>Contact Us</h5>
-                <address class="mb-0">
-                    <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Railway Street, City</p>
-                    <p class="mb-2"><i class="fas fa-phone me-2"></i> (123) 456-7890</p>
-                    <p class="mb-2"><i class="fas fa-envelope me-2"></i> info@trainconnect.com</p>
-                    <p class="mb-2"><i class="fas fa-clock me-2"></i> Mon-Fri: 9AM - 6PM</p>
-                </address>
+            <div class="col-md-6">
+                <h5>Train System - Station Manager</h5>
+                <p>Efficiently manage seasonal packages for your train routes.</p>
             </div>
             <div class="col-md-3">
-                <h5>Newsletter</h5>
-                <p>Subscribe for updates on new routes and special offers.</p>
-                <div class="input-group mb-3">
-                    <input type="email" class="form-control" placeholder="Your email">
-                    <button class="btn btn-secondary" type="button">Subscribe</button>
-                </div>
-                <p class="small">By subscribing, you agree to our Privacy Policy and Terms of Service.</p>
+                <h5>Quick Links</h5>
+                <ul class="list-unstyled">
+                    <li><a href="/packages" class="text-white">Dashboard</a></li>
+                    <li><a href="/packages" class="text-white">Packages</a></li>
+                    <li><a href="/routes" class="text-white">Routes</a></li>
+                </ul>
+            </div>
+            <div class="col-md-3">
+                <h5>Contact</h5>
+                <address>
+                    <i class="bi bi-geo-alt-fill me-2"></i> Colombo, Sri Lanka<br>
+                    <i class="bi bi-envelope-fill me-2"></i> info@trainsystem.com<br>
+                    <i class="bi bi-telephone-fill me-2"></i> +94 11 123 4567
+                </address>
             </div>
         </div>
-        <hr class="my-4 bg-light opacity-25">
+        <hr>
         <div class="text-center">
-            <p class="mb-0">&copy; 2025 TrainConnect. All rights reserved.</p>
-            <p class="mb-0">Current time: 2025-09-16 12:41:12 | User: Krishmal2004</p>
+            <p class="mb-0">© 2025 Train System. All rights reserved.</p>
+            <p class="mb-0">Current time: <span th:text="${#temporals.format(currentDateTime, 'yyyy-MM-dd HH:mm:ss')}">2025-10-03 11:34:03</span></p>
         </div>
     </div>
 </footer>
 
-<!-- Bootstrap JS Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<!-- Form validation script -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Validate date inputs
-    document.getElementById('endDate').addEventListener('change', function() {
-        const startDate = new Date(document.getElementById('startDate').value);
-        const endDate = new Date(this.value);
-
-        if (endDate < startDate) {
-            alert('End date cannot be before start date');
-            this.value = '';
-        }
-    });
-
-    // Form validation
-    (function() {
-        'use strict';
-
-        // Fetch all forms we want to apply validation to
-        var forms = document.querySelectorAll('.needs-validation');
+    // Enable form validation
+    document.addEventListener('DOMContentLoaded', function() {
+        // Fetch all forms that need validation
+        const forms = document.querySelectorAll('.needs-validation');
 
         // Loop over them and prevent submission
-        Array.prototype.slice.call(forms)
-            .forEach(function(form) {
-                form.addEventListener('submit', function(event) {
-                    if (!form.checkValidity()) {
-                        event.preventDefault();
-                        event.stopPropagation();
-                    }
+        Array.from(forms).forEach(form => {
+            form.addEventListener('submit', event => {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
 
-                    form.classList.add('was-validated');
-                }, false);
-            });
-    })();
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Date validation logic
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+
+        endDateInput.addEventListener('change', function() {
+            if (startDateInput.value && endDateInput.value) {
+                if (new Date(endDateInput.value) < new Date(startDateInput.value)) {
+                    endDateInput.setCustomValidity('End date must be after start date');
+                } else {
+                    endDateInput.setCustomValidity('');
+                }
+            }
+        });
+
+        startDateInput.addEventListener('change', function() {
+            if (startDateInput.value && endDateInput.value) {
+                if (new Date(endDateInput.value) < new Date(startDateInput.value)) {
+                    endDateInput.setCustomValidity('End date must be after start date');
+                } else {
+                    endDateInput.setCustomValidity('');
+                }
+            }
+        });
+    });
 </script>
 </body>
 </html>

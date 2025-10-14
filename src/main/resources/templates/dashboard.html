@@ -35,6 +35,7 @@
         .user-info { display: flex; align-items: center; gap: 15px; color: white; }
         .user-avatar { width: 40px; height: 40px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.2); display: flex; align-items: center; justify-content: center; font-weight: 600; color: white; }
         .user-name { font-weight: 500; }
+        .navbar-toggler { display: none; background: none; border: none; font-size: 1.5rem; color: white; cursor: pointer; }
         .page-header { background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1554103213-79353a1a52c3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80'); background-size: cover; background-position: center; color: white; padding: 60px 0; margin-bottom: 40px; }
         .page-title { font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; text-align: center; }
         .page-subtitle { font-size: 1.1rem; max-width: 600px; margin: 0 auto; opacity: 0.9; text-align: center; }
@@ -47,6 +48,8 @@
         .btn-primary:hover { background-color: #132d54; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .btn-warning { background-color: var(--warning); color: var(--dark); }
         .btn-warning:hover { background-color: #e5ac00; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .btn-success { background-color: var(--success); color: white; }
+        .btn-success:hover { background-color: #146c43; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         .btn i { margin-right: 8px; }
         .booking-card { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); margin-bottom: 20px; display: flex; overflow: hidden; transition: var(--transition); }
         .booking-card:hover { transform: translateY(-5px); box-shadow: 0 1rem 1.5rem rgba(0,0,0,0.1); }
@@ -63,7 +66,7 @@
         .detail-item { text-align: left; }
         .detail-item .label { font-size: 0.8rem; color: #6c757d; margin-bottom: 4px; text-transform: uppercase; }
         .detail-item .value { font-size: 1.1rem; font-weight: 600; color: var(--dark); }
-        .booking-actions { display: flex; gap: 10px; text-align: right; }
+        .booking-actions { display: flex; flex-wrap: wrap; gap: 10px; text-align: right; }
         .alert-info { color: #0c5460; background-color: #d1ecf1; border-color: #bee5eb; padding: 15px; margin-bottom: 20px; border: 1px solid transparent; border-radius: var(--border-radius); }
         .footer { background-color: var(--dark); color: white; padding: 40px 0; margin-top: 60px; }
         .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; }
@@ -119,6 +122,52 @@
             background-color: rgba(220, 53, 69, 0.15);
             color: var(--danger);
         }
+
+        /* --- RESPONSIVE STYLES --- */
+        @media (max-width: 992px) {
+            .navbar-nav {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                text-align: center;
+                background-color: var(--primary);
+                position: absolute;
+                top: 70px;
+                left: 0;
+                padding: 10px 0;
+            }
+            .navbar-nav.active {
+                display: flex;
+            }
+            .navbar-toggler {
+                display: block;
+            }
+            .user-info .user-name {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body { padding-top: 60px; }
+            .navbar { padding: 10px 0; }
+            .page-header { padding: 40px 0; }
+            .page-title { font-size: 2rem; }
+            .page-subtitle { font-size: 1rem; }
+            .book-ticket-card { flex-direction: column; text-align: center; }
+            .booking-card-main { flex-direction: column; align-items: flex-start; }
+            .booking-details { width: 100%; justify-content: space-between; gap: 15px; }
+            .booking-actions { width: 100%; justify-content: flex-end; }
+            .footer-content { flex-direction: column; text-align: center; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 576px) {
+            .booking-details { flex-direction: column; align-items: flex-start; gap: 10px; }
+            .detail-item { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+            .btn { width: 100%; }
+            .booking-actions .btn { width: auto; }
+            .section-heading { font-size: 1.5rem; }
+        }
     </style>
 </head>
 <body>
@@ -126,10 +175,13 @@
     <div class="container">
         <div class="navbar-content">
             <a href="/" class="navbar-brand"><i class="fas fa-train"></i> TrainConnect</a>
-            <ul class="navbar-nav">
+            <button class="navbar-toggler" id="navbarToggler">
+                <i class="fas fa-bars"></i>
+            </button>
+            <ul class="navbar-nav" id="navbarNav">
                 <li><a href="/" class="nav-link"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="/routes" class="nav-link"><i class="fas fa-route"></i> Routes</a></li>
-                <li><a href="/schedules" class="nav-link"><i class="fas fa-calendar-alt"></i> Schedules</a></li>
+                <li><a href="/route" class="nav-link"><i class="fas fa-route"></i> Routes</a></li>
+                <li><a href="/schedule" class="nav-link"><i class="fas fa-calendar-alt"></i> Schedules</a></li>
                 <li><a href="/tickets" class="nav-link active"><i class="fas fa-ticket-alt"></i> Tickets</a></li>
             </ul>
             <div class="user-info">
@@ -233,10 +285,13 @@
                 <div class="booking-journey">
                     <div class="journey-icon"><i class="fas fa-train"></i></div>
                     <div class="journey-stations">
-                        <h4>
+                        <h4 th:if="${ticket.route != null}">
                             <span th:text="${ticket.route.origin}">Origin</span>
                             <i class="fas fa-long-arrow-alt-right"></i>
                             <span th:text="${ticket.route.destination}">Destination</span>
+                        </h4>
+                        <h4 th:if="${ticket.route == null}">
+                            <span>Route Not Available</span>
                         </h4>
                         <p>Ticket ID: <span th:text="${ticket.ticketId}">TKT-ID</span></p>
                     </div>
@@ -269,6 +324,9 @@
                 <div class="booking-actions">
                     <a th:href="@{/tickets/{id}(id=${ticket.id})}" class="btn btn-primary">
                         <i class="fas fa-eye"></i> View
+                    </a>
+                    <a th:if="${ticket.status == 'pending'}" th:href="@{/payments/pay/{ticketId}(ticketId=${ticket.id})}" class="btn btn-success">
+                        <i class="fas fa-credit-card"></i> Pay Now
                     </a>
                     <a th:href="@{/tickets/{id}/edit(id=${ticket.id})}" class="btn btn-warning">
                         <i class="fas fa-edit"></i> Edit
@@ -315,6 +373,12 @@
         </div>
     </div>
 </footer>
+
+<script>
+    document.getElementById('navbarToggler').addEventListener('click', function() {
+        document.getElementById('navbarNav').classList.toggle('active');
+    });
+</script>
 
 </body>
 </html>
