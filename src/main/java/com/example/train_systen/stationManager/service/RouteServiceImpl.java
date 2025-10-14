@@ -28,9 +28,18 @@ public class RouteServiceImpl implements RouteService {
     public Optional<Route> getRouteById(Long id) {
         return routeRepository.findById(id);
     }
-    
+
     @Override
     public Route saveRoute(Route route) {
+        // --- NEW: Automatically generate Route ID for new routes ---
+        // We check if the primary key (id) is null, which means it's a new entity.
+        if (route.getId() == null) {
+            // Find the next sequence number by counting existing routes.
+            long nextSequence = routeRepository.count() + 1;
+            // Format the ID as "R-" followed by a three-digit number (e.g., R-001, R-012, R-123).
+            String generatedId = String.format("R-%03d", nextSequence);
+            route.setRouteId(generatedId);
+        }
         return routeRepository.save(route);
     }
     

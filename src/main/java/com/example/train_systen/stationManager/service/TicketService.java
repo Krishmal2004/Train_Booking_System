@@ -30,5 +30,8 @@ public interface TicketService {
 
     boolean isTicketIdExists(String ticketId);
 
+    // Add this method signature to the TicketService interface
+    boolean isSeatBooked(Long routeId, LocalDate travelDate, String seatNumber);
+
     String generateTicketId();
 }
