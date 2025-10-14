@@ -4,9 +4,7 @@
     <title>Edit Train Ticket</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -499,7 +497,7 @@
 
         .ticket-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(3, 1fr); /* Changed from auto-fit to fixed 3 columns */
             gap: 20px;
             margin-bottom: 20px;
         }
@@ -721,6 +719,17 @@
                 order: 1;
             }
         }
+        @media (max-width: 992px) {
+            .ticket-details {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .ticket-details {
+                grid-template-columns: 1fr; /* 1 column on mobile */
+            }
+        }
 
         @media (max-width: 480px) {
             .action-bar {
@@ -801,7 +810,6 @@
     </style>
 </head>
 <body>
-<!-- Navigation Bar -->
 <nav class="navbar">
     <div class="container">
         <div class="navbar-content">
@@ -843,7 +851,6 @@
     </div>
 </nav>
 
-<!-- Page Header -->
 <header class="page-header">
     <div class="edit-mode-badge">EDIT MODE</div>
     <div class="container">
@@ -853,14 +860,12 @@
 </header>
 
 <div class="container">
-    <!-- Action Bar -->
     <div class="action-bar">
         <a href="/dashboard" class="btn btn-primary">
             <i class="fas fa-arrow-left"></i> Back to Tickets
         </a>
     </div>
 
-    <!-- Ticket Preview -->
     <div class="ticket-preview">
         <div class="ticket-edit-badge">EDITING</div>
         <div class="ticket-header">
@@ -890,6 +895,11 @@
                 <div class="ticket-detail-label">Passenger</div>
                 <div class="ticket-detail-value" id="passengerNamePreview">Guest Passenger</div>
             </div>
+            <div class="ticket-detail-group">
+                <div class="ticket-detail-label">Email</div>
+                <div class="ticket-detail-value" id="passengerEmailPreview">Not provided</div>
+            </div>
+
 
             <div class="ticket-detail-group">
                 <div class="ticket-detail-label">Travel Date</div>
@@ -924,7 +934,6 @@
         </div>
     </div>
 
-    <!-- Ticket Form -->
     <div class="form-card">
         <div class="card-header">
             <i class="fas fa-edit"></i>
@@ -932,18 +941,18 @@
         </div>
         <div class="card-body">
             <form th:action="@{/tickets/{id}/edit(id=${ticket.id})}" th:object="${ticket}" method="post" id="ticketForm">
-                <!-- Basic Information Section -->
                 <div class="section-divider">
                     <h5><i class="fas fa-info-circle"></i> Basic Information</h5>
                     <div class="line"></div>
                 </div>
 
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="ticketId" class="form-label"><i class="fas fa-fingerprint"></i> Ticket ID</label>
-                        <input type="text" class="form-control" id="ticketId" th:field="*{ticketId}" required>
+                        <input type="text" class="form-control" id="ticketId" th:field="*{ticketId}" readonly>
                         <span class="error-message" th:if="${#fields.hasErrors('ticketId')}" th:errors="*{ticketId}"></span>
-                        <small class="form-text">Enter a unique identifier for this ticket</small>
+                        <small class="form-text">The ticket ID is a permanent identifier and cannot be changed.</small>
                     </div>
 
                     <div class="form-group">
@@ -952,8 +961,12 @@
                         <span class="error-message" th:if="${#fields.hasErrors('passengerName')}" th:errors="*{passengerName}"></span>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label for="passengerEmail" class="form-label"><i class="fas fa-envelope"></i> Passenger Email</label>
+                    <input type="email" class="form-control" id="passengerEmail" th:field="*{passengerEmail}" required readonly>
+                    <small class="form-text">Email is linked to the passenger's account and cannot be changed.</small>
+                </div>
 
-                <!-- Journey Details Section -->
                 <div class="section-divider">
                     <h5><i class="fas fa-route"></i> Journey Details</h5>
                     <div class="line"></div>
@@ -980,7 +993,6 @@
                     </div>
                 </div>
 
-                <!-- Ticket Details Section -->
                 <div class="section-divider">
                     <h5><i class="fas fa-ticket-alt"></i> Ticket Details</h5>
                     <div class="line"></div>
@@ -1008,14 +1020,13 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="price" class="form-label"><i class="fas fa-dollar-sign"></i> Price</label>
-                        <input type="number" class="form-control" id="price" th:field="*{price}" step="0.01" min="0" required>
+                        <input type="number" class="form-control" id="price" th:field="*{price}" step="0.01" min="0" readonly>
                         <span class="error-message" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="status" class="form-label"><i class="fas fa-info-circle"></i> Status</label>
                         <select class="form-control" id="status" th:field="*{status}" required>
-                            <option value="confirmed">Confirmed</option>
                             <option value="pending">Pending</option>
                             <option value="cancelled">Cancelled</option>
                         </select>
@@ -1023,7 +1034,6 @@
                     </div>
                 </div>
 
-                <!-- Additional Information Section -->
                 <div class="section-divider">
                     <h5><i class="fas fa-comment-alt"></i> Additional Information</h5>
                     <div class="line"></div>
@@ -1034,7 +1044,6 @@
                     <textarea class="form-control" id="remarks" th:field="*{remarks}" rows="3" placeholder="Enter any additional notes or special requirements"></textarea>
                 </div>
 
-                <!-- Form Actions -->
                 <div class="form-actions">
                     <div class="form-actions-left">
                         <button type="button" class="btn btn-danger" id="deleteBtn">
@@ -1056,7 +1065,6 @@
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
 <div class="modal-backdrop" id="deleteModal">
     <div class="modal-content">
         <div class="modal-header">
@@ -1081,7 +1089,6 @@
     </div>
 </div>
 
-<!-- Footer -->
 <footer class="footer">
     <div class="container">
         <div class="footer-content">
@@ -1103,7 +1110,6 @@
     </div>
 </footer>
 
-<!-- JavaScript -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Form elements
@@ -1115,6 +1121,8 @@
         const ticketClassSelect = document.getElementById('ticketClass');
         const priceInput = document.getElementById('price');
         const statusSelect = document.getElementById('status');
+        const passengerEmailInput = document.getElementById('passengerEmail');
+        const passengerEmailPreview = document.getElementById('passengerEmailPreview');
 
         // Preview elements
         const ticketIdPreview = document.getElementById('ticketIdPreview');
@@ -1135,6 +1143,13 @@
         const cancelDelete = document.getElementById('cancelDelete');
         const deleteTicketId = document.getElementById('deleteTicketId');
         const deletePassengerName = document.getElementById('deletePassengerName');
+
+        passengerEmailInput.addEventListener('input', function() {
+            passengerEmailPreview.textContent = this.value || 'Not provided';
+        });
+
+        // Add this to the initialization section (around line 995)
+        if (passengerEmailInput.value) passengerEmailInput.dispatchEvent(new Event('input'));
 
         // Update preview on input changes
         ticketIdInput.addEventListener('input', function() {
@@ -1244,10 +1259,11 @@
         document.getElementById('ticketForm').addEventListener('submit', function(event) {
             let isValid = true;
 
-            // Validate ticket ID format (e.g., TKT-12345)
-            const ticketIdPattern = /^[A-Z]+-\d+$/;
+            // Validate ticket ID format (e.g., TKT-20251003-1234)
+            const ticketIdPattern = /^[A-Z]+-\d+-\d+$/; // CORRECTED PATTERN
             if (!ticketIdPattern.test(ticketIdInput.value)) {
-                alert('Ticket ID should be in format XXX-12345 (e.g., TKT-12345)');
+                // CORRECTED ALERT MESSAGE
+                alert('Ticket ID should be in the format XXX-YYYYMMDD-NNNN (e.g., TKT-20251003-1234)');
                 isValid = false;
             }
 

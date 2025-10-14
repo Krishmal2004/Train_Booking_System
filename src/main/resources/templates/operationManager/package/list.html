@@ -1,641 +1,302 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>TrainConnect - Seasonal Package List</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <!-- Custom CSS -->
+  <title>All Seasonal Packages</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
   <style>
-    :root {
-      --primary-color: #1a3a6e;
-      --secondary-color: #e63946;
-      --light-color: #f1faee;
-      --dark-color: #1d3557;
-      --accent-color: #a8dadc;
-      --gradient-primary: linear-gradient(135deg, #1a3a6e 0%, #2a5298 100%);
-      --gradient-secondary: linear-gradient(135deg, #e63946 0%, #ff616f 100%);
-      --box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-      --transition: all 0.3s ease;
-    }
-
     body {
-      font-family: 'Poppins', sans-serif;
       background-color: #f8f9fa;
-      color: #333;
-      line-height: 1.6;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
-    h1, h2, h3, h4, h5 {
-      font-family: 'Playfair Display', serif;
-      font-weight: 600;
-      color: var(--primary-color);
-    }
-
-    .content-wrapper {
-      flex: 1 0 auto;
-    }
-
-    /* NAVBAR STYLING */
     .navbar {
-      background-color: rgba(26, 58, 110, 0.95);
-      box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-      padding: 15px 0;
-      transition: var(--transition);
+      background: linear-gradient(to right, #1a2980, #26d0ce);
     }
-
-    .navbar-brand {
-      font-weight: 700;
-      color: white;
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
     }
-
-    .navbar-brand .train-icon {
-      color: var(--secondary-color);
-    }
-
-    /* Page header */
-    .page-header {
-      background: var(--gradient-primary);
-      color: white;
-      padding: 30px 0;
-      margin-bottom: 30px;
-    }
-
-    .page-header h1 {
-      margin-bottom: 0;
-      color: white;
-    }
-
-    .breadcrumb {
-      background: transparent;
-      padding: 0;
-      margin: 10px 0 0;
-    }
-
-    .breadcrumb-item a {
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      transition: var(--transition);
-    }
-
-    .breadcrumb-item a:hover {
-      color: white;
-    }
-
-    .breadcrumb-item.active {
-      color: rgba(255, 255, 255, 0.6);
-    }
-
-    /* Action buttons */
-    .action-buttons {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 20px;
-    }
-
-    .btn {
-      border-radius: 50px;
-      padding: 10px 25px;
-      font-weight: 500;
-      transition: var(--transition);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-size: 0.85rem;
-      display: inline-flex;
-      align-items: center;
-    }
-
-    .btn i {
-      margin-right: 8px;
-    }
-
-    .btn-primary {
-      background: var(--gradient-secondary);
+    .card {
       border: none;
-      box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
+      box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      transition: transform 0.3s;
     }
-
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 25px rgba(230, 57, 70, 0.4);
-      background: linear-gradient(135deg, #d12836 0%, #e63946 100%);
+    .card:hover {
+      transform: translateY(-5px);
     }
-
-    .btn-outline-primary {
-      color: var(--primary-color);
-      border: 2px solid var(--primary-color);
-      background: transparent;
-    }
-
-    .btn-outline-primary:hover {
-      background-color: var(--primary-color);
+    .card-header {
+      background: linear-gradient(to right, #3494e6, #ec6ead);
       color: white;
-      transform: translateY(-3px);
     }
-
-    /* User info card */
-    .user-info-card {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: var(--box-shadow);
-      margin-bottom: 30px;
-      overflow: hidden;
+    .btn-primary {
+      background: linear-gradient(to right, #4e54c8, #8f94fb);
+      border: none;
     }
-
-    .user-info-header {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 15px 20px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    .btn-danger {
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      border: none;
     }
-
-    .user-info-header h5 {
-      margin-bottom: 0;
-      color: white;
-      font-size: 1.1rem;
+    .btn-success {
+      background: linear-gradient(to right, #11998e, #38ef7d);
+      border: none;
     }
-
-    .user-info-body {
-      padding: 15px 20px;
+    .alert {
+      border-radius: 0.5rem;
     }
-
-    .user-profile {
-      display: flex;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .user-avatar {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background-color: var(--accent-color);
-      color: var(--primary-color);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.5rem;
-      margin-right: 15px;
-    }
-
-    .user-details h6 {
-      margin-bottom: 0;
-      font-size: 1rem;
-    }
-
-    .user-details p {
-      margin-bottom: 0;
-      font-size: 0.85rem;
-      color: #6c757d;
-    }
-
-    .datetime {
-      font-size: 0.85rem;
-      color: #6c757d;
-      margin-bottom: 0;
-      display: flex;
-      align-items: center;
-    }
-
-    .datetime i {
-      margin-right: 5px;
-      color: var(--primary-color);
-    }
-
-    /* Success message */
-    .alert-success {
-      background-color: #d4edda;
-      color: #155724;
-      padding: 15px;
-      margin-bottom: 30px;
-      border-radius: 8px;
-      border-left: 5px solid #28a745;
-    }
-
-    /* Package card */
-    .package-card {
-      background-color: white;
-      border-radius: 10px;
-      box-shadow: var(--box-shadow);
-      margin-bottom: 30px;
-      overflow: hidden;
-    }
-
-    .package-card-header {
-      background-color: var(--primary-color);
-      color: white;
-      padding: 15px 20px;
-      font-weight: 600;
-    }
-
-    .package-card-header h5 {
-      margin-bottom: 0;
-      color: white;
-      font-size: 1.2rem;
-    }
-
-    /* Table styling */
     .table {
-      margin-bottom: 0;
+      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
-
-    .table th {
+    .table thead {
       background-color: #f8f9fa;
-      font-weight: 600;
-      padding: 15px;
-      border-top: none;
-      border-bottom: 2px solid #dee2e6;
     }
-
-    .table td {
-      padding: 15px;
-      vertical-align: middle;
-      border-top: 1px solid #dee2e6;
+    .badge {
+      font-size: 0.85em;
+      padding: 0.4em 0.8em;
     }
-
-    /* Status badges */
-    .status-badge {
-      display: inline-block;
-      padding: 5px 12px;
-      border-radius: 50px;
-      font-size: 0.8rem;
-      font-weight: 500;
+    .badge-active {
+      background-color: #28a745;
     }
-
-    .status-active {
-      background-color: #d4edda;
-      color: #155724;
-    }
-
-    .status-scheduled {
-      background-color: #cce5ff;
-      color: #004085;
-    }
-
-    .status-completed {
-      background-color: #d6d8db;
-      color: #383d41;
-    }
-
-    .status-cancelled {
-      background-color: #f8d7da;
-      color: #721c24;
-    }
-
-    /* Action buttons */
-    .action-btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      color: white;
-      text-decoration: none;
-      transition: var(--transition);
-      margin-right: 5px;
-    }
-
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-
-    .edit-btn {
-      background-color: #ffc107;
-    }
-
-    .delete-btn {
+    .badge-inactive {
       background-color: #dc3545;
     }
-
-    .view-btn {
-      background-color: var(--primary-color);
+    .badge-pending {
+      background-color: #ffc107;
     }
-
-    /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: #6c757d;
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
-
-    .empty-state i {
-      font-size: 3rem;
+    .filter-card {
       margin-bottom: 20px;
-      opacity: 0.5;
-    }
-
-    /* FOOTER STYLING */
-    .footer {
-      background: var(--gradient-primary);
-      color: white;
-      padding: 60px 0 20px;
-      margin-top: 60px;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .footer:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 10px;
-      background: var(--secondary-color);
-    }
-
-    .footer h5 {
-      position: relative;
-      padding-bottom: 15px;
-      margin-bottom: 25px;
-      font-size: 1.3rem;
-      color: white;
-    }
-
-    .footer h5:after {
-      content: '';
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 40px;
-      height: 2px;
-      background-color: var(--secondary-color);
-    }
-
-    .footer-link {
-      color: rgba(255, 255, 255, 0.8);
-      text-decoration: none;
-      display: block;
-      margin-bottom: 10px;
-      transition: var(--transition);
-    }
-
-    .footer-link:hover {
-      color: white;
-      transform: translateX(5px);
-    }
-
-    .social-links a {
-      display: inline-block;
-      width: 36px;
-      height: 36px;
-      line-height: 36px;
-      text-align: center;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      margin-right: 10px;
-      transition: var(--transition);
-      color: white;
-    }
-
-    .social-links a:hover {
-      background-color: var(--secondary-color);
-      transform: translateY(-3px);
+      background: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
     }
   </style>
 </head>
 <body>
-<!-- Navigation Bar -->
-<nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
   <div class="container">
-    <a class="navbar-brand" href="/">
-      <i class="fas fa-train me-2 train-icon"></i>TrainConnect
+    <a class="navbar-brand" href="#">
+      <i class="bi bi-train-front me-2"></i>
+      Train System
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/"><i class="fas fa-home me-1"></i> Home</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/routes"><i class="fas fa-route me-1"></i> Routes</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/attractions"><i class="fas fa-mountain me-1"></i> Attractions</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/schedules"><i class="fas fa-calendar-alt me-1"></i> Schedules</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/packages"><i class="fas fa-gift me-1"></i> Packages</a>
-        </li>
-        <li class="nav-item ms-lg-3">
-          <a class="btn btn-primary" href="/logout"><i class="fas fa-sign-out-alt me-1"></i> Logout</a>
-        </li>
+      <ul class="navbar-nav me-auto">
       </ul>
+      <div class="user-info text-white">
+        <i class="bi bi-person-circle"></i>
+        <span th:text="${username}">Username</span>
+        <a href="/logout" class="btn btn-sm btn-outline-light ms-3">Logout</a>
+      </div>
     </div>
   </div>
 </nav>
 
-<div class="content-wrapper">
-  <!-- Page Header -->
-  <div class="page-header">
-    <div class="container">
-      <h1><i class="fas fa-gift me-2"></i> Seasonal Package List</h1>
-      <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="/"><i class="fas fa-home"></i> Home</a></li>
-          <li class="breadcrumb-item active">Seasonal Packages</li>
-        </ol>
-      </nav>
+<div class="container">
+  <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${successMessage}">
+    <i class="bi bi-check-circle-fill me-2"></i>
+    <span th:text="${successMessage}"></span>
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="mb-0">Seasonal Packages</h1>
+    <div>
+      <a href="/packages/report" class="btn btn-outline-primary me-2">
+        <i class="bi bi-bar-chart-fill me-1"></i> Generate Report
+      </a>
+      <a href="/packages/create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Add New Package
+      </a>
     </div>
   </div>
 
-  <div class="container">
-    <div class="row">
-      <!-- Main Content -->
-      <div class="col-lg-9">
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-          <a href="/packages/create" class="btn btn-primary">
-            <i class="fas fa-plus-circle"></i> New Package
-          </a>
-          <a href="/packages/report" class="btn btn-outline-primary">
-            <i class="fas fa-chart-bar"></i> Generate Report
-          </a>
-        </div>
-
-        <!-- Success Message -->
-        <div th:if="${message}" class="alert alert-success" role="alert">
-          <i class="fas fa-check-circle me-2"></i>
-          <span th:text="${message}"></span>
-        </div>
-
-        <!-- Packages Card -->
-        <div class="package-card">
-          <div class="package-card-header d-flex justify-content-between align-items-center">
-            <h5><i class="fas fa-list me-2"></i> All Packages</h5>
-          </div>
-          <div class="table-responsive">
-            <table class="table">
-              <thead>
-              <tr>
-                <th>Package ID</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-                <th>Status</th>
-                <th class="text-end">Actions</th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr th:if="${packages.empty}">
-                <td colspan="5" class="empty-state">
-                  <i class="fas fa-box-open d-block"></i>
-                  <p>No packages found</p>
-                  <a href="/packages/create" class="btn btn-sm btn-primary">Add your first package</a>
-                </td>
-              </tr>
-              <tr th:each="package : ${packages}">
-                <td><strong th:text="${package.packageID}"></strong></td>
-                <td th:text="${#temporals.format(package.startDate, 'dd MMM yyyy')}"></td>
-                <td th:text="${#temporals.format(package.endDate, 'dd MMM yyyy')}"></td>
-                <td>
-                  <span th:class="${'status-badge ' +
-                           (package.status == 'ACTIVE' ? 'status-active' :
-                           (package.status == 'SCHEDULED' ? 'status-scheduled' :
-                           (package.status == 'COMPLETED' ? 'status-completed' : 'status-cancelled')))}"
-                        th:text="${package.status}">
-                  </span>
-                </td>
-                <td class="text-end">
-                  <a th:href="@{/packages/{id}(id=${package.packageID})}" class="action-btn view-btn" title="View">
-                    <i class="fas fa-eye"></i>
-                  </a>
-                  <a th:href="@{/packages/{id}/edit(id=${package.packageID})}" class="action-btn edit-btn" title="Edit">
-                    <i class="fas fa-edit"></i>
-                  </a>
-                  <a th:href="@{/packages/{id}/delete(id=${package.packageID})}"
-                     onclick="return confirm('Are you sure you want to delete this package?')"
-                     class="action-btn delete-btn" title="Delete">
-                    <i class="fas fa-trash-alt"></i>
-                  </a>
-                </td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+  <div class="filter-card">
+    <h5 class="mb-3">Filter Packages</h5>
+    <form method="get" action="/packages" class="row g-3">
+      <div class="col-md-4">
+        <label for="status" class="form-label">Status</label>
+        <select id="status" name="status" class="form-select">
+          <option value="">All Status</option>
+          <option value="Active">Active</option>
+          <option value="Inactive">Inactive</option>
+          <option value="Pending">Pending</option>
+        </select>
       </div>
+      <div class="col-md-4">
+        <label for="startDate" class="form-label">Start Date</label>
+        <input type="date" id="startDate" name="startDate" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label for="routeId" class="form-label">Route</label>
+        <select id="routeId" name="routeId" class="form-select">
+          <option value="">All Routes</option>
+          <option th:each="route : ${routes}" th:value="${route.id}" th:text="${route.origin + ' - ' + route.destination}"></option>
+        </select>
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-filter me-1"></i> Apply Filter
+        </button>
+        <a href="/packages" class="btn btn-outline-secondary ms-2">
+          <i class="bi bi-x-circle me-1"></i> Clear Filters
+        </a>
+      </div>
+    </form>
+  </div>
 
-      <!-- Sidebar -->
-      <div class="col-lg-3">
-        <!-- User Info Card -->
-        <div class="user-info-card">
-          <div class="user-info-header">
-            <h5><i class="fas fa-user-circle me-2"></i> User Information</h5>
-          </div>
-          <div class="user-info-body">
-            <div class="user-profile">
-              <div class="user-avatar">
-                <i class="fas fa-user"></i>
+  <div class="card">
+    <div class="card-header">
+      <h5 class="card-title mb-0">Package List</h5>
+    </div>
+    <div class="card-body">
+      <div th:if="${#lists.isEmpty(packages)}" class="alert alert-info">
+        <i class="bi bi-info-circle-fill me-2"></i> No packages found.
+      </div>
+      <div class="table-responsive" th:unless="${#lists.isEmpty(packages)}">
+        <table class="table table-hover">
+          <thead>
+          <tr>
+            <th>Package ID</th>
+            <th>Route</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr th:each="package : ${packages}">
+            <td th:text="${package.packageID}">PKG-2025-0001</td>
+            <td th:text="${package.route != null ? package.route.origin + ' - ' + package.route.destination : 'N/A'}">Colombo - Kandy</td>
+            <td th:text="${#temporals.format(package.startDate, 'yyyy-MM-dd')}">2025-10-01</td>
+            <td th:text="${#temporals.format(package.endDate, 'yyyy-MM-dd')}">2025-10-31</td>
+            <td>
+              <span th:class="${'badge ' + (package.status == 'Active' ? 'bg-success' : (package.status == 'Inactive' ? 'bg-danger' : 'bg-warning'))}"
+                    th:text="${package.status}">
+                  Active
+              </span>
+            </td>
+            <td>
+              <div class="btn-group btn-group-sm">
+                <a th:href="@{/packages/{id}(id=${package.packageID})}" class="btn btn-info" title="View">
+                  <i class="bi bi-eye-fill"></i>
+                </a>
+                <a th:href="@{/packages/{id}/edit(id=${package.packageID})}" class="btn btn-primary" title="Edit">
+                  <i class="bi bi-pencil-fill"></i>
+                </a>
+                <button type="button" class="btn btn-danger"
+                        data-bs-toggle="modal"
+                        data-bs-target="#deleteConfirmationModal"
+                        th:data-package-id="${package.packageID}"
+                        th:data-form-action="@{/packages/{id}/delete(id=${package.packageID})}"
+                        title="Delete">
+                  <i class="bi bi-trash-fill"></i>
+                </button>
               </div>
-              <div class="user-details">
-                <h6>Krishmal2004</h6>
-                <p>Operations Manager</p>
-              </div>
-            </div>
-            <p class="datetime">
-              <i class="far fa-clock"></i> 2025-09-16 12:37:47
-            </p>
-          </div>
-        </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card-footer text-muted">
+      Total packages: <span th:text="${packages.size()}">0</span>
+    </div>
+  </div>
+</div>
 
-        <!-- Quick Stats Card -->
-        <div class="package-card">
-          <div class="package-card-header">
-            <h5><i class="fas fa-chart-pie me-2"></i> Package Stats</h5>
-          </div>
-          <div class="p-3">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <span>Active Packages:</span>
-              <span class="badge bg-success rounded-pill">8</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <span>Scheduled Packages:</span>
-              <span class="badge bg-primary rounded-pill">12</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center mb-3">
-              <span>Completed Packages:</span>
-              <span class="badge bg-secondary rounded-pill">24</span>
-            </div>
-            <div class="d-flex justify-content-between align-items-center">
-              <span>Cancelled Packages:</span>
-              <span class="badge bg-danger rounded-pill">3</span>
-            </div>
-          </div>
-        </div>
+<div class="modal fade" id="deleteConfirmationModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Delete</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to delete package <span class="fw-bold" id="packageIdToDelete"></span>?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form id="deleteForm" method="post">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Footer -->
-<footer class="footer">
+<footer class="bg-dark text-white py-4 mt-5">
   <div class="container">
     <div class="row">
-      <div class="col-md-4 mb-4 mb-md-0">
-        <h5>TrainConnect</h5>
-        <p>Modern railway management and booking system for seamless passenger experience. Explore scenic routes and unforgettable journeys.</p>
-        <div class="social-links mt-4">
-          <a href="#"><i class="fab fa-facebook-f"></i></a>
-          <a href="#"><i class="fab fa-twitter"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
-          <a href="#"><i class="fab fa-linkedin-in"></i></a>
-          <a href="#"><i class="fab fa-youtube"></i></a>
-        </div>
-      </div>
-      <div class="col-md-2 mb-4 mb-md-0">
-        <h5>Quick Links</h5>
-        <ul class="list-unstyled">
-          <li><a href="/" class="footer-link">Home</a></li>
-          <li><a href="/routes" class="footer-link">Routes</a></li>
-          <li><a href="/attractions" class="footer-link">Attractions</a></li>
-          <li><a href="/schedules" class="footer-link">Schedules</a></li>
-          <li><a href="/packages" class="footer-link">Packages</a></li>
-        </ul>
-      </div>
-      <div class="col-md-3 mb-4 mb-md-0">
-        <h5>Contact Us</h5>
-        <address class="mb-0">
-          <p class="mb-2"><i class="fas fa-map-marker-alt me-2"></i> 123 Railway Street, City</p>
-          <p class="mb-2"><i class="fas fa-phone me-2"></i> (123) 456-7890</p>
-          <p class="mb-2"><i class="fas fa-envelope me-2"></i> info@trainconnect.com</p>
-          <p class="mb-2"><i class="fas fa-clock me-2"></i> Mon-Fri: 9AM - 6PM</p>
-        </address>
+      <div class="col-md-6">
+        <h5>Train System - Station Manager</h5>
+        <p>Efficiently manage seasonal packages for your train routes.</p>
       </div>
       <div class="col-md-3">
-        <h5>Newsletter</h5>
-        <p>Subscribe for updates on new routes and special offers.</p>
-        <div class="input-group mb-3">
-          <input type="email" class="form-control" placeholder="Your email">
-          <button class="btn btn-secondary" type="button">Subscribe</button>
-        </div>
-        <p class="small">By subscribing, you agree to our Privacy Policy and Terms of Service.</p>
+        <h5>Quick Links</h5>
+        <ul class="list-unstyled">
+          <li><a href="/dashboard" class="text-white">Dashboard</a></li>
+          <li><a href="/packages" class="text-white">Packages</a></li>
+          <li><a href="/routes" class="text-white">Routes</a></li>
+        </ul>
+      </div>
+      <div class="col-md-3">
+        <h5>Contact</h5>
+        <address>
+          <i class="bi bi-geo-alt-fill me-2"></i> Colombo, Sri Lanka<br>
+          <i class="bi bi-envelope-fill me-2"></i> info@trainsystem.com<br>
+          <i class="bi bi-telephone-fill me-2"></i> +94 11 123 4567
+        </address>
       </div>
     </div>
-    <hr class="my-4 bg-light opacity-25">
+    <hr>
     <div class="text-center">
-      <p class="mb-0">&copy; 2025 TrainConnect. All rights reserved.</p>
-      <p class="mb-0">Current time: 2025-09-16 12:37:47 | User: Krishmal2004</p>
+      <p class="mb-0">© 2025 Train System. All rights reserved.</p>
+      <p class="mb-0">Current time: <span th:text="${#temporals.format(currentDateTime, 'yyyy-MM-dd HH:mm:ss')}">2025-10-03 11:34:03</span></p>
     </div>
   </div>
 </footer>
 
-<!-- Bootstrap JS Bundle with Popper -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Auto-dismiss alerts after 5 seconds
+    setTimeout(function() {
+      const successAlert = document.querySelector('.alert-success');
+      if (successAlert) {
+        new bootstrap.Alert(successAlert).close();
+      }
+    }, 5000);
+
+    // SCRIPT TO CONNECT THE BUTTON TO THE MODAL
+    const deleteModal = document.getElementById('deleteConfirmationModal');
+    if (deleteModal) {
+      deleteModal.addEventListener('show.bs.modal', function(event) {
+        // Button that triggered the modal
+        const button = event.relatedTarget;
+
+        // Extract info from data-* attributes
+        const packageId = button.getAttribute('data-package-id');
+        const formAction = button.getAttribute('data-form-action');
+
+        // Update the modal's content
+        const modalPackageIdSpan = deleteModal.querySelector('#packageIdToDelete');
+        const deleteForm = deleteModal.querySelector('#deleteForm');
+
+        modalPackageIdSpan.textContent = packageId;
+        deleteForm.setAttribute('action', formAction);
+      });
+    }
+  });
+</script>
 </body>
 </html>

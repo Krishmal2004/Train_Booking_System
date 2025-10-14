@@ -1,628 +1,136 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IT Support Dashboard</title>
-  <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary: #1a3a6e;
-      --primary-dark: #132d54;
-      --primary-light: rgba(26, 58, 110, 0.1);
-      --secondary: #e63946;
-      --secondary-light: rgba(230, 57, 70, 0.1);
-      --accent: #a8dadc;
-      --success: #38b000;
-      --warning: #ffaa00;
-      --danger: #d90429;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --gray: #6c757d;
-      --border-radius: 12px;
-      --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      --transition: all 0.3s ease;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f5f7fa;
-      color: #333;
-      line-height: 1.6;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white;
-      padding: 30px 0;
-      text-align: center;
-      box-shadow: var(--box-shadow);
-      margin-bottom: 30px;
-      position: relative;
-    }
-
-    main {
-      flex: 1;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px 40px;
-    }
-
-    footer {
-      background-color: var(--dark);
-      color: white;
-      padding: 20px 0;
-      text-align: center;
-      margin-top: 40px;
-    }
-
-    h1, h2, h3, h4, h5 {
-      font-family: 'Montserrat', sans-serif;
-      font-weight: 600;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-    }
-
-    h2 {
-      font-size: 1.8rem;
-      color: var(--primary);
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid var(--secondary);
-      display: inline-block;
-    }
-
-    h3 {
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-    }
-
-    a {
-      color: var(--primary);
-      text-decoration: none;
-      transition: var(--transition);
-    }
-
-    a:hover {
-      color: var(--secondary);
-    }
-
-    .user-info {
-      background-color: rgba(255, 255, 255, 0.1);
-      padding: 15px;
-      border-radius: 10px;
-      margin: 15px auto;
-      max-width: 500px;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-    }
-
-    .user-info p {
-      margin: 0;
-      display: flex;
-      align-items: center;
-    }
-
-    .user-info i {
-      margin-right: 8px;
-    }
-
-    nav {
-      margin-top: 20px;
-    }
-
-    nav ul {
-      list-style: none;
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
-
-    nav a {
-      background-color: rgba(255, 255, 255, 0.15);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 30px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: var(--transition);
-    }
-
-    nav a:hover {
-      background-color: rgba(255, 255, 255, 0.25);
-      transform: translateY(-3px);
-      color: white;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    }
-
-    .logout-button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background-color: var(--secondary);
-      color: white;
-      padding: 10px 20px;
-      border-radius: 30px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: var(--transition);
-      font-weight: 500;
-      font-size: 0.9rem;
-      border: none;
-      cursor: pointer;
-    }
-
-    .logout-button:hover {
-      background-color: #d32f2f;
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(230, 57, 70, 0.3);
-    }
-
-    /* Stats section */
-    section {
-      margin-bottom: 40px;
-      animation: fadeIn 0.5s ease-in-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .stats-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .stat-card {
-      background-color: white;
-      padding: 25px;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      text-align: center;
-      transition: var(--transition);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .stat-card:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 5px;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-    }
-
-    .stat-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    }
-
-    .stat-card h3 {
-      color: var(--gray);
-      font-size: 1.1rem;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .stat-card h3 i {
-      margin-right: 8px;
-      color: var(--secondary);
-    }
-
-    .stat-number {
-      font-size: 2.5rem;
-      font-weight: 700;
-      color: var(--primary);
-      margin: 0;
-    }
-
-    /* Priority stats */
-    .priority-stats {
-      background-color: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      padding: 25px;
-      margin-top: 20px;
-    }
-
-    .priority-stats table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    .priority-stats th,
-    .priority-stats td {
-      padding: 15px;
-      text-align: left;
-    }
-
-    .priority-stats th {
-      background-color: var(--primary);
-      color: white;
-      font-weight: 500;
-    }
-
-    .priority-stats th:first-child {
-      border-top-left-radius: 8px;
-    }
-
-    .priority-stats th:last-child {
-      border-top-right-radius: 8px;
-    }
-
-    .priority-stats tr:nth-child(even) {
-      background-color: rgba(0, 0, 0, 0.02);
-    }
-
-    .priority-stats td:last-child {
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .priority-badge {
-      display: inline-block;
-      padding: 5px 12px;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .badge-high {
-      background-color: rgba(217, 4, 41, 0.1);
-      color: var(--danger);
-    }
-
-    .badge-medium {
-      background-color: rgba(255, 170, 0, 0.1);
-      color: var(--warning);
-    }
-
-    .badge-low {
-      background-color: rgba(56, 176, 0, 0.1);
-      color: var(--success);
-    }
-
-    /* Recent issues */
-    .recent-issues {
-      background-color: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      padding: 25px;
-      margin-top: 20px;
-    }
-
-    .recent-issues table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 20px;
-    }
-
-    .recent-issues th,
-    .recent-issues td {
-      padding: 15px;
-      text-align: left;
-    }
-
-    .recent-issues th {
-      background-color: var(--primary);
-      color: white;
-      font-weight: 500;
-    }
-
-    .recent-issues th:first-child {
-      border-top-left-radius: 8px;
-    }
-
-    .recent-issues th:last-child {
-      border-top-right-radius: 8px;
-    }
-
-    .recent-issues tr:nth-child(even) {
-      background-color: rgba(0, 0, 0, 0.02);
-    }
-
-    .recent-issues tr:hover {
-      background-color: rgba(0, 0, 0, 0.03);
-    }
-
-    .status-badge {
-      display: inline-block;
-      padding: 5px 12px;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .badge-open {
-      background-color: rgba(26, 58, 110, 0.1);
-      color: var(--primary);
-    }
-
-    .badge-in-progress {
-      background-color: rgba(255, 170, 0, 0.1);
-      color: var(--warning);
-    }
-
-    .badge-resolved {
-      background-color: rgba(56, 176, 0, 0.1);
-      color: var(--success);
-    }
-
-    .badge-closed {
-      background-color: rgba(108, 117, 125, 0.1);
-      color: var(--gray);
-    }
-
-    .view-all-btn {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: white;
-      padding: 12px 25px;
-      border-radius: 30px;
-      margin-top: 10px;
-      transition: var(--transition);
-    }
-
-    .view-all-btn:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(26, 58, 110, 0.2);
-      color: white;
-    }
-
-    /* System status */
-    .system-status {
-      background-color: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      padding: 25px;
-      margin-top: 20px;
-    }
-
-    .system-status ul {
-      list-style: none;
-    }
-
-    .system-status li {
-      display: flex;
-      justify-content: space-between;
-      padding: 15px 0;
-      border-bottom: 1px solid #edf2f7;
-      align-items: center;
-    }
-
-    .system-status li:last-child {
-      border-bottom: none;
-    }
-
-    .system-status li i {
-      margin-right: 10px;
-      color: var(--primary);
-    }
-
-    .status-operational,
-    .status-warning,
-    .status-error {
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
-
-    .status-operational {
-      background-color: rgba(56, 176, 0, 0.1);
-      color: var(--success);
-    }
-
-    .status-warning {
-      background-color: rgba(255, 170, 0, 0.1);
-      color: var(--warning);
-    }
-
-    .status-error {
-      background-color: rgba(217, 4, 41, 0.1);
-      color: var(--danger);
-    }
-
-    /* Footer */
-    footer p {
-      margin: 5px 0;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      header {
-        padding: 20px 0;
-      }
-
-      h1 {
-        font-size: 2rem;
-      }
-
-      .user-info {
-        flex-direction: column;
-        gap: 10px;
-      }
-
-      nav ul {
-        flex-direction: column;
-        align-items: center;
-      }
-
-      nav a {
-        width: 100%;
-        justify-content: center;
-      }
-
-      .stats-container {
-        grid-template-columns: 1fr;
-      }
-
-      .recent-issues,
-      .priority-stats,
-      .system-status {
-        overflow-x: auto;
-      }
-
-      .logout-button {
-        position: static;
-        margin: 20px auto 0;
-        display: block;
-      }
-    }
-  </style>
+    <title>Issue Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary: #1a3a6e; --primary-light: #2a4b82; --primary-dark: #142c54; --secondary: #e63946; --success: #198754; --danger: #dc3545; --info: #0dcaf0; --warning: #ffc107; --light: #f8f9fa; --dark: #343a40; --gray: #6c757d; --border-radius: 10px; --box-shadow: 0 2px 15px rgba(0,0,0,0.08); --transition: all 0.3s ease;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f9; color: var(--dark); line-height: 1.6; padding: 20px; }
+        .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 20px; }
+        .header h1 { font-size: 2.5rem; color: var(--primary); font-weight: 700; display: flex; align-items: center; gap: 12px; }
+        .header h1 i { color: var(--primary); font-size: 2.2rem; }
+        .header .nav-links { display: flex; gap: 10px; flex-wrap: wrap; }
+        .header .nav-links a { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; background-color: var(--primary); color: white; padding: 12px 20px; border-radius: var(--border-radius); font-weight: 500; transition: var(--transition); }
+        .header .nav-links a:hover { background-color: var(--primary-dark); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow); display: flex; align-items: center; gap: 1.2rem; transition: var(--transition); }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); }
+        .stat-card .icon { font-size: 2.5rem; width: 70px; height: 70px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+        .stat-card .icon-open { color: var(--info); background-color: #e0f7fa; }
+        .stat-card .icon-progress { color: var(--warning); background-color: #fff8e1; }
+        .stat-card .icon-resolved { color: var(--success); background-color: #e8f5e9; }
+        .stat-card .icon-high-priority { color: var(--danger); background-color: #fce4ec; }
+        .stat-card .stat-info .value { font-size: 2rem; font-weight: 700; color: var(--primary); line-height: 1.2; margin-bottom: 5px; }
+        .stat-card .stat-info .label { font-size: 0.9rem; color: var(--gray); font-weight: 500; }
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        .chart-card { background: white; padding: 1.8rem; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
+        .chart-card h2 { font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--primary); font-weight: 600; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .stats-grid, .charts-grid { animation: fadeIn 0.6s ease-out forwards; }
+        @media (max-width: 992px) { .charts-grid { grid-template-columns: 1fr; } }
+    </style>
 </head>
 <body>
-<header>
-  <a href="/logout" class="logout-button">
-    <i class="fas fa-sign-out-alt"></i> Logout
-  </a>
-  <h1>IT Support Dashboard</h1>
-  <div class="user-info">
-    <p><i class="fas fa-user-circle"></i> User: <span th:text="${currentUser}">Krishmal2004</span></p>
-    <p><i class="fas fa-clock"></i> Date/Time: <span th:text="${currentDateTime}">2025-09-18 09:01:00</span></p>
-  </div>
-  <nav>
-    <ul>
-      <li><a th:href="@{/reports/dashboard}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-      <li><a th:href="@{/reports}"><i class="fas fa-list"></i> View All Issues</a></li>
-      <li><a th:href="@{/reports/create}"><i class="fas fa-plus-circle"></i> Create New Issue</a></li>
-    </ul>
-  </nav>
-</header>
-
-<main>
-  <section class="stats-summary">
-    <h2>Issue Summary</h2>
-    <div class="stats-container">
-      <div class="stat-card">
-        <h3><i class="fas fa-exclamation-circle"></i> Open Issues</h3>
-        <p class="stat-number" th:text="${openTickets}">5</p>
-      </div>
-      <div class="stat-card">
-        <h3><i class="fas fa-spinner"></i> In Progress</h3>
-        <p class="stat-number" th:text="${inProgressTickets}">3</p>
-      </div>
-      <div class="stat-card">
-        <h3><i class="fas fa-check-circle"></i> Resolved</h3>
-        <p class="stat-number" th:text="${resolvedTickets}">8</p>
-      </div>
-      <div class="stat-card">
-        <h3><i class="fas fa-archive"></i> Closed</h3>
-        <p class="stat-number" th:text="${closedTickets}">2</p>
-      </div>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-tasks"></i> Issue Dashboard</h1>
+        <div class="nav-links">
+            <a href="/issues"><i class="fas fa-list-alt"></i> View All Issues</a>
+            <a href="/logout" class="nav-link" style="background-color: var(--danger);">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
     </div>
-  </section>
 
-  <section class="priority-stats">
-    <h2>Priority Distribution</h2>
-    <table>
-      <thead>
-      <tr>
-        <th>Priority</th>
-        <th>Count</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr>
-        <td><span class="priority-badge badge-high">High</span></td>
-        <td th:text="${highPriorityTickets}">4</td>
-      </tr>
-      <tr>
-        <td><span class="priority-badge badge-medium">Medium</span></td>
-        <td th:text="${mediumPriorityTickets}">10</td>
-      </tr>
-      <tr>
-        <td><span class="priority-badge badge-low">Low</span></td>
-        <td th:text="${lowPriorityTickets}">4</td>
-      </tr>
-      </tbody>
-    </table>
-  </section>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="icon icon-open"><i class="fas fa-folder-open"></i></div>
+            <div class="stat-info">
+                <div class="value" th:text="${openIssuesCount}">12</div>
+                <div class="label">Open Issues</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon icon-progress"><i class="fas fa-spinner"></i></div>
+            <div class="stat-info">
+                <div class="value" th:text="${inProgressIssuesCount}">5</div>
+                <div class="label">In Progress</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon icon-resolved"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-info">
+                <div class="value" th:text="${resolvedTodayCount}">3</div>
+                <div class="label">Resolved Today</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <div class="icon icon-high-priority"><i class="fas fa-exclamation-triangle"></i></div>
+            <div class="stat-info">
+                <div class="value" th:text="${highPriorityIssuesCount}">4</div>
+                <div class="label">High Priority</div>
+            </div>
+        </div>
+    </div>
 
-  <section class="recent-issues">
-    <h2>Recent Issues</h2>
-    <table>
-      <thead>
-      <tr>
-        <th>Ticket ID</th>
-        <th>Title</th>
-        <th>Priority</th>
-        <th>Status</th>
-        <th>Created</th>
-        <th>Actions</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr th:if="${allTickets == null || allTickets.empty}">
-        <td colspan="6">No issues found</td>
-      </tr>
-      <tr th:each="issue : ${allTickets}" th:if="${allTickets != null}">
-        <td th:text="${issue.ticketId}">IT-20250918-1001</td>
-        <td th:text="${issue.title}">Payment Gateway Error</td>
-        <td>
-          <span th:if="${issue.priority == 'High'}" class="priority-badge badge-high" th:text="${issue.priority}">High</span>
-          <span th:if="${issue.priority == 'Medium'}" class="priority-badge badge-medium" th:text="${issue.priority}">Medium</span>
-          <span th:if="${issue.priority == 'Low'}" class="priority-badge badge-low" th:text="${issue.priority}">Low</span>
-        </td>
-        <td>
-          <span th:if="${issue.status == 'Open'}" class="status-badge badge-open" th:text="${issue.status}">Open</span>
-          <span th:if="${issue.status == 'In Progress'}" class="status-badge badge-in-progress" th:text="${issue.status}">In Progress</span>
-          <span th:if="${issue.status == 'Resolved'}" class="status-badge badge-resolved" th:text="${issue.status}">Resolved</span>
-          <span th:if="${issue.status == 'Closed'}" class="status-badge badge-closed" th:text="${issue.status}">Closed</span>
-        </td>
-        <td th:text="${#temporals.format(issue.createdAt, 'yyyy-MM-dd HH:mm')}">2025-09-18 08:30</td>
-        <td>
-          <a th:href="@{/reports/{id}(id=${issue.id})}" class="btn-view"><i class="fas fa-eye"></i> View</a>
-        </td>
-      </tr>
-      </tbody>
-    </table>
-    <a th:href="@{/reports}" class="view-all-btn"><i class="fas fa-list"></i> View All Issues</a>
-  </section>
+    <div class="charts-grid">
+        <div class="chart-card">
+            <h2>Issues by Status</h2>
+            <canvas id="statusChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h2>Issues by Priority</h2>
+            <canvas id="priorityChart"></canvas>
+        </div>
+    </div>
+</div>
 
-  <section class="system-status">
-    <h2>System Status</h2>
-    <ul>
-      <li><i class="fas fa-credit-card"></i> Payment System <span class="status-operational">Operational</span></li>
-      <li><i class="fas fa-network-wired"></i> Network Infrastructure <span class="status-operational">Operational</span></li>
-      <li><i class="fas fa-database"></i> Database <span class="status-operational">Operational</span></li>
-      <li><i class="fas fa-globe"></i> Web Application <span class="status-operational">Operational</span></li>
-      <li><i class="fas fa-envelope"></i> Email System <span class="status-warning">Degraded Performance</span></li>
-    </ul>
-  </section>
-</main>
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const statusData = /*[[${statusCounts}]]*/ { open: 12, inProgress: 5, resolved: 28 };
+        const priorityData = /*[[${priorityCounts}]]*/ { low: 15, medium: 24, high: 4 };
 
-<footer>
-  <p>IT Support System - Managed by <span th:text="${currentUser}">Krishmal2004</span></p>
-  <p>Current time: 2025-09-18 09:01:00</p>
-</footer>
+        // Status Doughnut Chart
+        const statusCtx = document.getElementById('statusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Open', 'In Progress', 'Resolved'],
+                datasets: [{
+                    data: [statusData.open, statusData.inProgress, statusData.resolved],
+                    backgroundColor: ['#0dcaf0', '#ffc107', '#198754'],
+                    borderColor: 'white',
+                    borderWidth: 2,
+                    hoverOffset: 10
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: true, cutout: '70%', plugins: { legend: { position: 'bottom' } } }
+        });
+
+        // Priority Bar Chart
+        const priorityCtx = document.getElementById('priorityChart').getContext('2d');
+        new Chart(priorityCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Low', 'Medium', 'High'],
+                datasets: [{
+                    label: 'Issue Count',
+                    data: [priorityData.low, priorityData.medium, priorityData.high],
+                    backgroundColor: ['#198754', '#ffc107', '#dc3545'],
+                    borderRadius: 5
+                }]
+            },
+            options: { responsive: true, maintainAspectRatio: true, scales: { y: { beginAtZero: true } }, plugins: { legend: { display: false } } }
+        });
+    });
+</script>
 </body>
 </html>

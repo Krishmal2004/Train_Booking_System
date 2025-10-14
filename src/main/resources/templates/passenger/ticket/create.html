@@ -9,7 +9,7 @@
     <style>
         :root {
             --primary: #1a3a6e;
-            --secondary: #e63946;
+            --secondary: #e63a46;
             --light: #f8f9fa;
             --dark: #212529;
             --success: #198754;
@@ -467,7 +467,7 @@
 
         .ticket-details {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(3, 1fr); /* Changed from auto-fit to fixed 3 columns */
             gap: 20px;
             margin-bottom: 20px;
         }
@@ -658,6 +658,16 @@
                 align-items: flex-start;
             }
         }
+        @media (max-width: 992px) {
+            .ticket-details {
+                grid-template-columns: repeat(2, 1fr); /* 2 columns on tablets */
+            }
+        }
+        @media (max-width: 768px) {
+            .ticket-details {
+                grid-template-columns: 1fr; /* 1 column on mobile */
+            }
+        }
 
         @media (max-width: 480px) {
             .action-bar {
@@ -762,6 +772,11 @@
             </div>
 
             <div class="ticket-detail-group">
+                <div class="ticket-detail-label">Email</div>
+                <div class="ticket-detail-value" id="passengerEmailPreview">Not provided</div>
+            </div>
+
+            <div class="ticket-detail-group">
                 <div class="ticket-detail-label">Travel Date</div>
                 <div class="ticket-detail-value" id="travelDatePreview">Select date</div>
             </div>
@@ -800,6 +815,10 @@
             <h2 class="card-title">Ticket Information</h2>
         </div>
         <div class="card-body">
+            <div th:if="${errorMessage}" class="alert alert-danger" role="alert">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                <strong th:text="${errorMessage}">Error will be shown here.</strong>
+            </div>
             <form th:action="@{/tickets/create}" th:object="${ticket}" method="post" id="ticketForm">
                 <div class="section-divider">
                     <h5><i class="fas fa-info-circle"></i> Basic Information</h5>
@@ -819,6 +838,12 @@
                         <input type="text" class="form-control" id="passengerName" th:field="*{passengerName}" required>
                         <span class="error-message" th:if="${#fields.hasErrors('passengerName')}" th:errors="*{passengerName}"></span>
                     </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="passengerEmail" class="form-label"><i class="fas fa-envelope"></i> Passenger Email</label>
+                    <input type="email" class="form-control" id="passengerEmail" th:field="*{passengerEmail}" placeholder="passenger@example.com" required>
+                    <span class="error-message" th:if="${#fields.hasErrors('passengerEmail')}" th:errors="*{passengerEmail}"></span>
                 </div>
 
                 <div class="section-divider">
@@ -891,7 +916,6 @@
                     <div class="form-group">
                         <label for="status" class="form-label"><i class="fas fa-info-circle"></i> Status</label>
                         <select class="form-control" id="status" th:field="*{status}" required>
-                            <option value="confirmed">Confirmed</option>
                             <option value="pending">Pending</option>
                             <option value="cancelled">Cancelled</option>
                         </select>
@@ -910,7 +934,7 @@
                 </div>
 
                 <div class="d-flex justify-content-between" style="margin-top: 30px;">
-                    <button type="reset" class="btn btn-secondary">
+                    <button type="reset" class="btn btn-secondary" id="resetBtn">
                         <i class="fas fa-undo"></i> Reset Form
                     </button>
                     <button type="submit" class="btn btn-success">
@@ -945,9 +969,78 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // --- SCRIPT FOR AUTOMATIC TICKET ID ---
-        const ticketIdInput = document.getElementById('ticketId');
+        const STORAGE_KEY = 'ticketFormData';
 
+        // Form field references
+        const ticketIdInput = document.getElementById('ticketId');
+        const passengerNameInput = document.getElementById('passengerName');
+        const passengerEmailInput = document.getElementById('passengerEmail');
+        const routeSelect = document.getElementById('route');
+        const travelDateInput = document.getElementById('travelDate');
+        const seatNumberInput = document.getElementById('seatNumber');
+        const ticketClassSelect = document.getElementById('ticketClass');
+        const priceInput = document.getElementById('price');
+        const statusSelect = document.getElementById('status');
+        const remarksInput = document.getElementById('remarks');
+
+        // Preview references
+        const ticketIdPreview = document.getElementById('ticketIdPreview');
+        const passengerNamePreview = document.getElementById('passengerNamePreview');
+        const passengerEmailPreview = document.getElementById('passengerEmailPreview');
+        const originPreview = document.getElementById('originPreview');
+        const destinationPreview = document.getElementById('destinationPreview');
+        const travelDatePreview = document.getElementById('travelDatePreview');
+        const seatNumberPreview = document.getElementById('seatNumberPreview');
+        const ticketClassPreview = document.getElementById('ticketClassPreview');
+        const ticketStatusPreview = document.getElementById('ticketStatusPreview');
+        const pricePreview = document.getElementById('pricePreview');
+
+        // --- LOCAL STORAGE FUNCTIONS ---
+        function saveFormData() {
+            const formData = {
+                ticketId: ticketIdInput.value,
+                passengerName: passengerNameInput.value,
+                passengerEmail: passengerEmailInput.value,
+                route: routeSelect.value,
+                travelDate: travelDateInput.value,
+                seatNumber: seatNumberInput.value,
+                ticketClass: ticketClassSelect.value,
+                price: priceInput.value,
+                status: statusSelect.value,
+                remarks: remarksInput.value
+            };
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
+        }
+
+        function loadFormData() {
+            const savedData = localStorage.getItem(STORAGE_KEY);
+            if (savedData) {
+                try {
+                    const formData = JSON.parse(savedData);
+
+                    // Only restore if Thymeleaf hasn't pre-filled the field
+                    if (!ticketIdInput.value && formData.ticketId) ticketIdInput.value = formData.ticketId;
+                    if (!passengerNameInput.value && formData.passengerName) passengerNameInput.value = formData.passengerName;
+                    if (!passengerEmailInput.value && formData.passengerEmail) passengerEmailInput.value = formData.passengerEmail;
+                    if (!routeSelect.value && formData.route) routeSelect.value = formData.route;
+                    if (!travelDateInput.value && formData.travelDate) travelDateInput.value = formData.travelDate;
+                    if (!seatNumberInput.value && formData.seatNumber) seatNumberInput.value = formData.seatNumber;
+                    if (!ticketClassSelect.value && formData.ticketClass) ticketClassSelect.value = formData.ticketClass;
+                    if (!priceInput.value && formData.price) priceInput.value = formData.price;
+                    if (!statusSelect.value && formData.status) statusSelect.value = formData.status;
+                    if (!remarksInput.value && formData.remarks) remarksInput.value = formData.remarks;
+
+                } catch (e) {
+                    console.error('Error loading form data:', e);
+                }
+            }
+        }
+
+        function clearFormData() {
+            localStorage.removeItem(STORAGE_KEY);
+        }
+
+        // --- GENERATE TICKET ID ---
         function generateFrontendTicketId() {
             const now = new Date();
             const year = now.getFullYear();
@@ -958,38 +1051,40 @@
             return `TKT-${datePrefix}-${randomSuffix}`;
         }
 
+        // Load saved form data first
+        loadFormData();
+
+        // Generate ticket ID if not present
         if (!ticketIdInput.value) {
             const newTicketId = generateFrontendTicketId();
             ticketIdInput.value = newTicketId;
-            ticketIdInput.dispatchEvent(new Event('input'));
         }
 
-        // --- SCRIPT FOR TICKET PREVIEW ---
-        const passengerNameInput = document.getElementById('passengerName');
-        const routeSelect = document.getElementById('route');
-        const travelDateInput = document.getElementById('travelDate');
-        const seatNumberInput = document.getElementById('seatNumber');
-        const ticketClassSelect = document.getElementById('ticketClass');
-        const priceInput = document.getElementById('price');
-        const statusSelect = document.getElementById('status');
-        const ticketIdPreview = document.getElementById('ticketIdPreview');
-        const passengerNamePreview = document.getElementById('passengerNamePreview');
-        const originPreview = document.getElementById('originPreview');
-        const destinationPreview = document.getElementById('destinationPreview');
-        const travelDatePreview = document.getElementById('travelDatePreview');
-        const seatNumberPreview = document.getElementById('seatNumberPreview');
-        const ticketClassPreview = document.getElementById('ticketClassPreview');
-        const ticketClassContainer = document.getElementById('ticketClassContainer');
-        const ticketStatusPreview = document.getElementById('ticketStatusPreview');
-        const ticketStatusContainer = document.getElementById('ticketStatusContainer');
-        const pricePreview = document.getElementById('pricePreview');
+        // --- SAVE FORM DATA ON INPUT CHANGE ---
+        const formInputs = [
+            ticketIdInput, passengerNameInput, passengerEmailInput,
+            routeSelect, travelDateInput, seatNumberInput,
+            ticketClassSelect, priceInput, statusSelect, remarksInput
+        ];
 
+        formInputs.forEach(input => {
+            input.addEventListener('input', saveFormData);
+            input.addEventListener('change', saveFormData);
+        });
+
+        // --- PREVIEW UPDATE FUNCTIONS ---
         ticketIdInput.addEventListener('input', function() {
             ticketIdPreview.textContent = this.value || 'TKT-XXXXX';
         });
+
         passengerNameInput.addEventListener('input', function() {
             passengerNamePreview.textContent = this.value || 'Guest Passenger';
         });
+
+        passengerEmailInput.addEventListener('input', function() {
+            passengerEmailPreview.textContent = this.value || 'Not provided';
+        });
+
         routeSelect.addEventListener('change', function() {
             const selectedOption = this.options[this.selectedIndex];
             if (selectedOption.value) {
@@ -1002,6 +1097,7 @@
                 destinationPreview.textContent = 'XXX';
             }
         });
+
         travelDateInput.addEventListener('change', function() {
             if (this.value) {
                 const date = new Date(this.value);
@@ -1014,9 +1110,11 @@
                 travelDatePreview.textContent = 'Select date';
             }
         });
+
         seatNumberInput.addEventListener('input', function() {
             seatNumberPreview.textContent = this.value || '--';
         });
+
         ticketClassSelect.addEventListener('change', function() {
             ticketClassPreview.textContent = this.options[this.selectedIndex].text;
             ticketClassPreview.className = 'ticket-class';
@@ -1026,9 +1124,11 @@
                 case 'first': ticketClassPreview.classList.add('ticket-class-first'); break;
             }
         });
+
         priceInput.addEventListener('input', function() {
             pricePreview.textContent = '$' + (parseFloat(this.value) || 0).toFixed(2);
         });
+
         statusSelect.addEventListener('change', function() {
             ticketStatusPreview.textContent = this.options[this.selectedIndex].text;
             ticketStatusPreview.className = 'ticket-status';
@@ -1039,7 +1139,7 @@
             }
         });
 
-        // --- SCRIPT FOR SEAT SELECTION ---
+        // --- SEAT SELECTION ---
         const selectSeatBtn = document.getElementById('selectSeatBtn');
 
         selectSeatBtn.addEventListener('click', function() {
@@ -1060,14 +1160,18 @@
                 return;
             }
 
+            // Save form data before navigating away
+            saveFormData();
+
             const url = `/seats/select?routeId=${routeId}&travelDate=${travelDate}&ticketClass=${ticketClass}`;
             window.location.href = url;
         });
 
-        // --- Auto-trigger preview update on page load ---
+        // --- TRIGGER PREVIEW UPDATES ON PAGE LOAD ---
         function triggerAllPreviewUpdates() {
             if (ticketIdInput.value) ticketIdInput.dispatchEvent(new Event('input'));
             if (passengerNameInput.value) passengerNameInput.dispatchEvent(new Event('input'));
+            if (passengerEmailInput.value) passengerEmailInput.dispatchEvent(new Event('input'));
             if (routeSelect.value) routeSelect.dispatchEvent(new Event('change'));
             if (travelDateInput.value) travelDateInput.dispatchEvent(new Event('change'));
             if (seatNumberInput.value) seatNumberInput.dispatchEvent(new Event('input'));
@@ -1078,7 +1182,7 @@
 
         triggerAllPreviewUpdates();
 
-        // Form validation
+        // --- FORM VALIDATION ---
         document.getElementById('ticketForm').addEventListener('submit', function(event) {
             let isValid = true;
             if (travelDateInput.value) {
@@ -1092,9 +1196,22 @@
                 }
             }
 
-            if (!isValid) {
+            if (isValid) {
+                // Clear saved data on successful submission
+                clearFormData();
+            } else {
                 event.preventDefault();
             }
+        });
+
+        // --- RESET BUTTON ---
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            clearFormData();
+            // Generate new ticket ID after reset
+            setTimeout(() => {
+                ticketIdInput.value = generateFrontendTicketId();
+                triggerAllPreviewUpdates();
+            }, 10);
         });
     });
 </script>

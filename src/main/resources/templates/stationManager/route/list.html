@@ -4,9 +4,7 @@
     <title>Route Management</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -41,13 +39,20 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding-top: 80px; /* Added padding for fixed header */
         }
 
+        /* UPDATED HEADER STYLES WITH NAVIGATION */
         .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
             background-color: var(--primary-color);
             color: white;
-            padding: 20px 0;
+            padding: 15px 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
         }
 
         .header-content {
@@ -57,6 +62,12 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 40px;
         }
 
         .logo {
@@ -74,50 +85,89 @@
             font-size: 28px;
         }
 
-        /* Navigation styles */
-        .nav-menu {
-            display: flex;
-            list-style: none;
-            gap: 20px;
+        .main-nav {
+            display: none; /* Hide on mobile */
         }
 
-        .nav-item {
-            position: relative;
+        @media (min-width: 768px) {
+            .main-nav {
+                display: flex;
+                gap: 15px;
+            }
         }
 
         .nav-link {
-            color: white;
+            color: #bdc3c7; /* Lighter color for non-active link */
             text-decoration: none;
             font-weight: 500;
-            padding: 8px 16px;
-            border-radius: 50px;
+            padding: 8px 12px;
+            border-radius: 6px;
             transition: var(--transition);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+
+        .user-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-info {
             display: flex;
             align-items: center;
             gap: 8px;
         }
 
-        .nav-link:hover {
-            background-color: rgba(255, 255, 255, 0.1);
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
         }
 
-        .nav-link.active {
+        .username {
+            font-weight: 500;
+            display: none; /* Hide on small screens */
+        }
+
+        @media (min-width: 640px) {
+            .username {
+                display: block; /* Show on larger screens */
+            }
+        }
+
+        .logout-btn {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .logout-btn:hover {
             background-color: rgba(255, 255, 255, 0.2);
         }
 
-        .nav-link i {
-            font-size: 16px;
-        }
-
-        /* Mobile menu toggle */
-        .menu-toggle {
-            display: none;
-            background: none;
-            border: none;
-            color: white;
-            font-size: 24px;
-            cursor: pointer;
-        }
 
         .main-content {
             flex: 1;
@@ -460,69 +510,39 @@
             .action-buttons {
                 flex-direction: column;
             }
-
-            .menu-toggle {
-                display: block;
-            }
-
-            .nav-menu {
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background-color: var(--primary-color);
-                flex-direction: column;
-                padding: 20px;
-                gap: 10px;
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-                display: none;
-                z-index: 100;
-            }
-
-            .nav-menu.active {
-                display: flex;
-            }
         }
     </style>
 </head>
 <body>
-<div class="page-wrapper">
-    <header class="header">
-        <div class="header-content">
+
+<header class="header">
+    <div class="header-content">
+        <div class="header-left">
             <a href="/" class="logo">
                 <i class="fas fa-train"></i>
                 <span>TrainConnect</span>
             </a>
-            <button class="menu-toggle" id="menuToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-            <nav>
-                <ul class="nav-menu" id="navMenu">
-                    <li class="nav-item">
-                        <a href="/" class="nav-link">
-                            <i class="fas fa-home"></i> Home
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/routes" class="nav-link active">
-                            <i class="fas fa-route"></i> Routes
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/schedules" class="nav-link">
-                            <i class="fas fa-calendar-alt"></i> Schedules
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/tickets" class="nav-link">
-                            <i class="fas fa-ticket-alt"></i> Tickets
-                        </a>
-                    </li>
-                </ul>
+            <nav class="main-nav">
+                <a href="/routes" class="nav-link active">Routes</a>
+                <a href="/schedules" class="nav-link">Schedules</a>
             </nav>
         </div>
-    </header>
+        <div class="user-nav">
+            <div class="user-info">
+                <div class="user-avatar" th:if="${username != null}">
+                    <span th:text="${#strings.substring(username, 0, 1).toUpperCase()}">U</span>
+                </div>
+                <span class="username" th:text="${username}">User</span>
+            </div>
+            <a href="/logout" class="logout-btn">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </div>
+    </div>
+</header>
 
+
+<div class="page-wrapper">
     <main class="main-content">
         <h1 class="page-title">Route Management</h1>
 
@@ -649,19 +669,5 @@
         </div>
     </footer>
 </div>
-
-<script>
-    // Toggle mobile menu
-    document.addEventListener('DOMContentLoaded', function() {
-        const menuToggle = document.getElementById('menuToggle');
-        const navMenu = document.getElementById('navMenu');
-
-        if (menuToggle && navMenu) {
-            menuToggle.addEventListener('click', function() {
-                navMenu.classList.toggle('active');
-            });
-        }
-    });
-</script>
 </body>
 </html>

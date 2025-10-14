@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Complete Your Payment</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://js.stripe.com/v3/"></script>
+    <style>
+        :root {
+            --primary: #1a3a6e;
+            --primary-light: rgba(26, 58, 110, 0.1);
+            --primary-dark: #142d56;
+            --secondary: #e63946;
+            --success: #198754;
+            --danger: #dc3545;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border-radius: 12px;
+            --box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 40px 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .page-header p {
+            font-size: 1.1rem;
+            color: var(--gray);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+
+        .card-header {
+            background-color: transparent;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header i {
+            color: var(--primary);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .ticket-summary .detail-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+            border-bottom: 1px solid #f1f3f5;
+        }
+
+        .ticket-summary .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .ticket-summary .detail-label {
+            font-weight: 500;
+            color: var(--gray);
+        }
+
+        .ticket-summary .detail-value {
+            font-weight: 600;
+            color: var(--dark);
+            text-align: right;
+        }
+
+        .total-amount {
+            background: var(--primary-light);
+            color: var(--primary);
+            padding: 1.25rem 1.5rem;
+            text-align: right;
+        }
+
+        .total-amount .total-label {
+            font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .total-amount .total-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .payment-form .form-label {
+            font-weight: 500;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+            display: block;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 24px;
+            border: none;
+            border-radius: var(--border-radius);
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            font-size: 1rem;
+            width: 100%;
+            height: 52px;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.2);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .btn-success:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .btn i {
+            margin-right: 10px;
+        }
+
+        .secure-badge {
+            text-align: center;
+            color: var(--gray);
+            margin-top: 1.75rem;
+            font-size: 0.9rem;
+        }
+
+        .secure-badge i {
+            color: var(--success);
+        }
+
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -15px;
+        }
+
+        .col-md-6, .col-md-5 {
+            padding: 0 15px;
+        }
+
+        .col-md-6 { width: 50%; }
+        .col-md-5 { width: 41.666%; }
+        .col-md-7 { width: 58.333%; padding: 0 15px; }
+
+        .mb-3 { margin-bottom: 1.5rem; }
+        .mt-3 { margin-top: 1.5rem; }
+
+        .StripeElement {
+            height: 52px;
+            padding: 15px 12px;
+            border-radius: var(--border-radius);
+            border: 1px solid #ced4da;
+            background-color: white;
+            transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+        }
+
+        .StripeElement--focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem var(--primary-light);
+        }
+
+        #card-errors {
+            color: var(--danger);
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, .3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        .btn-success:disabled .spinner { display: inline-block; }
+        .btn-success:disabled #button-text { display: none; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .row {
+                flex-direction: column-reverse;
+            }
+            .col-md-5, .col-md-7 {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            body { padding: 20px 0; }
+            .page-header h1 { font-size: 1.8rem; }
+            .page-header p { font-size: 1rem; }
+            .ticket-summary .detail-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.25rem;
+            }
+            .ticket-summary .detail-value { text-align: left; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>Complete Your Payment</h1>
+        <p>Review your booking and complete your secure payment below.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-7">
+            <div class="card payment-form">
+                <div class="card-header"><i class="fas fa-credit-card"></i> Secure Payment Details</div>
+                <div class="card-body">
+                    <form id="payment-form">
+                        <input type="hidden" id="ticketId" name="ticketId" th:value="${ticket.id}" />
+
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Cardholder Name</label>
+                            <input type="text" id="name" class="form-control" placeholder="John M. Doe" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="card-element" class="form-label">Credit or Debit Card</label>
+                            <div id="card-element"></div>
+                            <div id="card-errors" role="alert"></div>
+                        </div>
+
+                        <button id="submit" class="btn btn-success mt-3">
+                            <div class="spinner" id="spinner"></div>
+                            <span id="button-text"><i class="fas fa-lock"></i> Pay Now</span>
+                        </button>
+                    </form>
+                    <div class="secure-badge">
+                        <img src="https://stripe.com/img/documentation/checkout/marketplace.png" alt="Powered by Stripe" style="height: 25px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card ticket-summary">
+                <div class="card-header"><i class="fas fa-receipt"></i> Booking Summary</div>
+                <div class="card-body">
+                    <div class="detail-row">
+                        <span class="detail-label">Ticket ID</span>
+                        <span class="detail-value" th:text="${ticket.ticketId}">TKT-12345</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Passenger</span>
+                        <span class="detail-value" th:text="${ticket.passengerName}">John Doe</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Route</span>
+                        <span class="detail-value" th:if="${ticket.route}" th:text="${ticket.route.origin + ' to ' + ticket.route.destination}">City A to City B</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Travel Date</span>
+                        <span class="detail-value" th:text="${#temporals.format(ticket.travelDate, 'MMMM dd, yyyy')}">October 26, 2025</span>
+                    </div>
+                </div>
+                <div class="total-amount">
+                    <span class="total-label">Total Amount</span>
+                    <h2 class="total-value" th:text="${'$' + #numbers.formatDecimal(ticket.price, 1, 'COMMA', 2, 'POINT')}">$50.00</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script th:inline="javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        // Use your publishable key
+        const stripe = Stripe('pk_test_51SEsFv6SGhqYPVNCeNVzVtAK1ZV3y0kzJPoBV8Yi4FhfemdM8Y1DuIpRIsHnkvHsNFSxefeu1EpSpD88DiTDsPGh00gsnOkKDH');
+        const clientSecret = /*[[${clientSecret}]]*/ '';
+
+        const elements = stripe.elements();
+        const style = {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+                fontFamily: '"Montserrat", sans-serif',
+                '::placeholder': {
+                    color: '#aab7c4'
+                }
+            },
+            invalid: {
+                color: '#fa755a',
+                iconColor: '#fa755a'
+            }
+        };
+        const card = elements.create('card', {style: style});
+        card.mount('#card-element');
+
+        const form = document.getElementById('payment-form');
+        const cardholderName = document.getElementById('name');
+        const submitButton = document.getElementById('submit');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            setLoading(true);
+
+            const { paymentIntent, error } = await stripe.confirmCardPayment(clientSecret, {
+                payment_method: {
+                    card: card,
+                    billing_details: {
+                        name: cardholderName.value,
+                    },
+                },
+            });
+
+            if (error) {
+                const errorElement = document.getElementById('card-errors');
+                errorElement.textContent = error.message;
+                setLoading(false);
+            } else {
+                if (paymentIntent.status === 'succeeded') {
+                    const serverForm = document.createElement('form');
+                    serverForm.method = 'POST';
+                    serverForm.action = '/payments/charge';
+
+                    const hiddenInput = document.createElement('input');
+                    hiddenInput.type = 'hidden';
+                    hiddenInput.name = 'ticketId';
+                    hiddenInput.value = document.getElementById('ticketId').value;
+
+                    serverForm.appendChild(hiddenInput);
+                    document.body.appendChild(serverForm);
+                    serverForm.submit();
+                }
+            }
+        });
+
+        function setLoading(isLoading) {
+            submitButton.disabled = isLoading;
+        }
+    });
+</script>
+
+</body>
+</html>

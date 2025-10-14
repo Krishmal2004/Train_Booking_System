@@ -1,408 +1,65 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <title>Create New Issue Report</title>
+  <title>Report New Issue</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --primary: #1a3a6e;
-      --primary-dark: #132d54;
-      --primary-light: rgba(26, 58, 110, 0.1);
-      --secondary: #e63946;
-      --secondary-light: rgba(230, 57, 70, 0.1);
-      --accent: #a8dadc;
-      --success: #38b000;
-      --warning: #ffaa00;
-      --danger: #d90429;
-      --light: #f8f9fa;
-      --dark: #212529;
-      --gray: #6c757d;
-      --border-radius: 12px;
-      --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-      --transition: all 0.3s ease;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-color: #f5f7fa;
-      color: #333;
-      line-height: 1.6;
-      padding: 30px;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    h1, h2, h3, h4, h5 {
-      font-family: 'Montserrat', sans-serif;
-      color: var(--primary);
-      margin-bottom: 20px;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      text-align: center;
-      margin-bottom: 30px;
-      position: relative;
-      padding-bottom: 15px;
-    }
-
-    h1:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100px;
-      height: 4px;
-      background: linear-gradient(to right, var(--primary), var(--secondary));
-      border-radius: 2px;
-    }
-
-    h3 {
-      font-size: 1.4rem;
-      font-weight: 600;
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-    }
-
-    h3 i {
-      margin-right: 10px;
-      color: var(--secondary);
-    }
-
-    a {
-      color: var(--primary);
-      text-decoration: none;
-      transition: var(--transition);
-    }
-
-    a:hover {
-      color: var(--secondary);
-    }
-
-    .nav-links {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 30px;
-      gap: 20px;
-    }
-
-    .nav-link {
-      background-color: white;
-      color: var(--primary);
-      padding: 12px 24px;
-      border-radius: var(--border-radius);
-      font-weight: 500;
-      box-shadow: var(--box-shadow);
-      display: inline-flex;
-      align-items: center;
-      transition: var(--transition);
-    }
-
-    .nav-link i {
-      margin-right: 8px;
-    }
-
-    .nav-link:hover {
-      transform: translateY(-3px);
-      color: white;
-      background-color: var(--primary);
-      box-shadow: 0 8px 25px rgba(26, 58, 110, 0.2);
-    }
-
-    .user-info {
-      background-color: white;
-      padding: 20px;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      margin-bottom: 30px;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .user-info p {
-      margin: 0;
-      display: flex;
-      align-items: center;
-    }
-
-    .user-info i {
-      color: var(--primary);
-      margin-right: 8px;
-      font-size: 1.1rem;
-    }
-
-    .user-info strong {
-      color: var(--secondary);
-      font-weight: 600;
-    }
-
-    .form-container {
-      background-color: white;
-      border-radius: var(--border-radius);
-      box-shadow: var(--box-shadow);
-      margin-bottom: 30px;
-      padding: 30px;
-    }
-
-    .form-group {
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 500;
-      color: var(--primary);
-    }
-
-    input[type="text"],
-    textarea,
-    select {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-family: 'Poppins', sans-serif;
-      font-size: 0.95rem;
-      transition: var(--transition);
-    }
-
-    input[type="text"]:focus,
-    textarea:focus,
-    select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(26, 58, 110, 0.1);
-    }
-
-    textarea {
-      min-height: 150px;
-      resize: vertical;
-    }
-
-    .error {
-      color: var(--danger);
-      font-size: 0.85rem;
-      margin-top: 5px;
-      display: block;
-    }
-
-    .button-group {
-      display: flex;
-      gap: 15px;
-      margin-top: 30px;
-    }
-
-    button {
-      flex: 1;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      font-family: 'Poppins', sans-serif;
-      font-weight: 500;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-
-    button[type="submit"] {
-      background-color: var(--primary);
-      color: white;
-    }
-
-    button[type="submit"]:hover {
-      background-color: var(--primary-dark);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(26, 58, 110, 0.2);
-    }
-
-    button[type="reset"] {
-      background-color: #f8f9fa;
-      color: var(--dark);
-      border: 1px solid #ddd;
-    }
-
-    button[type="reset"]:hover {
-      background-color: #e9ecef;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .guidelines {
-      background-color: var(--primary-light);
-      border-radius: var(--border-radius);
-      padding: 25px;
-      margin-bottom: 30px;
-    }
-
-    .guidelines h3 {
-      color: var(--primary);
-      margin-top: 0;
-      margin-bottom: 15px;
-    }
-
-    .guidelines ul {
-      list-style-type: none;
-    }
-
-    .guidelines li {
-      margin-bottom: 10px;
-      position: relative;
-      padding-left: 30px;
-    }
-
-    .guidelines li:before {
-      content: '\f058';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      position: absolute;
-      left: 0;
-      color: var(--secondary);
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 50px;
-      padding-top: 20px;
-      border-top: 1px solid #edf2f7;
-      color: var(--gray);
-    }
-
-    @media (max-width: 768px) {
-      body {
-        padding: 15px;
-      }
-
-      .user-info {
-        flex-direction: column;
-      }
-
-      .button-group {
-        flex-direction: column;
-      }
-
-      button {
-        width: 100%;
-      }
-    }
+    :root { --primary: #1a3a6e; --primary-dark: #142c54; --border-radius: 8px; --box-shadow: 0 2px 15px rgba(0,0,0,0.08); --transition: all 0.3s ease; }
+    body { font-family: 'Poppins', sans-serif; background-color: #f4f7f9; color: #343a40; padding: 20px; }
+    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+    h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: 1.5rem; font-weight: 600; }
+    .card { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
+    .card-header { background-color: var(--primary); color: white; padding: 15px 20px; font-weight: 500; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+    .card-body { padding: 25px; }
+    .form-group { margin-bottom: 25px; }
+    label { display: block; margin-bottom: 10px; color: #495057; font-weight: 500; }
+    .form-control { width: 100%; padding: 12px 15px; border: 1px solid #ced4da; border-radius: var(--border-radius); font-family: 'Poppins', sans-serif; font-size: 1rem; transition: border-color 0.3s; }
+    .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,58,110,0.2); }
+    textarea.form-control { resize: vertical; min-height: 120px; }
+    .button-group { display: flex; gap: 12px; margin-top: 25px; }
+    button, .nav-link { display: inline-flex; align-items: center; gap: 8px; border: none; padding: 14px 24px; border-radius: var(--border-radius); cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 1rem; transition: var(--transition); text-decoration: none; justify-content: center; }
+    button { background-color: var(--primary); color: white; }
+    button:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+    .nav-link { background-color: #6c757d; color: white; }
   </style>
 </head>
 <body>
 <div class="container">
-  <h1>Create New Issue Report</h1>
-
-  <div class="nav-links">
-    <a href="/reports" class="nav-link">
-      <i class="fas fa-arrow-left"></i> Back to All Issues
-    </a>
-    <a href="/reports/dashboard" class="nav-link">
-      <i class="fas fa-chart-line"></i> Dashboard
-    </a>
+  <h1>Report a New Issue</h1>
+  <div class="card">
+    <div class="card-header"><i class="fas fa-bug"></i> Issue Details</div>
+    <div class="card-body">
+      <form th:action="@{/issues/create}" th:object="${issue}" method="post">
+        <div class="form-group">
+          <label for="title">Title</label>
+          <input type="text" id="title" th:field="*{title}" class="form-control" required placeholder="e.g., Login button not working on Chrome">
+        </div>
+        <div class="form-group">
+          <label for="reporterName">Your Name</label>
+          <input type="text" id="reporterName" th:field="*{reporterName}" class="form-control" required placeholder="e.g., Jane Doe">
+        </div>
+        <div class="form-group">
+          <label for="priority">Priority</label>
+          <select id="priority" th:field="*{priority}" class="form-control">
+            <option value="Low">Low</option>
+            <option value="Medium" selected>Medium</option>
+            <option value="High">High</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" th:field="*{description}" class="form-control" placeholder="Please provide a detailed description of the issue..."></textarea>
+        </div>
+        <div class="button-group">
+          <button type="submit"><i class="fas fa-paper-plane"></i> Submit Report</button>
+          <a href="/issues" class="nav-link">Cancel</a>
+        </div>
+      </form>
+    </div>
   </div>
-
-  <div class="user-info">
-    <p><i class="fas fa-user-circle"></i> Current User: <strong>Krishmal2004</strong></p>
-    <p><i class="fas fa-clock"></i> Current Date/Time: <span>2025-09-18 07:02:29</span></p>
-  </div>
-
-  <div class="form-container">
-    <form th:action="@{/reports/create}" th:object="${issue}" method="post">
-      <div class="form-group">
-        <label for="title"><i class="fas fa-heading"></i> Issue Title:</label>
-        <input type="text" id="title" th:field="*{title}" required
-               placeholder="Enter a brief, descriptive title">
-        <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}" class="error"></span>
-      </div>
-
-      <div class="form-group">
-        <label for="description"><i class="fas fa-align-left"></i> Description:</label>
-        <textarea id="description" th:field="*{description}" rows="5" required
-                  placeholder="Describe the issue in detail, including any error messages"></textarea>
-        <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error"></span>
-      </div>
-
-      <div class="form-group">
-        <label for="priority"><i class="fas fa-exclamation-circle"></i> Priority:</label>
-        <select id="priority" th:field="*{priority}" required>
-          <option value="">-- Select Priority --</option>
-          <option value="High">High</option>
-          <option value="Medium">Medium</option>
-          <option value="Low">Low</option>
-        </select>
-        <span th:if="${#fields.hasErrors('priority')}" th:errors="*{priority}" class="error"></span>
-      </div>
-
-      <div class="form-group">
-        <label for="systemAffected"><i class="fas fa-server"></i> System Affected:</label>
-        <select id="systemAffected" th:field="*{systemAffected}" required>
-          <option value="">-- Select System --</option>
-          <option value="Payment System">Payment System</option>
-          <option value="Network Infrastructure">Network Infrastructure</option>
-          <option value="Database">Database</option>
-          <option value="Web Application">Web Application</option>
-          <option value="Mobile App">Mobile App</option>
-          <option value="Email System">Email System</option>
-          <option value="Third-party Integration">Third-party Integration</option>
-          <option value="Other">Other</option>
-        </select>
-        <span th:if="${#fields.hasErrors('systemAffected')}" th:errors="*{systemAffected}" class="error"></span>
-      </div>
-
-      <div class="form-group">
-        <label for="reporterName"><i class="fas fa-user-edit"></i> Reported By:</label>
-        <input type="text" id="reporterName" th:field="*{reporterName}" th:value="Krishmal2004" required>
-      </div>
-
-      <div class="form-group">
-        <label for="assigneeName"><i class="fas fa-user-check"></i> Assign To (Optional):</label>
-        <input type="text" id="assigneeName" th:field="*{assigneeName}"
-               placeholder="Leave blank if unassigned">
-      </div>
-
-      <div class="button-group">
-        <button type="submit"><i class="fas fa-paper-plane"></i> Submit Issue Report</button>
-        <button type="reset"><i class="fas fa-undo"></i> Clear Form</button>
-      </div>
-    </form>
-  </div>
-
-  <div class="guidelines">
-    <h3><i class="fas fa-info-circle"></i> Guidelines for Issue Reporting:</h3>
-    <ul>
-      <li>Be specific in your issue title and description</li>
-      <li>Include steps to reproduce the issue</li>
-      <li>Provide any error messages received</li>
-      <li>Note any recent changes that might have caused the issue</li>
-      <li>For payment system issues, include transaction ID when available</li>
-    </ul>
-  </div>
-
-  <footer>
-    <p>IT Support System - Managed by Krishmal2004 - Kapuge K.H.P.P</p>
-    <p>Last updated: 2025-09-18 07:02:29</p>
-  </footer>
 </div>
 </body>
 </html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Update Issue</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #1a3a6e; --primary-dark: #142c54; --border-radius: 8px; --box-shadow: 0 2px 15px rgba(0,0,0,0.08); --transition: all 0.3s ease; }
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f9; color: #343a40; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; padding: 20px; }
+        h1 { font-size: 2.2rem; color: var(--primary); margin-bottom: 1.5rem; font-weight: 600; }
+        .card { background: white; border-radius: var(--border-radius); box-shadow: var(--box-shadow); }
+        .card-header { background-color: var(--primary); color: white; padding: 15px 20px; font-weight: 500; font-size: 1.1rem; display: flex; align-items: center; gap: 10px; }
+        .card-body { padding: 25px; }
+        .form-group { margin-bottom: 25px; }
+        label { display: block; margin-bottom: 10px; color: #495057; font-weight: 500; }
+        .form-control { width: 100%; padding: 12px 15px; border: 1px solid #ced4da; border-radius: var(--border-radius); font-family: 'Poppins', sans-serif; font-size: 1rem; transition: border-color 0.3s; }
+        .form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(26,58,110,0.2); }
+        textarea.form-control { resize: vertical; min-height: 120px; }
+        .button-group { display: flex; gap: 12px; margin-top: 25px; }
+        button, .nav-link { display: inline-flex; align-items: center; gap: 8px; border: none; padding: 14px 24px; border-radius: var(--border-radius); cursor: pointer; font-family: 'Poppins', sans-serif; font-weight: 500; font-size: 1rem; transition: var(--transition); text-decoration: none; justify-content: center; }
+        button { background-color: var(--primary); color: white; }
+        button:hover { background-color: var(--primary-dark); transform: translateY(-2px); }
+        .nav-link { background-color: #6c757d; color: white; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; background-color: #f8f9fa; padding: 15px; border-radius: var(--border-radius); border: 1px solid #e9ecef; }
+        .info-item p { margin: 0; }
+        .info-item strong { color: var(--primary); font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Update Issue #<span th:text="${issue.id}">101</span></h1>
+    <div class="card">
+        <div class="card-header"><i class="fas fa-pencil-alt"></i> Edit Issue Details</div>
+        <div class="card-body">
+            <form th:action="@{/issues/{id}/update(id=${issue.id})}" th:object="${issue}" method="post">
+                <input type="hidden" th:field="*{id}" />
+                <div class="info-grid">
+                    <div class="info-item"><p><strong>Reporter:</strong> <span th:text="*{reporterName}"></span></p></div>
+                    <div class="info-item"><p><strong>Reported On:</strong> <span th:text="${#temporals.format(issue.createdAt, 'yyyy-MM-dd HH:mm')}"></span></p></div>
+                </div>
+                <div class="form-group">
+                    <label for="title">Title</label>
+                    <input type="text" id="title" th:field="*{title}" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" th:field="*{status}" class="form-control">
+                        <option value="Open">Open</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="priority">Priority</label>
+                    <select id="priority" th:field="*{priority}" class="form-control">
+                        <option value="Low">Low</option>
+                        <option value="Medium">Medium</option>
+                        <option value="High">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" th:field="*{description}" class="form-control"></textarea>
+                </div>
+                <div class="button-group">
+                    <button type="submit"><i class="fas fa-save"></i> Save Changes</button>
+                    <a href="/issues" class="nav-link">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</body>
+</html>

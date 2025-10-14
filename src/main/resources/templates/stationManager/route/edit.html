@@ -433,6 +433,7 @@
     </style>
 </head>
 <body>
+
 <div class="container">
     <!-- Banner with Train Image -->
     <div class="edit-banner">
@@ -485,8 +486,9 @@
                         <label for="routeId"><i class="fas fa-hashtag"></i> Route ID:</label>
                         <div class="input-with-icon">
                             <i class="fas fa-fingerprint"></i>
-                            <input type="text" id="routeId" th:field="*{routeId}" required>
+                            <input type="text" id="routeId" th:field="*{routeId}" readonly>
                         </div>
+                        <div class="helper-text">The Route ID is a permanent identifier and cannot be changed.</div>
                         <span class="error-message" th:if="${#fields.hasErrors('routeId')}" th:errors="*{routeId}"></span>
                     </div>
 
@@ -508,8 +510,9 @@
                         <label for="origin"><i class="fas fa-map-marker-alt"></i> Origin:</label>
                         <div class="input-with-icon">
                             <i class="fas fa-train"></i>
-                            <input type="text" id="origin" th:field="*{origin}" required>
+                            <input type="text" id="origin" th:field="*{origin}" readonly>
                         </div>
+                        <div class="helper-text">The origin cannot be changed. To modify, please create a new route.</div>
                         <span class="error-message" th:if="${#fields.hasErrors('origin')}" th:errors="*{origin}"></span>
                     </div>
 
@@ -517,8 +520,9 @@
                         <label for="destination"><i class="fas fa-map-marker"></i> Destination:</label>
                         <div class="input-with-icon">
                             <i class="fas fa-flag-checkered"></i>
-                            <input type="text" id="destination" th:field="*{destination}" required>
+                            <input type="text" id="destination" th:field="*{destination}" readonly>
                         </div>
+                        <div class="helper-text">The destination cannot be changed. To modify, please create a new route.</div>
                         <span class="error-message" th:if="${#fields.hasErrors('destination')}" th:errors="*{destination}"></span>
                     </div>
                 </div>
