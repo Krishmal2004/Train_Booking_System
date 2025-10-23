@@ -24,15 +24,19 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
     @Query("SELECT t FROM Ticket t LEFT JOIN FETCH t.route WHERE t.route.id = :routeId")
     List<Ticket> findByRouteId(@Param("routeId") Long routeId);
 
-    List<Ticket> findByPassengerNameContainingIgnoreCase(String passengerName);
+    // --- FIX IS HERE: This is the single, correct method definition ---
+    @Query("SELECT t FROM Ticket t LEFT JOIN FETCH t.route WHERE lower(t.passengerName) = lower(:passengerName)")
+    List<Ticket> findByPassengerNameIgnoreCase(@Param("passengerName") String passengerName);
 
     boolean existsByTicketId(String ticketId);
+
+    boolean existsByRouteIdAndTravelDateAndSeatNumber(Long routeId, LocalDate travelDate, String seatNumber);
 
     @Query("SELECT t FROM Ticket t LEFT JOIN FETCH t.route WHERE t.route.id = :routeId AND t.travelDate = :travelDate")
     List<Ticket> findByRouteAndTravelDate(@Param("routeId") Long routeId, @Param("travelDate") LocalDate travelDate);
 
     @Query("SELECT t FROM Ticket t LEFT JOIN FETCH t.route")
-    List<Ticket> findAll();
+    List<Ticket> findAll(); // Overriding to fetch routes for the main list view
 
     @Query("SELECT COALESCE(SUM(t.price), 0) FROM Ticket t")
     BigDecimal findTotalRevenue();
@@ -44,9 +48,7 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
             "FROM Ticket t WHERE YEAR(t.travelDate) = :year " +
             "GROUP BY MONTH(t.travelDate) ORDER BY MONTH(t.travelDate) ASC")
     List<MonthlySalesDTO> findMonthlySalesForYear(@Param("year") int year);
-
-    List<Ticket> findByPassengerName(String passengerName);
+    List<Ticket> findByTravelDateBetweenAndStatus(LocalDate startDate, LocalDate endDate, String status);
 
     List<Ticket> findByTravelDateBetween(LocalDate startDate, LocalDate endDate);
-
 }

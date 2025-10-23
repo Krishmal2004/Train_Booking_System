@@ -36,6 +36,14 @@ public class TicketServiceImpl implements TicketService {
         }
     }
 
+    // Add this method implementation to TicketServiceImpl.java
+
+    @Override
+    public boolean isSeatBooked(Long routeId, LocalDate travelDate, String seatNumber) {
+        // This check is the core of the validation logic.
+        return ticketRepository.existsByRouteIdAndTravelDateAndSeatNumber(routeId, travelDate, seatNumber);
+    }
+
     @Override
     public Optional<Ticket> getTicketById(Long id) {
         try {
@@ -121,7 +129,7 @@ public class TicketServiceImpl implements TicketService {
     @Override
     public List<Ticket> getTicketsByPassengerName(String passengerName) {
         try {
-            return ticketRepository.findByPassengerName(passengerName);
+            return ticketRepository.findByPassengerNameIgnoreCase(passengerName);
         } catch (DataAccessException e) {
             logger.error("Error fetching tickets by passenger name {}: {}",
                     passengerName, e.getMessage(), e);

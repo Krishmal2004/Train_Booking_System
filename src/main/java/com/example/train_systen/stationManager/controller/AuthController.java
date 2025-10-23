@@ -72,7 +72,7 @@ public class AuthController {
 
             // Redirect based on role
             if (user.hasRole("ROLE_ADMIN")) {
-                return "redirect:/admin/dashboard";
+                return "redirect:/admins/";
             } else if (user.hasRole("ROLE_IT_SUPPORT")) {
                 return "redirect:/issues/dashboard";
             } else if (user.hasRole("ROLE_OPS_MANAGER")) {
